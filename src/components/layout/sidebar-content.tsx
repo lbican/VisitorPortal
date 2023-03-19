@@ -1,10 +1,4 @@
-import {
-  Box,
-  BoxProps,
-  Flex,
-  Heading,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Heading, useColorModeValue } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import NavItem from './nav-item';
 import { AiOutlineTeam } from 'react-icons/ai';
@@ -39,13 +33,7 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => (
         VisitorPortal
       </Heading>
     </Flex>
-    <Flex
-      direction="column"
-      as="nav"
-      fontSize="md"
-      color="gray.600"
-      aria-label="Main Navigation"
-    >
+    <Flex direction="column" as="nav" fontSize="md" color="gray.600" aria-label="Main Navigation">
       <NavItem icon={RxDashboard} route={'/'}>
         Dashboard
       </NavItem>

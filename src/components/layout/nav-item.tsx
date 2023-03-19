@@ -33,11 +33,7 @@ const isSelected = (route: string, locationPath: string): NavItemColors => {
     };
 };
 
-const NavItem: React.FC<NavItemProps> = ({
-  icon,
-  children,
-  route,
-}): ReactElement => {
+const NavItem: React.FC<NavItemProps> = ({ icon, children, route }): ReactElement => {
   const location = useLocation();
   const colors = isSelected(route, location.pathname);
 

@@ -26,8 +26,7 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
       last_name: form?.formState.steps.account.value.last_name ?? '',
       email: form?.formState.steps.account.value.email ?? '',
       password: form?.formState.steps.account.value.password ?? '',
-      repeat_password:
-        form?.formState.steps.account.value.repeat_password ?? '',
+      repeat_password: form?.formState.steps.account.value.repeat_password ?? '',
       avatar: form?.formState.steps.account.value.avatar ?? '',
     },
   });
@@ -44,17 +43,14 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
   const { ref: passwordRef, ...passwordControl } = register('password', {
     required: true,
   });
-  const { ref: repeatPasswordRef, ...repeatPasswordControl } = register(
-    'repeat_password',
-    {
-      required: true,
-      validate: (val: string) => {
-        if (watch('password') != val) {
-          return 'Your passwords do no match';
-        }
-      },
-    }
-  );
+  const { ref: repeatPasswordRef, ...repeatPasswordControl } = register('repeat_password', {
+    required: true,
+    validate: (val: string) => {
+      if (watch('password') != val) {
+        return 'Your passwords do no match';
+      }
+    },
+  });
 
   const avatarControl = register('avatar');
 
@@ -94,12 +90,7 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
           <FormLabel htmlFor="last-name" fontWeight={'normal'}>
             Last name
           </FormLabel>
-          <Input
-            id="last-name"
-            placeholder="First name"
-            ref={lastNameRef}
-            {...lastNameControl}
-          />
+          <Input id="last-name" placeholder="First name" ref={lastNameRef} {...lastNameControl} />
         </FormControl>
       </Flex>
       <FormControl mt="2%">

@@ -1,13 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormLabel,
-  Input,
-  Link,
-  Stack,
-} from '@chakra-ui/react';
+import { Button, Checkbox, FormControl, FormLabel, Input, Link, Stack } from '@chakra-ui/react';
 
 const LoginForm = (): ReactElement => {
   return (
@@ -21,11 +13,7 @@ const LoginForm = (): ReactElement => {
         <Input type="password" />
       </FormControl>
       <Stack spacing={6}>
-        <Stack
-          direction={{ base: 'column', sm: 'row' }}
-          align={'start'}
-          justify={'space-between'}
-        >
+        <Stack direction={{ base: 'column', sm: 'row' }} align={'start'} justify={'space-between'}>
           <Checkbox>Remember me</Checkbox>
           <Link color={'blue.500'}>Forgot password?</Link>
         </Stack>

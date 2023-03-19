@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Input } from '@chakra-ui/react';
 import { StepActions } from '../definition/form-state';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep, prevStep }) => {
