@@ -2,25 +2,25 @@ import React, { ReactElement } from 'react';
 import { Step, Steps, useSteps } from 'chakra-ui-steps';
 import { Flex } from '@chakra-ui/react';
 import { FormProvider } from './definition/form-context';
-import AccountRegistration from './parts/account-registration';
 import AccountDetails from './parts/account-details';
+import AccountSecurity from './parts/account-security';
 import AccountComplete from './parts/account-complete';
 
 const RegisterForm = (): ReactElement => {
-  const { nextStep, prevStep, reset, activeStep } = useSteps({
+  const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
 
   const steps = [
     {
       label: 'Account',
-      content: <AccountRegistration nextStep={nextStep} />,
+      content: <AccountDetails nextStep={nextStep} />,
     },
     {
-      label: 'Details',
-      content: <AccountDetails nextStep={nextStep} prevStep={prevStep} />,
+      label: 'Security',
+      content: <AccountSecurity nextStep={nextStep} prevStep={prevStep} />,
     },
-    { label: 'Complete', content: <AccountComplete nextStep={nextStep} /> },
+    { label: 'Complete', content: <AccountComplete nextStep={nextStep} prevStep={prevStep} /> },
   ];
 
   return (

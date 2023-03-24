@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import {
   Box,
   Button,
-  Flex,
   FormControl,
-  FormHelperText,
+  FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -14,45 +14,40 @@ import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
 import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
-const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
+const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
   const [show, setShow] = React.useState(false);
   const form = useContext(FormContext);
 
-  const { register, handleSubmit, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     shouldUseNativeValidation: false,
     defaultValues: {
-      first_name: form?.formState.steps.account.value.first_name ?? '',
-      last_name: form?.formState.steps.account.value.last_name ?? '',
-      email: form?.formState.steps.account.value.email ?? '',
-      password: form?.formState.steps.account.value.password ?? '',
-      repeat_password: form?.formState.steps.account.value.repeat_password ?? '',
-      avatar: form?.formState.steps.account.value.avatar ?? '',
+      email: form?.formState.steps.security.value.email ?? '',
+      password: form?.formState.steps.security.value.password ?? '',
+      repeat_password: form?.formState.steps.security.value.repeat_password ?? '',
     },
   });
 
-  const { ref: firstNameRef, ...firstNameControl } = register('first_name', {
-    required: true,
-  });
-  const { ref: lastNameRef, ...lastNameControl } = register('last_name', {
-    required: true,
-  });
   const { ref: emailRef, ...emailControl } = register('email', {
-    required: true,
+    required: 'Email is required',
   });
   const { ref: passwordRef, ...passwordControl } = register('password', {
-    required: true,
+    required: 'Password is required',
   });
   const { ref: repeatPasswordRef, ...repeatPasswordControl } = register('repeat_password', {
-    required: true,
+    required: 'You need to repeat the password',
     validate: (val: string) => {
       if (watch('password') != val) {
         return 'Your passwords do no match';
       }
     },
   });
-
-  const avatarControl = register('avatar');
 
   const handleClick = (): void => setShow(!show);
 
@@ -63,7 +58,7 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
       onSubmit={handleSubmit((value) => {
         form?.setFormState(
           produce((state) => {
-            state.steps.account = {
+            state.steps.security = {
               valid: true,
               value,
             };
@@ -73,35 +68,21 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
         nextStep();
       })}
     >
-      <Flex>
-        <FormControl mr="5%">
-          <FormLabel htmlFor="first-name" fontWeight={'normal'}>
-            First name
-          </FormLabel>
-          <Input
-            id="first-name"
-            placeholder="First name"
-            ref={firstNameRef}
-            {...firstNameControl}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="last-name" fontWeight={'normal'}>
-            Last name
-          </FormLabel>
-          <Input id="last-name" placeholder="First name" ref={lastNameRef} {...lastNameControl} />
-        </FormControl>
-      </Flex>
-      <FormControl mt="2%">
+      <FormControl mt="2%" isInvalid={!!errors.email}>
         <FormLabel htmlFor="email" fontWeight={'normal'}>
           Email address
         </FormLabel>
-        <Input id="email" type="email" ref={emailRef} {...emailControl} />
-        <FormHelperText>We will never share your email.</FormHelperText>
+        <Input
+          id="email"
+          type="email"
+          placeholder="your@mail.com"
+          ref={emailRef}
+          {...emailControl}
+        />
+        <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
       </FormControl>
 
-      <FormControl>
+      <FormControl mt="2%" isInvalid={!!errors.password}>
         <FormLabel htmlFor="password" fontWeight={'normal'} mt="2%">
           Password
         </FormLabel>
@@ -115,11 +96,14 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? 'Hide' : 'Show'}
+              {show ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </Button>
           </InputRightElement>
         </InputGroup>
-        <FormLabel htmlFor="email" fontWeight={'normal'}>
+        <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
+      </FormControl>
+      <FormControl mt="2%" isInvalid={!!errors.repeat_password}>
+        <FormLabel htmlFor="repeat_password" fontWeight={'normal'}>
           Repeat Password
         </FormLabel>
         <Input
@@ -128,14 +112,18 @@ const AccountRegistration: React.FC<StepActions> = ({ nextStep }) => {
           ref={repeatPasswordRef}
           {...repeatPasswordControl}
         />
+        <FormErrorMessage>{errors.repeat_password?.message?.toString()}</FormErrorMessage>
       </FormControl>
-      <Flex width="100%" justifyContent="flex-end" my={6}>
+      <HStack spacing={2} width="100%" justifyContent="flex-end" my={6}>
+        <Button size="sm" onClick={prevStep}>
+          Previous
+        </Button>
         <Button size="sm" type="submit">
           Next
         </Button>
-      </Flex>
+      </HStack>
     </Box>
   );
 };
 
-export default AccountRegistration;
+export default AccountSecurity;

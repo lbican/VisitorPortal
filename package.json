@@ -9,12 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.5.1",
+    "@chakra-ui/react": "^2.5.2",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@reduxjs/toolkit": "^1.9.3",
+    "chakra-ui-file-picker": "^0.1.0",
     "chakra-ui-steps": "^2.0.4",
-    "framer-motion": "^10.2.4",
+    "framer-motion": "^10.6.0",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.7",
