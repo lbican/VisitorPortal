@@ -9,6 +9,7 @@ export const FORM_STATE = {
     account: {
       valid: false,
       value: {
+        username: '',
         first_name: '',
         last_name: '',
         avatar: '',

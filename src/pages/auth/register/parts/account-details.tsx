@@ -31,10 +31,15 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
   } = useForm({
     shouldUseNativeValidation: false,
     defaultValues: {
+      username: form?.formState.steps.account.value.username ?? '',
       first_name: form?.formState.steps.account.value.first_name ?? '',
       last_name: form?.formState.steps.account.value.last_name ?? '',
       avatar: form?.formState.steps.account.value.avatar ?? '',
     },
+  });
+
+  const { ref: usernameRef, ...usernameControl } = register('username', {
+    required: 'Username is required',
   });
 
   const { ref: firstNameRef, ...firstNameControl } = register('first_name', {
@@ -61,7 +66,15 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
         nextStep();
       })}
     >
-      <Flex>
+      <FormControl isInvalid={!!errors.username}>
+        <FormLabel htmlFor="username" fontWeight={'normal'}>
+          Username
+        </FormLabel>
+        <Input id="username" placeholder="Username" ref={usernameRef} {...usernameControl} />
+        <FormErrorMessage>{errors.username?.message?.toString()}</FormErrorMessage>
+      </FormControl>
+
+      <Flex mt="5%">
         <FormControl mr="5%" isInvalid={!!errors.first_name}>
           <FormLabel htmlFor="first-name" fontWeight={'normal'}>
             First name

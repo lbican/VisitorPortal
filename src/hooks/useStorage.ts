@@ -1,28 +1,23 @@
 import { useState } from 'react';
+import { StorageHook } from '../utils/interfaces/typings';
 
-interface LocalStorageHook {
-  value: string | null;
-  setItem: (key: string, value: string) => void;
-  getItem: (key: string) => string | null;
-  removeItem: (key: string) => void;
-}
-
-export const useLocalStorage = (): LocalStorageHook => {
+export const useStorage = (storageType: 'local' | 'session'): StorageHook => {
   const [value, setValue] = useState<string | null>(null);
+  const storage = storageType === 'local' ? localStorage : sessionStorage;
 
   const setItem = (key: string, value: string): void => {
-    localStorage.setItem(key, value);
+    storage.setItem(key, value);
     setValue(value);
   };
 
   const getItem = (key: string): string | null => {
-    const value = localStorage.getItem(key);
+    const value = storage.getItem(key);
     setValue(value);
     return value;
   };
 
   const removeItem = (key: string): void => {
-    localStorage.removeItem(key);
+    storage.removeItem(key);
     setValue(null);
   };
 

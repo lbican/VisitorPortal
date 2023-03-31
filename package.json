@@ -13,6 +13,8 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@reduxjs/toolkit": "^1.9.3",
+    "@supabase/auth-ui-react": "^0.3.5",
+    "@supabase/supabase-js": "^2.12.1",
     "chakra-ui-file-picker": "^0.1.0",
     "chakra-ui-steps": "^2.0.4",
     "framer-motion": "^10.6.0",

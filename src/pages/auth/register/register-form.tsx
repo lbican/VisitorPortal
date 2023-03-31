@@ -20,7 +20,10 @@ const RegisterForm = (): ReactElement => {
       label: 'Security',
       content: <AccountSecurity nextStep={nextStep} prevStep={prevStep} />,
     },
-    { label: 'Complete', content: <AccountComplete nextStep={nextStep} prevStep={prevStep} /> },
+    {
+      label: 'Complete',
+      content: <AccountComplete nextStep={nextStep} prevStep={prevStep} />,
+    },
   ];
 
   return (

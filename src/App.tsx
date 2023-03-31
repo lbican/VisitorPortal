@@ -10,6 +10,7 @@ import Dashboard from './pages/dashboard/dashboard';
 import Team from './pages/team/team';
 import Calendar from './pages/calendar/calendar';
 import Properties from './pages/properties/properties';
+import { AuthProvider } from './context/auth-context';
 
 const router = createBrowserRouter([
   {
@@ -48,7 +49,9 @@ const router = createBrowserRouter([
 function App(): ReactElement {
   return (
     <ChakraProvider theme={themeConfig}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ChakraProvider>
   );
 }

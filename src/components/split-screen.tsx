@@ -11,7 +11,7 @@ interface Props {
 const SplitScreen: React.FC<Props> = ({ title, imageLink, children }) => {
   return (
     <Stack minH={'100vh'} direction={{ md: 'row' }}>
-      <Flex p={8} flex={1} align={'center'} justify={'center'}>
+      <Flex p={{ base: 0, sm: 2, md: 8 }} flex={1} align={'center'} justify={'center'}>
         <Stack
           spacing={4}
           p={8}
@@ -24,7 +24,7 @@ const SplitScreen: React.FC<Props> = ({ title, imageLink, children }) => {
           {children}
         </Stack>
       </Flex>
-      <Flex flex={1} display={{ sm: 'none', md: 'flex' }}>
+      <Flex flex={1} display={{ base: 'none', md: 'flex' }}>
         <ProgressiveImage imageLink={imageLink} imageAlt={'Action image'} />
       </Flex>
     </Stack>
