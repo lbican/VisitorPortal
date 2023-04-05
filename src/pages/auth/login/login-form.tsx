@@ -11,9 +11,9 @@ import {
   Stack,
   VStack,
 } from '@chakra-ui/react';
-import supabase from '../../../../database';
 import { FcGoogle } from 'react-icons/fc';
 import { SignInWithOAuthCredentials } from '@supabase/supabase-js';
+import supabase from '../../../../database';
 
 const LoginForm = (): ReactElement => {
   const jwtLogin = async (provider: string) => {

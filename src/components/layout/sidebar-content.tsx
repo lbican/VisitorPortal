@@ -18,11 +18,10 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => (
     overflowY="auto"
     bg={useColorModeValue('white', 'gray.800')}
     borderColor={useColorModeValue('inherit', 'gray.700')}
-    borderRightWidth="1px"
     w="60"
     {...props}
   >
-    <Flex px="4" py="5" align="center">
+    <Flex px="4" h={'14'} align="center">
       <Heading
         as={'h2'}
         fontSize="2xl"

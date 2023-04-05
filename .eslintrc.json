@@ -21,7 +21,7 @@
         "prettier"
     ],
     "rules": {
-        "indent": ["warn", 2],
+        "@typescript-eslint/no-empty-function": "off",
         "linebreak-style": ["warn", "unix"],
         "quotes": ["warn", "single"],
         "semi": ["warn", "always"],

@@ -43,13 +43,14 @@ const NavItem: React.FC<NavItemProps> = ({ icon, children, route }): ReactElemen
       to={route}
       align="center"
       px="4"
+      py="3"
       bgColor={useColorModeValue(colors.bgColor[0], colors.bgColor[1])}
       color={useColorModeValue(colors.color[0], colors.color[1])}
-      py="3"
       cursor="pointer"
       role="group"
       fontWeight="semibold"
       transition=".15s ease"
+      roundedEnd={'md'}
       _hover={{
         bg: useColorModeValue(colors.hoverBg[0], colors.hoverBg[1]),
         color: useColorModeValue(colors.hoverColor[0], colors.hoverColor[1]),

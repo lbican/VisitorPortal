@@ -1,21 +1,26 @@
 import React from 'react';
-import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Avatar, Box, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { RiSettings2Line, RiLogoutBoxLine } from 'react-icons/ri';
-interface Props {
-  size: string;
-  src?: string;
-  name: string;
-}
+import { CurrentUser } from '../context/auth-context';
 
-const InteractiveAvatar: React.FC<Props> = ({ size, src, name }) => {
+interface AvatarProps {
+  user: CurrentUser;
+  signOut: () => void;
+}
+const InteractiveAvatar: React.FC<AvatarProps> = ({ user, signOut }) => {
   return (
-    <Menu>
-      <Avatar size={size} name={name} src={src} as={MenuButton} />
-      <MenuList>
-        <MenuItem icon={<RiSettings2Line size={20} />}>Settings</MenuItem>
-        <MenuItem icon={<RiLogoutBoxLine size={20} />}>Logout</MenuItem>
-      </MenuList>
-    </Menu>
+    <Box>
+      <Menu>
+        <Avatar size={'sm'} name={user?.full_name} src={user?.avatar_url} as={MenuButton} />
+        <MenuList>
+          <Text p={2}>{user?.full_name}</Text>
+          <MenuItem icon={<RiSettings2Line size={20} />}>Settings</MenuItem>
+          <MenuItem onClick={signOut} icon={<RiLogoutBoxLine size={20} />}>
+            Sign out
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    </Box>
   );
 };
 

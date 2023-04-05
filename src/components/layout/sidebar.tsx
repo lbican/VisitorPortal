@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import {
   Box,
   Drawer,
@@ -6,12 +6,19 @@ import {
   useDisclosure,
   DrawerOverlay,
   useColorModeValue,
+  Flex,
 } from '@chakra-ui/react';
 import SidebarContent from './sidebar-content';
 import Header from './header';
 
 const Sidebar: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const handleHeaderRef = useCallback((headerRef: HTMLDivElement | null) => {
+    if (headerRef) {
+      setHeaderHeight(headerRef.clientHeight || 56);
+    }
+  }, []);
 
   return (
     <Box as="section" bg={useColorModeValue('gray.50', 'gray.700')} minH="100vh">
@@ -23,11 +30,17 @@ const Sidebar: React.FC<{ children: ReactNode }> = ({ children }) => {
         </DrawerContent>
       </Drawer>
       <Box ml={{ base: 0, md: 60 }} transition=".3s ease">
-        <Header onOpen={onOpen} />
+        <Header onOpen={onOpen} headerRef={handleHeaderRef} />
 
-        <Box padding={'8'} as="main">
+        <Flex
+          paddingLeft={{ base: '0', md: '4' }}
+          as="main"
+          bg={useColorModeValue('white', 'gray.800')}
+          height={`calc(100vh - ${headerHeight + 'px'});`}
+          flexDirection={'column'}
+        >
           {children}
-        </Box>
+        </Flex>
       </Box>
     </Box>
   );

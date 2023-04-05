@@ -1,42 +1,91 @@
-import React, { createContext, ReactNode, useMemo, useState } from 'react';
-import { User } from '../utils/interfaces/typings';
-import { useStorage } from '../hooks/useStorage';
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
-export interface AuthContextType {
-  user: User | null;
-  login: (authorizedUser: User, rememberUser: boolean) => void;
-  logout: () => void;
+import { Session } from '@supabase/supabase-js';
+import supabase from '../../database';
+
+export interface CurrentUser {
+  avatar_url: string;
+  email: string;
+  email_verified: boolean;
+  full_name: string;
+  iss: string;
+  name: string;
+  picture: string;
+  provider_id: string;
+  sub: string;
 }
 
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+interface AuthType {
+  user: CurrentUser | null;
+  session: Session | null;
+  signOut: () => void;
+}
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [storageType, setStorageType] = useState<'local' | 'session'>('local');
-  const storage = useStorage(storageType);
+export const AuthContext = createContext<AuthType>({
+  user: null,
+  session: null,
+  signOut: () => {},
+});
 
-  const login = (authorizedUser: User, rememberUser: boolean): void => {
-    const newStorageType = rememberUser ? 'local' : 'session';
-    setStorageType(newStorageType);
+export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [userSession, setUserSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<CurrentUser | null>(null);
 
-    storage.setItem('user', JSON.stringify(authorizedUser));
-    setUser(authorizedUser);
+  useEffect(() => {
+    const getSession = async (): Promise<Session | null> => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setUserSession(session);
+        setUser((session?.user.user_metadata as CurrentUser) ?? null);
+        return Promise.resolve(session);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    };
+
+    getSession()
+      .then((session) => {
+        console.log(session);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`Supabase auth event: ${event}`);
+      setUserSession(session);
+      setUser((session?.user.user_metadata as CurrentUser) ?? null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const signOut = () => {
+    supabase.auth
+      .signOut()
+      .then(() => {
+        setUser(null);
+        setUserSession(null);
+      })
+      .catch((error) => console.error(error));
   };
 
-  const logout = (): void => {
-    storage.removeItem('user');
-    setUser(null);
-  };
-
-  const authContextValue = useMemo(() => ({ user, login, logout }), [user, login, logout]);
-
-  // Check for user in storage on component mount
-  React.useEffect(() => {
-    const storedUser = storage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, [storage]);
+  const authContextValue = useMemo(
+    () => ({ user: user, session: userSession, signOut }),
+    [user, userSession]
+  );
 
   return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a AuthContextProvider.');
+  }
+  return context;
 };
