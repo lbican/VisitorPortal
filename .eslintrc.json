@@ -25,11 +25,13 @@
         "linebreak-style": ["warn", "unix"],
         "quotes": ["warn", "single"],
         "semi": ["warn", "always"],
+        "indent": ["warn", 4],
         "prettier/prettier": [
             "warn",
             {
                 "singleQuote":true,
-                "printWidth": 100
+                "printWidth": 100,
+                "tabWidth": 4
             }
         ]
     }

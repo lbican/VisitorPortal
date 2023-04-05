@@ -13,47 +13,47 @@ import Properties from './pages/properties/properties';
 import { AuthContextProvider } from './context/auth-context';
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    errorElement: <ErrorPage />,
-    element: <AdminPanel />,
-    children: [
-      {
+    {
         path: '/',
-        element: <Dashboard />,
-      },
-      {
-        path: '/team',
-        element: <Team />,
-      },
-      {
-        path: '/properties',
-        element: <Properties />,
-      },
-      {
-        path: '/calendar',
-        element: <Calendar />,
-      },
-    ],
-  },
-  {
-    path: 'login',
-    element: <LoginPage />,
-  },
-  {
-    path: 'register',
-    element: <RegisterPage />,
-  },
+        errorElement: <ErrorPage />,
+        element: <AdminPanel />,
+        children: [
+            {
+                path: '/',
+                element: <Dashboard />,
+            },
+            {
+                path: '/team',
+                element: <Team />,
+            },
+            {
+                path: '/properties',
+                element: <Properties />,
+            },
+            {
+                path: '/calendar',
+                element: <Calendar />,
+            },
+        ],
+    },
+    {
+        path: 'login',
+        element: <LoginPage />,
+    },
+    {
+        path: 'register',
+        element: <RegisterPage />,
+    },
 ]);
 
 function App(): ReactElement {
-  return (
-    <ChakraProvider theme={themeConfig}>
-      <AuthContextProvider>
-        <RouterProvider router={router} />
-      </AuthContextProvider>
-    </ChakraProvider>
-  );
+    return (
+        <ChakraProvider theme={themeConfig}>
+            <AuthContextProvider>
+                <RouterProvider router={router} />
+            </AuthContextProvider>
+        </ChakraProvider>
+    );
 }
 
 export default App;
