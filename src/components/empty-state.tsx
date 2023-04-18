@@ -16,7 +16,7 @@ const EmptyState: React.FC<Props> = ({ code, shortMessage, message }) => {
                 as="h2"
                 size="2xl"
                 backgroundClip="text"
-                color={'green.500'}
+                color="green.500"
             >
                 {code}
             </Heading>
@@ -25,7 +25,7 @@ const EmptyState: React.FC<Props> = ({ code, shortMessage, message }) => {
             </Text>
             <Text mb={6}>{message}</Text>
 
-            <Button color="white" variant="solid" bgColor={'green.500'} as={NavLink} to={'/'}>
+            <Button color="white" variant="solid" bgColor="green.500" as={NavLink} to="/">
                 Go to Home
             </Button>
         </Box>

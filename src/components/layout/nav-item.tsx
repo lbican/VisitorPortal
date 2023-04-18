@@ -50,7 +50,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, children, route }): ReactElemen
             role="group"
             fontWeight="semibold"
             transition=".15s ease"
-            roundedEnd={'md'}
+            roundedEnd="md"
             _hover={{
                 bg: useColorModeValue(colors.hoverBg[0], colors.hoverBg[1]),
                 color: useColorModeValue(colors.hoverColor[0], colors.hoverColor[1]),

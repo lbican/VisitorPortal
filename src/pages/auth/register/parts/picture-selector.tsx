@@ -25,7 +25,7 @@ const PictureSelector: React.FC<SelectorProps> = ({ onSelect }) => {
     );
 
     return (
-        <Wrap alignSelf={'center'} p={5}>
+        <Wrap alignSelf="center" p={5}>
             {images.map((image, index) => {
                 return (
                     <WrapItem key={index}>
@@ -46,7 +46,7 @@ const PictureSelector: React.FC<SelectorProps> = ({ onSelect }) => {
                     as={motion.div}
                     whileHover={{ rotateZ: 60 }}
                     whileTap={{ rotateZ: 360 }}
-                    bgColor={'blue.500'}
+                    bgColor="blue.500"
                     icon={<TbArrowsRandom />}
                     onClick={() => {
                         setNum(getRandomNumber);

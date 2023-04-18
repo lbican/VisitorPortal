@@ -45,15 +45,10 @@ const Header: React.FC<Props> = ({ onOpen, headerRef }) => {
                     <InteractiveAvatar user={user} signOut={signOut} />
                 ) : (
                     <>
-                        <Button
-                            colorScheme={'green'}
-                            variant={'ghost'}
-                            as={NavLink}
-                            to={'/register'}
-                        >
+                        <Button colorScheme="green" variant="ghost" as={NavLink} to="/register">
                             Register
                         </Button>
-                        <Button colorScheme={'green'} as={NavLink} to={'/login'}>
+                        <Button colorScheme="green" as={NavLink} to="/login">
                             Sign in
                         </Button>
                     </>

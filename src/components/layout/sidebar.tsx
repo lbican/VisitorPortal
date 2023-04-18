@@ -37,7 +37,7 @@ const Sidebar: React.FC<{ children: ReactNode }> = ({ children }) => {
                     as="main"
                     bg={useColorModeValue('white', 'gray.800')}
                     height={`calc(100vh - ${headerHeight + 'px'});`}
-                    flexDirection={'column'}
+                    flexDirection="column"
                 >
                     {children}
                 </Flex>

@@ -15,6 +15,7 @@ import { FormContext } from '../definition/form-context';
 import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { motion } from 'framer-motion';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const [show, setShow] = React.useState(false);
@@ -52,77 +53,86 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const handleClick = (): void => setShow(!show);
 
     return (
-        <Box
-            py={6}
-            as={'form'}
-            onSubmit={handleSubmit((value) => {
-                form?.setFormState(
-                    produce((state) => {
-                        state.steps.security = {
-                            valid: true,
-                            value,
-                        };
-                    })
-                );
-
-                nextStep();
-            })}
+        <motion.div
+            key="security"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
         >
-            <FormControl mt="2%" isInvalid={!!errors.email}>
-                <FormLabel htmlFor="email" fontWeight={'normal'}>
-                    Email address
-                </FormLabel>
-                <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@mail.com"
-                    ref={emailRef}
-                    {...emailControl}
-                />
-                <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
-            </FormControl>
+            <Box
+                py={6}
+                as="form"
+                onSubmit={handleSubmit((value) => {
+                    form?.setFormState(
+                        produce((state) => {
+                            state.steps.security = {
+                                valid: true,
+                                value,
+                            };
+                        })
+                    );
 
-            <FormControl mt="2%" isInvalid={!!errors.password}>
-                <FormLabel htmlFor="password" fontWeight={'normal'} mt="2%">
-                    Password
-                </FormLabel>
-                <InputGroup size="md">
+                    nextStep();
+                })}
+            >
+                <FormControl mt="2%" isInvalid={!!errors.email}>
+                    <FormLabel htmlFor="email" fontWeight="normal">
+                        Email address
+                    </FormLabel>
                     <Input
-                        pr="4.5rem"
-                        type={show ? 'text' : 'password'}
-                        placeholder="Enter password"
-                        ref={passwordRef}
-                        {...passwordControl}
+                        id="email"
+                        type="email"
+                        placeholder="your@mail.com"
+                        ref={emailRef}
+                        {...emailControl}
                     />
-                    <InputRightElement width="4.5rem">
-                        <Button h="1.75rem" size="sm" onClick={handleClick}>
-                            {show ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
-                        </Button>
-                    </InputRightElement>
-                </InputGroup>
-                <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
-            </FormControl>
-            <FormControl mt="2%" isInvalid={!!errors.repeat_password}>
-                <FormLabel htmlFor="repeat_password" fontWeight={'normal'}>
-                    Repeat Password
-                </FormLabel>
-                <Input
-                    id="repeat_password"
-                    type="password"
-                    ref={repeatPasswordRef}
-                    {...repeatPasswordControl}
-                />
-                <FormErrorMessage>{errors.repeat_password?.message?.toString()}</FormErrorMessage>
-            </FormControl>
-            <HStack spacing={2} width="100%" justifyContent="flex-end" my={6}>
-                <Button size="sm" onClick={prevStep}>
-                    Previous
-                </Button>
-                <Button size="sm" type="submit">
-                    Next
-                </Button>
-            </HStack>
-        </Box>
+                    <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
+                </FormControl>
+
+                <FormControl mt="2%" isInvalid={!!errors.password}>
+                    <FormLabel htmlFor="password" fontWeight="normal" mt="2%">
+                        Password
+                    </FormLabel>
+                    <InputGroup size="md">
+                        <Input
+                            pr="4.5rem"
+                            type={show ? 'text' : 'password'}
+                            placeholder="Enter password"
+                            ref={passwordRef}
+                            {...passwordControl}
+                        />
+                        <InputRightElement width="4.5rem">
+                            <Button h="1.75rem" size="sm" onClick={handleClick}>
+                                {show ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                            </Button>
+                        </InputRightElement>
+                    </InputGroup>
+                    <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
+                </FormControl>
+                <FormControl mt="2%" isInvalid={!!errors.repeat_password}>
+                    <FormLabel htmlFor="repeat_password" fontWeight="normal">
+                        Repeat Password
+                    </FormLabel>
+                    <Input
+                        id="repeat_password"
+                        type="password"
+                        ref={repeatPasswordRef}
+                        {...repeatPasswordControl}
+                    />
+                    <FormErrorMessage>
+                        {errors.repeat_password?.message?.toString()}
+                    </FormErrorMessage>
+                </FormControl>
+                <HStack spacing={2} width="100%" justifyContent="flex-end" my={6}>
+                    <Button size="sm" onClick={prevStep}>
+                        Previous
+                    </Button>
+                    <Button size="sm" type="submit">
+                        Next
+                    </Button>
+                </HStack>
+            </Box>
+        </motion.div>
     );
 };
 

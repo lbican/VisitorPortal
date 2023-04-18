@@ -21,9 +21,9 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => (
         w="60"
         {...props}
     >
-        <Flex px="4" h={'14'} align="center">
+        <Flex px="4" h="14" align="center">
             <Heading
-                as={'h2'}
+                as="h2"
                 fontSize="2xl"
                 ml="2"
                 color={useColorModeValue('brand.500', 'white')}
@@ -39,16 +39,16 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => (
             color="gray.600"
             aria-label="Main Navigation"
         >
-            <NavItem icon={RxDashboard} route={'/'}>
+            <NavItem icon={RxDashboard} route="/">
                 Dashboard
             </NavItem>
-            <NavItem icon={AiOutlineTeam} route={'/team'}>
+            <NavItem icon={AiOutlineTeam} route="/team">
                 Team
             </NavItem>
-            <NavItem icon={BsHouses} route={'/properties'}>
+            <NavItem icon={BsHouses} route="/properties">
                 Properties
             </NavItem>
-            <NavItem icon={BsCalendarCheck} route={'/calendar'}>
+            <NavItem icon={BsCalendarCheck} route="/calendar">
                 Calendar
             </NavItem>
         </Flex>

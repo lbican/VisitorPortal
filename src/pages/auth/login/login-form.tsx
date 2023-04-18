@@ -12,15 +12,15 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
-import { SignInWithOAuthCredentials } from '@supabase/supabase-js';
+import { Provider } from '@supabase/supabase-js';
 import supabase from '../../../../database';
 
 const LoginForm = (): ReactElement => {
-    const jwtLogin = async (provider: string) => {
+    const jwtLogin = async (provider: Provider) => {
         await supabase.auth
             .signInWithOAuth({
                 provider: provider,
-            } as SignInWithOAuthCredentials)
+            })
             .catch((error) => console.error(error));
     };
 
@@ -37,21 +37,21 @@ const LoginForm = (): ReactElement => {
             <VStack spacing={6}>
                 <Stack
                     direction={{ base: 'column', sm: 'row' }}
-                    align={'start'}
-                    justify={'space-between'}
+                    align="start"
+                    justify="space-between"
                 >
-                    <Checkbox colorScheme={'green'}>Remember me</Checkbox>
-                    <Link color={'green.500'}>Forgot password?</Link>
+                    <Checkbox colorScheme="green">Remember me</Checkbox>
+                    <Link color="green.500">Forgot password?</Link>
                 </Stack>
-                <Button alignSelf={'flex-end'} backgroundColor={'green.500'} variant={'solid'}>
+                <Button alignSelf="flex-end" backgroundColor="green.500" variant="solid">
                     Sign in
                 </Button>
                 <Divider />
                 <HStack>
                     <Button
-                        bgColor={'white'}
+                        bgColor="white"
                         onClick={() => jwtLogin('google')}
-                        color={'black'}
+                        color="black"
                         leftIcon={<FcGoogle />}
                     >
                         Google

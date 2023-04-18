@@ -5,6 +5,7 @@ import { FormProvider } from './definition/form-context';
 import AccountDetails from './parts/account-details';
 import AccountSecurity from './parts/account-security';
 import AccountComplete from './parts/account-complete';
+import { AnimatePresence } from 'framer-motion';
 
 const RegisterForm = (): ReactElement => {
     const { nextStep, prevStep, activeStep } = useSteps({
@@ -32,10 +33,11 @@ const RegisterForm = (): ReactElement => {
                 <Steps activeStep={activeStep}>
                     {steps.map(({ label, content }) => (
                         <Step label={label} key={label}>
-                            {content}
+                            <AnimatePresence>{content}</AnimatePresence>
                         </Step>
                     ))}
                 </Steps>
+                {activeStep === 3 && <div>Complete!</div>}
             </Flex>
         </FormProvider>
     );

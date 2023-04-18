@@ -14,6 +14,7 @@ import { FormContext } from '../definition/form-context';
 import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import PictureSelector from './picture-selector';
+import { motion } from 'framer-motion';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);
@@ -50,77 +51,86 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     });
 
     return (
-        <Box
-            py={6}
-            as={'form'}
-            onSubmit={handleSubmit((value) => {
-                form?.setFormState(
-                    produce((state) => {
-                        state.steps.account = {
-                            valid: true,
-                            value,
-                        };
-                    })
-                );
-
-                nextStep();
-            })}
+        <motion.div
+            key="details"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
         >
-            <FormControl isInvalid={!!errors.username}>
-                <FormLabel htmlFor="username" fontWeight={'normal'}>
-                    Username
-                </FormLabel>
-                <Input
-                    id="username"
-                    placeholder="Username"
-                    ref={usernameRef}
-                    {...usernameControl}
-                />
-                <FormErrorMessage>{errors.username?.message?.toString()}</FormErrorMessage>
-            </FormControl>
+            <Box
+                py={6}
+                as="form"
+                onSubmit={handleSubmit((value) => {
+                    form?.setFormState(
+                        produce((state) => {
+                            state.steps.account = {
+                                valid: true,
+                                value,
+                            };
+                        })
+                    );
 
-            <Flex mt="5%">
-                <FormControl mr="5%" isInvalid={!!errors.first_name}>
-                    <FormLabel htmlFor="first-name" fontWeight={'normal'}>
-                        First name
+                    nextStep();
+                })}
+            >
+                <FormControl isInvalid={!!errors.username}>
+                    <FormLabel htmlFor="username" fontWeight="normal">
+                        Username
                     </FormLabel>
                     <Input
-                        id="first-name"
-                        placeholder="First name"
-                        ref={firstNameRef}
-                        {...firstNameControl}
+                        id="username"
+                        placeholder="Username"
+                        ref={usernameRef}
+                        {...usernameControl}
                     />
-                    <FormErrorMessage>{errors.first_name?.message?.toString()}</FormErrorMessage>
+                    <FormErrorMessage>{errors.username?.message?.toString()}</FormErrorMessage>
                 </FormControl>
 
-                <FormControl isInvalid={!!errors.last_name}>
-                    <FormLabel htmlFor="last_name" fontWeight={'normal'}>
-                        Last name
-                    </FormLabel>
-                    <Input
-                        id="last_name"
-                        placeholder="Last name"
-                        ref={lastNameRef}
-                        {...lastNameControl}
+                <Flex mt="5%">
+                    <FormControl mr="5%" isInvalid={!!errors.first_name}>
+                        <FormLabel htmlFor="first-name" fontWeight="normal">
+                            First name
+                        </FormLabel>
+                        <Input
+                            id="first-name"
+                            placeholder="First name"
+                            ref={firstNameRef}
+                            {...firstNameControl}
+                        />
+                        <FormErrorMessage>
+                            {errors.first_name?.message?.toString()}
+                        </FormErrorMessage>
+                    </FormControl>
+
+                    <FormControl isInvalid={!!errors.last_name}>
+                        <FormLabel htmlFor="last_name" fontWeight="normal">
+                            Last name
+                        </FormLabel>
+                        <Input
+                            id="last_name"
+                            placeholder="Last name"
+                            ref={lastNameRef}
+                            {...lastNameControl}
+                        />
+                        <FormErrorMessage>{errors.last_name?.message?.toString()}</FormErrorMessage>
+                    </FormControl>
+                </Flex>
+                <Flex mt="5%">
+                    <Avatar size="2xl" src={avatar} />
+                    <PictureSelector
+                        onSelect={(url) => {
+                            setValue('avatar', url);
+                            handleImageClick(url);
+                        }}
                     />
-                    <FormErrorMessage>{errors.last_name?.message?.toString()}</FormErrorMessage>
-                </FormControl>
-            </Flex>
-            <Flex mt="5%">
-                <Avatar size={'2xl'} src={avatar} />
-                <PictureSelector
-                    onSelect={(url) => {
-                        setValue('avatar', url);
-                        handleImageClick(url);
-                    }}
-                />
-            </Flex>
-            <Flex width="100%" justifyContent="flex-end" my={6}>
-                <Button size="sm" type="submit">
-                    Next
-                </Button>
-            </Flex>
-        </Box>
+                </Flex>
+                <Flex width="100%" justifyContent="flex-end" my={6}>
+                    <Button size="sm" type="submit">
+                        Next
+                    </Button>
+                </Flex>
+            </Box>
+        </motion.div>
     );
 };
 

@@ -13,8 +13,8 @@ export default function LoginPage(): ReactElement {
 
     return (
         <SplitScreen
-            imageLink={'https://source.unsplash.com/1600x900/?croatia'}
-            title={'Login to your account'}
+            imageLink="https://source.unsplash.com/1600x900/?croatia"
+            title="Login to your account"
         >
             <LoginForm />
         </SplitScreen>

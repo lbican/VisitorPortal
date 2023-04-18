@@ -13,13 +13,13 @@ const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt }) => {
             <Image
                 display={loaded ? 'block' : 'none'}
                 alt={imageAlt}
-                objectFit={'cover'}
+                objectFit="cover"
                 src={imageLink}
                 onLoad={(): void => {
                     setLoaded(true);
                 }}
             />
-            {!loaded && <Skeleton height={'100%'} width={'100%'} />}
+            {!loaded && <Skeleton height="100%" width="100%" />}
         </>
     );
 };
