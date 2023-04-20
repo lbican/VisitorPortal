@@ -15,21 +15,17 @@ export const AuthContext = createContext<AuthType>({
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    useEffect(() => {
-        const loadUser = async (): Promise<User | null> => {
-            try {
-                const { data } = await supabase.auth.getUser();
-                return Promise.resolve(data.user);
-            } catch (error) {
-                return Promise.reject(error);
-            }
-        };
 
-        loadUser()
-            .then((user) => {
-                setUser(user);
-            })
-            .catch((error) => console.error(error));
+    useEffect(() => {
+        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`Supabase auth event: ${event}`);
+            console.log(session?.user.user_metadata);
+            setUser((session?.user.user_metadata as User) ?? null);
+        });
+
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
     }, []);
 
     const signOut = () => {

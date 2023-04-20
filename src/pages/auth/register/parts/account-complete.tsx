@@ -1,23 +1,13 @@
 import React, { useContext, useState } from 'react';
-import {
-    Alert,
-    AlertIcon,
-    Avatar,
-    Box,
-    Button,
-    Flex,
-    Heading,
-    HStack,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
 import { UserRegistration } from '../../../../utils/interfaces/typings';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import supabase from '../../../../../database';
 import _ from 'lodash';
 import { AuthError } from '@supabase/supabase-js';
+import AnimatedAlert from '../../../../components/layout/animated-alert';
 
 const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const form = useContext(FormContext);
@@ -45,7 +35,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
                 data: {
                     full_name: user.first_name + ' ' + user.last_name,
                     username: user.username,
-                    avatar: user.avatar,
+                    avatar_url: user.avatar,
                 },
             },
         });
@@ -105,21 +95,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
                         Finish registration
                     </Button>
                 </HStack>
-                <AnimatePresence>
-                    {error && (
-                        <Alert
-                            status="error"
-                            as={motion.div}
-                            key="alert"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0 }}
-                        >
-                            <AlertIcon />
-                            {error.message}
-                        </Alert>
-                    )}
-                </AnimatePresence>
+                <AnimatedAlert error={error} />
             </Box>
         </motion.div>
     );
