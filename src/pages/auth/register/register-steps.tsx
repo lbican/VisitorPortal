@@ -8,7 +8,7 @@ import AccountComplete from './parts/account-complete';
 import { AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 
-const RegisterForm = (): ReactElement => {
+const RegisterSteps = (): ReactElement => {
     const { nextStep, prevStep, activeStep } = useSteps({
         initialStep: 0,
     });
@@ -56,4 +56,4 @@ const RegisterForm = (): ReactElement => {
     );
 };
 
-export default RegisterForm;
+export default RegisterSteps;

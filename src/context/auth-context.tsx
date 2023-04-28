@@ -19,8 +19,9 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log(`Supabase auth event: ${event}`);
-            console.log(session?.user.user_metadata);
-            setUser((session?.user.user_metadata as User) ?? null);
+            const user: User = session?.user.user_metadata as User;
+
+            setUser(user ?? null);
         });
 
         return () => {
@@ -45,7 +46,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
-        throw new Error('useUser must be used within a AuthContextProvider.');
+        throw new Error('useAuth must be used within a AuthContextProvider.');
     }
     return context;
 };

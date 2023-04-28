@@ -17,7 +17,6 @@ import { AuthError, Provider } from '@supabase/supabase-js';
 import supabase from '../../../../database';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
-import { produce } from 'immer';
 import AnimatedAlert from '../../../components/layout/animated-alert';
 import { useNavigate } from 'react-router-dom';
 
