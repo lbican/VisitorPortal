@@ -39,7 +39,7 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => (
             color="gray.600"
             aria-label="Main Navigation"
         >
-            <NavItem icon={RxDashboard} route="/">
+            <NavItem icon={RxDashboard} route="/dashboard">
                 Dashboard
             </NavItem>
             <NavItem icon={AiOutlineTeam} route="/team">

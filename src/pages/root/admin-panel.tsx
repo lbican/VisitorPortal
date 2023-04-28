@@ -1,19 +1,8 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import Sidebar from '../../components/layout/sidebar';
 import { Outlet } from 'react-router';
 import { Box, useColorModeValue } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/auth-context';
 const AdminPanel = (): ReactElement => {
-    const navigate = useNavigate();
-    const { user } = useAuth();
-
-    useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
-    }, [user]);
-
     return (
         <Sidebar>
             <Box
