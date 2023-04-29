@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import supabase from '../../../database';
+import Profile from '../../components/profile/profile';
 
 type User = {
     id: number;
+    email: string;
     full_name: string;
     avatar_url: string;
 };
@@ -35,12 +37,13 @@ const UserProfile: React.FC = () => {
     }
 
     return (
-        <div>
-            <h1>User Details</h1>
-            <p>ID: {user.id}</p>
-            <p>Name: {user.full_name}</p>
-            <p>Avatar: {user.avatar_url}</p>
-        </div>
+        <Profile
+            email={user.email}
+            avatar_url={user.avatar_url}
+            full_name={user.full_name}
+            job_title="Woodoworker"
+            location="Talahasee"
+        />
     );
 };
 

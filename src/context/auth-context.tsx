@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useMemo, useSta
 
 import { User } from '@supabase/supabase-js';
 import supabase from '../../database';
+import _ from 'lodash';
 
 interface AuthType {
     user: User | null;
@@ -14,20 +15,25 @@ export const AuthContext = createContext<AuthType>({
 });
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const storedUser = localStorage.getItem('user');
+    const [user, setUser] = useState<User | null>(storedUser ? JSON.parse(storedUser) : null);
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log(`Supabase auth event: ${event}`);
-            const user: User = session?.user.user_metadata as User;
+            const newUser: User = session?.user.user_metadata as User;
 
-            setUser(user ?? null);
+            if (!_.isEqual(user, newUser)) {
+                setUser(newUser ?? null);
+            }
         });
 
         return () => {
             authListener.subscription.unsubscribe();
         };
     }, []);
+
+    const memoizedUser = useMemo(() => user, [user]);
 
     const signOut = () => {
         supabase.auth
@@ -38,7 +44,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
             .catch((error) => console.error(error));
     };
 
-    const authContextValue = useMemo(() => ({ user: user, signOut }), [user]);
+    const authContextValue = useMemo(() => ({ user: memoizedUser, signOut }), [memoizedUser]);
 
     return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
 };
