@@ -18,7 +18,6 @@ import supabase from '../../../../database';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/layout/animated-alert';
-import { useNavigate } from 'react-router-dom';
 
 interface OAuthProvider {
     name: string;
@@ -31,7 +30,6 @@ const LoginForm = (): ReactElement => {
     const [error, setError] = useState<AuthError | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const navigate = useNavigate();
     const oAuthProviders: OAuthProvider[] = [
         { name: 'Google', provider: 'google', icon: <FcGoogle />, colorScheme: 'gray' },
         { name: 'Facebook', provider: 'facebook', icon: <FaFacebook />, colorScheme: 'facebook' },
@@ -89,7 +87,6 @@ const LoginForm = (): ReactElement => {
 
         if (data) {
             setLoading(false);
-            navigate('/');
         }
     };
 

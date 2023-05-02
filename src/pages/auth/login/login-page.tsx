@@ -10,7 +10,7 @@ export default function LoginPage(): ReactElement {
     const location = useLocation();
 
     useEffect(() => {
-        if (user) {
+        if (user && user.username) {
             const redirectTo = location.state?.from || '/';
             navigate(redirectTo, {
                 replace: true,

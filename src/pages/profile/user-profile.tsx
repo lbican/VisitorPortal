@@ -15,12 +15,11 @@ const UserProfile: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const fetchUser = async () => {
         const { data, error } = await supabase
-            .from('profiles')
+            .from('Profiles')
             .select('*')
             .eq('id', userId)
             .single();
 
-        console.log(data);
         if (error) {
             throw error;
         }

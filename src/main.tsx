@@ -13,6 +13,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import themeConfig from './utils/theme/theme-config';
 import { AuthContextProvider } from './context/auth-context';
 import UserProfile from './pages/profile/user-profile';
+import UsernamePage from './pages/auth/login/username-page';
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
     {
         path: 'login',
         element: <LoginPage />,
+    },
+    {
+        path: 'finish',
+        element: <UsernamePage />,
     },
     {
         path: 'register',

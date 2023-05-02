@@ -11,7 +11,6 @@ interface AvatarProps {
 const InteractiveAvatar: React.FC<AvatarProps> = ({ user, signOut }) => {
     const full_name: string = _.get(user, 'full_name', 'Unknown User');
     const avatar_url: string = _.get(user, 'avatar_url', '');
-    console.log(user);
 
     return (
         <Box>
