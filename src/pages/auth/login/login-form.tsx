@@ -18,6 +18,8 @@ import supabase from '../../../../database';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/layout/animated-alert';
+import { AuthService } from '../../../service/auth-service';
+import { emailValidator, passwordValidator } from '../../../service/validators';
 
 interface OAuthProvider {
     name: string;
@@ -48,44 +50,26 @@ const LoginForm = (): ReactElement => {
         },
     });
 
-    const { ref: emailRef, ...emailControl } = register('email', {
-        required: 'Email is required',
-    });
-    const { ref: passwordRef, ...passwordControl } = register('password', {
-        required: 'Password is required',
-    });
+    const { ref: emailRef, ...emailControl } = register('email', emailValidator);
+    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
 
-    const jwtLogin = async (provider: Provider) => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: provider,
-            options: {
-                queryParams: {
-                    prompt: 'consent',
-                },
-            },
-        });
-
-        if (error) {
-            console.error(error);
-            setError(error);
+    const loginUserWithToken = async (provider: Provider) => {
+        try {
+            await AuthService.oauthLogin(provider);
+        } catch (error) {
+            setError(error as AuthError);
         }
     };
 
-    const emailLogin = async (email: string, password: string) => {
+    const loginUserWithEmail = async (email: string, password: string) => {
         setError(null);
         setLoading(true);
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
-
-        if (error) {
-            console.error(error);
-            throw error;
-        }
-
-        if (data) {
+        try {
+            await AuthService.emailLogin(email, password);
+        } catch (error) {
+            setError(error as AuthError);
+        } finally {
             setLoading(false);
         }
     };
@@ -95,11 +79,8 @@ const LoginForm = (): ReactElement => {
             <VStack
                 spacing={6}
                 as="form"
-                onSubmit={handleSubmit((value) => {
-                    emailLogin(value.email, value.password).catch((error) => {
-                        setLoading(false);
-                        setError(error);
-                    });
+                onSubmit={handleSubmit(async (value) => {
+                    await loginUserWithEmail(value.email, value.password);
                 })}
             >
                 <FormControl id="email" isInvalid={!!errors.email}>
@@ -136,7 +117,7 @@ const LoginForm = (): ReactElement => {
                                 minWidth="33%"
                                 key={oauth.provider}
                                 colorScheme={oauth.colorScheme}
-                                onClick={() => jwtLogin(oauth.provider)}
+                                onClick={() => loginUserWithToken(oauth.provider)}
                                 leftIcon={oauth.icon}
                             >
                                 {oauth.name}

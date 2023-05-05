@@ -4,10 +4,10 @@ import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
 import { UserRegistration } from '../../../../utils/interfaces/typings';
 import { motion } from 'framer-motion';
-import supabase from '../../../../../database';
 import _ from 'lodash';
 import { AuthError } from '@supabase/supabase-js';
 import AnimatedAlert from '../../../../components/layout/animated-alert';
+import { AuthService } from '../../../../service/auth-service';
 
 const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const form = useContext(FormContext);
@@ -28,25 +28,14 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signUp({
-            email: user.email,
-            password: user.password,
-            options: {
-                data: {
-                    full_name: user.first_name + ' ' + user.last_name,
-                    username: user.username,
-                    avatar_url: user.avatar,
-                },
-            },
-        });
-
-        if (!error) {
+        try {
+            await AuthService.signUpUser(user);
             nextStep();
-        } else {
-            setError(error);
+        } catch (error) {
+            setError(error as AuthError);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     return (

@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import PictureSelector from './picture-selector';
 import { motion } from 'framer-motion';
+import { firstNameValidator, lastNameValidator, usernameValidator } from '../../../../service/validators';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);
@@ -39,16 +40,9 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
         },
     });
 
-    const { ref: usernameRef, ...usernameControl } = register('username', {
-        required: 'Username is required',
-    });
-
-    const { ref: firstNameRef, ...firstNameControl } = register('first_name', {
-        required: 'First name is required',
-    });
-    const { ref: lastNameRef, ...lastNameControl } = register('last_name', {
-        required: 'Last name is required',
-    });
+    const { ref: usernameRef, ...usernameControl } = register('username', usernameValidator);
+    const { ref: firstNameRef, ...firstNameControl } = register('first_name', firstNameValidator);
+    const { ref: lastNameRef, ...lastNameControl } = register('last_name', lastNameValidator);
 
     return (
         <motion.div

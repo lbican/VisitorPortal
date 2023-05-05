@@ -16,6 +16,11 @@ import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { motion } from 'framer-motion';
+import {
+    emailValidator,
+    passwordValidator,
+    repeatPasswordValidator,
+} from '../../../../service/validators';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const [show, setShow] = React.useState(false);
@@ -35,20 +40,12 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
         },
     });
 
-    const { ref: emailRef, ...emailControl } = register('email', {
-        required: 'Email is required',
-    });
-    const { ref: passwordRef, ...passwordControl } = register('password', {
-        required: 'Password is required',
-    });
-    const { ref: repeatPasswordRef, ...repeatPasswordControl } = register('repeat_password', {
-        required: 'You need to repeat the password',
-        validate: (val: string) => {
-            if (watch('password') != val) {
-                return 'Your passwords do no match';
-            }
-        },
-    });
+    const { ref: emailRef, ...emailControl } = register('email', emailValidator);
+    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
+    const { ref: repeatPasswordRef, ...repeatPasswordControl } = register(
+        'repeat_password',
+        repeatPasswordValidator(watch)
+    );
 
     const handleClick = (): void => setShow(!show);
 

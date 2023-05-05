@@ -1,6 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import supabase from '../../database';
+import { UserService } from '../service/user-service';
+import { StorageService } from '../service/storage-service';
 
 export interface UserProfile {
     id: string;
@@ -23,32 +25,20 @@ const AuthContext = createContext<AuthType>({
 });
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const storedUser = localStorage.getItem('user');
-    const [user, setUser] = useState<UserProfile | null>(
-        storedUser ? JSON.parse(storedUser) : null
-    );
+    const userService = new UserService(null);
+    const [user, setUser] = useState<UserProfile | null>(StorageService.getUserFromStorage());
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log(`Supabase auth event: ${event}`);
-            const { user } = session || {};
-            if (user) {
-                const { data, error } = await supabase
-                    .from('Profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-                if (error) {
-                    console.error(error);
-                } else {
-                    console.log(data);
-                    console.log(user);
-                    setUser((data as UserProfile) ?? null);
-                    localStorage.setItem('user', JSON.stringify(data));
-                }
-            } else {
+            userService.setSession(session);
+
+            try {
+                const userProfile = await userService.getUserProfile();
+                setUser(userProfile);
+            } catch (error) {
                 setUser(null);
-                localStorage.removeItem('user');
+                console.error(error);
             }
         });
 
@@ -61,8 +51,8 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
         supabase.auth
             .signOut()
             .then(() => {
+                StorageService.removeUserFromStorage();
                 setUser(null);
-                localStorage.removeItem('user');
             })
             .catch((error) => console.error(error));
     };
