@@ -18,7 +18,7 @@ export class UserService {
         return this.session?.user;
     }
 
-    getUserProfile = async (): Promise<UserProfile | null> => {
+    getAuthorizedUser = async (): Promise<UserProfile | null> => {
         if (!this.session) {
             StorageService.removeUserFromStorage();
             return Promise.resolve(null);
@@ -39,4 +39,21 @@ export class UserService {
         return Promise.resolve(data as UserProfile);
     };
 
+    static getUserProfile = async (username?: string): Promise<UserProfile> => {
+        if (!username) {
+            return Promise.reject('Cannot fetch user with undefined username');
+        }
+
+        const { data, error } = await supabase
+            .from('Profiles')
+            .select('*')
+            .eq('username', username)
+            .single();
+
+        if (error) {
+            return Promise.reject(error);
+        }
+
+        return Promise.resolve(data as UserProfile);
+    };
 }

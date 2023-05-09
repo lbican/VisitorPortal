@@ -1,8 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import supabase from '../../database';
-import { UserService } from '../service/user-service';
-import { StorageService } from '../service/storage-service';
+import { UserService } from '../services/user-service';
+import { StorageService } from '../services/storage-service';
 
 export interface UserProfile {
     id: string;
@@ -34,7 +34,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
             userService.setSession(session);
 
             try {
-                const userProfile = await userService.getUserProfile();
+                const userProfile = await userService.getAuthorizedUser();
                 setUser(userProfile);
             } catch (error) {
                 setUser(null);

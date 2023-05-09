@@ -15,7 +15,11 @@ import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import PictureSelector from './picture-selector';
 import { motion } from 'framer-motion';
-import { firstNameValidator, lastNameValidator, usernameValidator } from '../../../../service/validators';
+import {
+    firstNameValidator,
+    lastNameValidator,
+    usernameValidator,
+} from '../../../../services/validators';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);

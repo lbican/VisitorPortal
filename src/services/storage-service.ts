@@ -1,6 +1,6 @@
 import { UserProfile } from '../context/auth-context';
 
-export class StorageService{
+export class StorageService {
     static getUserFromStorage(): UserProfile | null {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -10,7 +10,7 @@ export class StorageService{
         return null;
     }
 
-    static saveUserToLocalStorage(user: UserProfile) {
+    static saveUserToLocalStorage(user: UserProfile): void {
         localStorage.setItem('user', JSON.stringify(user));
     }
 

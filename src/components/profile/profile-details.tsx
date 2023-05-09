@@ -1,24 +1,14 @@
 import React from 'react';
 import { Text, HStack, Box } from '@chakra-ui/react';
-import { FaEnvelope, FaMapPin, FaSuitcase } from 'react-icons/all';
+import { BsCalendarDate } from 'react-icons/bs';
+import { AiOutlineUser, AiOutlineMail } from 'react-icons/ai';
+import { UserProfile } from '../../context/auth-context';
 
-interface ProfileContactProps {
-    full_name: string;
-    email: string;
-    job_title: string;
-    location: string;
-}
-
-const ProfileDetails: React.FC<ProfileContactProps> = ({
-    full_name,
-    email,
-    job_title,
-    location,
-}) => {
+const ProfileDetails: React.FC<UserProfile> = (props) => {
     const contactDetails = [
-        { icon: FaSuitcase, text: job_title },
-        { icon: FaMapPin, text: location },
-        { icon: FaEnvelope, text: email },
+        { icon: AiOutlineUser, text: props.username },
+        { icon: AiOutlineMail, text: props.email },
+        { icon: BsCalendarDate, text: props.created_at },
     ];
 
     return (
@@ -33,10 +23,16 @@ const ProfileDetails: React.FC<ProfileContactProps> = ({
             mt={10}
         >
             <Text fontSize="4xl" fontWeight="bold" color="gray.800" _dark={{ color: 'white' }}>
-                {full_name}
+                {props.full_name}
             </Text>
             {contactDetails.map((detail, index) => (
-                <HStack key={index} spacing={3} color="gray.700" _dark={{ color: 'gray.200' }}>
+                <HStack
+                    key={index}
+                    spacing={4}
+                    my={2}
+                    color="gray.700"
+                    _dark={{ color: 'gray.200' }}
+                >
                     <detail.icon size={20} />
                     <Text fontSize="lg">{detail.text}</Text>
                 </HStack>

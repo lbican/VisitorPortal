@@ -2,15 +2,19 @@ import React, { ReactElement, useEffect } from 'react';
 import SplitScreen from '../../../components/split-screen';
 import RegisterSteps from './register-steps';
 import { useAuth } from '../../../context/auth-context';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function RegisterPage(): ReactElement {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        if (user) {
-            navigate('/');
+        if (user && user.username) {
+            const redirectTo = location.state?.from || '/';
+            navigate(redirectTo, {
+                replace: true,
+            });
         }
     }, [user]);
 

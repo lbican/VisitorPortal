@@ -20,7 +20,7 @@ import {
     emailValidator,
     passwordValidator,
     repeatPasswordValidator,
-} from '../../../../service/validators';
+} from '../../../../services/validators';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const [show, setShow] = React.useState(false);

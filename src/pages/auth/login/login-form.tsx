@@ -14,12 +14,11 @@ import {
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaTwitter } from 'react-icons/fa';
 import { AuthError, Provider } from '@supabase/supabase-js';
-import supabase from '../../../../database';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/layout/animated-alert';
-import { AuthService } from '../../../service/auth-service';
-import { emailValidator, passwordValidator } from '../../../service/validators';
+import { AuthService } from '../../../services/auth-service';
+import { emailValidator, passwordValidator } from '../../../services/validators';
 
 interface OAuthProvider {
     name: string;

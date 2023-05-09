@@ -2,18 +2,18 @@ import { Provider, Session, User } from '@supabase/supabase-js';
 import supabase from '../../database';
 import { UserRegistration } from '../utils/interfaces/typings';
 
-interface EmailLogin {
+interface EmailAuthData {
     user: User | null;
     session: Session | null;
 }
 
-interface TokenLogin {
+interface OAuthData {
     provider: Provider;
     url: string;
 }
 
 export class AuthService {
-    static async oauthLogin(provider: Provider): Promise<TokenLogin> {
+    static async oauthLogin(provider: Provider): Promise<OAuthData> {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: provider,
             options: {
@@ -30,7 +30,7 @@ export class AuthService {
         return Promise.resolve(data);
     }
 
-    static async emailLogin(email: string, password: string): Promise<EmailLogin> {
+    static async emailLogin(email: string, password: string): Promise<EmailAuthData> {
         const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
@@ -43,7 +43,7 @@ export class AuthService {
         return Promise.resolve(data);
     }
 
-    static async signUpUser(user: UserRegistration) {
+    static async signUpUser(user: UserRegistration): Promise<EmailAuthData> {
         const { data, error } = await supabase.auth.signUp({
             email: user.email,
             password: user.password,

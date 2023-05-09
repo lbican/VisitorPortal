@@ -4,10 +4,9 @@ import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
 import { UserRegistration } from '../../../../utils/interfaces/typings';
 import { motion } from 'framer-motion';
-import _ from 'lodash';
 import { AuthError } from '@supabase/supabase-js';
 import AnimatedAlert from '../../../../components/layout/animated-alert';
-import { AuthService } from '../../../../service/auth-service';
+import { AuthService } from '../../../../services/auth-service';
 
 const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const form = useContext(FormContext);
@@ -15,13 +14,13 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const [error, setError] = useState<AuthError | null>(null);
 
     const user: UserRegistration = {
-        username: _.get(form, 'formState.steps.account.value.username', ''),
-        first_name: _.get(form, 'formState.steps.account.value.first_name', ''),
-        last_name: _.get(form, 'formState.steps.account.value.last_name', ''),
-        avatar: _.get(form, 'formState.steps.account.value.avatar', ''),
-        email: _.get(form, 'formState.steps.security.value.email', ''),
-        password: _.get(form, 'formState.steps.security.value.password', ''),
-        repeat_password: _.get(form, 'formState.steps.security.value.password', ''),
+        username: form?.formState.steps.account.value.username || '',
+        first_name: form?.formState.steps.account.value.first_name || '',
+        last_name: form?.formState.steps.account.value.last_name || '',
+        avatar: form?.formState.steps.account.value.avatar || '',
+        email: form?.formState.steps.security.value.email || '',
+        password: form?.formState.steps.security.value.password || '',
+        repeat_password: form?.formState.steps.security.value.password || '',
     };
 
     const signUpUser = async (user: UserRegistration) => {

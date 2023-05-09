@@ -12,7 +12,7 @@ import RegisterPage from './pages/auth/register/register-page';
 import { ChakraProvider } from '@chakra-ui/react';
 import themeConfig from './utils/theme/theme-config';
 import { AuthContextProvider } from './context/auth-context';
-import UserProfile from './pages/profile/user-profile';
+import ProfilePage from './pages/profile/profile-page';
 import UsernamePage from './pages/auth/login/username-page';
 
 const router = createBrowserRouter([
@@ -38,8 +38,8 @@ const router = createBrowserRouter([
                 element: <Calendar />,
             },
             {
-                path: '/user/:userId',
-                element: <UserProfile />,
+                path: '/user/:username',
+                element: <ProfilePage />,
             },
         ],
     },
