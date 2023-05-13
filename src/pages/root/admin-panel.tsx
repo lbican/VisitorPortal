@@ -16,6 +16,13 @@ const AdminPanel = (): ReactElement => {
                 state: { from: location.pathname },
             });
         }
+
+        if (user && !user.username) {
+            navigate('/finish', {
+                replace: true,
+                state: { from: location.pathname },
+            });
+        }
     }, [user]);
 
     return (

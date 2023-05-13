@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SplitScreen from '../../../components/split-screen';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
 import AnimatedAlert from '../../../components/layout/animated-alert';
 import { AuthError } from '@supabase/supabase-js';
 import { useForm } from 'react-hook-form';
-import supabase from '../../../../database';
 import { useAuth } from '../../../context/auth-context';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { UserService } from '../../../services/user-service';
 const UsernamePage: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const USERNAME_MIN = 6;
     const USERNAME_MAX = 30;
 
@@ -14,6 +17,15 @@ const UsernamePage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const { user } = useAuth();
+    const redirectTo = location.state?.from || '/';
+
+    useEffect(() => {
+        if (user && user.username) {
+            navigate(redirectTo, {
+                replace: true,
+            });
+        }
+    }, [user]);
 
     const {
         register,
@@ -38,21 +50,17 @@ const UsernamePage: React.FC = () => {
         },
     });
 
-    const saveUsername = async (username: string) => {
+    const saveUsername = (username: string) => {
         setError(null);
         setLoading(true);
 
-        const { error } = await supabase
-            .from('Profiles')
-            .update({ username: username })
-            .eq('id', user?.id);
-
-        if (error) {
-            console.error(error);
-            throw error;
-        }
-
-        setLoading(false);
+        UserService.updateUserProfile(user?.id, { username: username })
+            .catch((error) => {
+                setError(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (
@@ -66,9 +74,7 @@ const UsernamePage: React.FC = () => {
                     spacing={6}
                     as="form"
                     onSubmit={handleSubmit((value) => {
-                        saveUsername(value.username).catch((error) => {
-                            setError(error);
-                        });
+                        saveUsername(value.username);
                     })}
                 >
                     <FormControl id="username" isInvalid={!!errors.username}>
@@ -79,7 +85,7 @@ const UsernamePage: React.FC = () => {
                     <Button
                         isLoading={loading}
                         alignSelf="flex-end"
-                        backgroundColor="green.500"
+                        colorScheme="blue"
                         variant="solid"
                         type="submit"
                     >

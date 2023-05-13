@@ -6,9 +6,10 @@ interface Props {
     code: number;
     shortMessage: string;
     message: string;
+    hideButton?: boolean;
 }
 
-const EmptyState: React.FC<Props> = ({ code, shortMessage, message }) => {
+const EmptyState: React.FC<Props> = ({ code, shortMessage, message, hideButton }) => {
     return (
         <Box textAlign="center" py={10} px={6}>
             <Heading
@@ -16,7 +17,7 @@ const EmptyState: React.FC<Props> = ({ code, shortMessage, message }) => {
                 as="h2"
                 size="2xl"
                 backgroundClip="text"
-                color="green.500"
+                color="blue.500"
             >
                 {code}
             </Heading>
@@ -25,9 +26,11 @@ const EmptyState: React.FC<Props> = ({ code, shortMessage, message }) => {
             </Text>
             <Text mb={6}>{message}</Text>
 
-            <Button color="white" variant="solid" bgColor="green.500" as={NavLink} to="/">
-                Go to Home
-            </Button>
+            {!hideButton && (
+                <Button color="white" variant="solid" colorScheme="blue" as={NavLink} to="/">
+                    Go to Home
+                </Button>
+            )}
         </Box>
     );
 };

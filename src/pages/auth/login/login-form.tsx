@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import {
     Button,
     ButtonGroup,
@@ -13,12 +13,12 @@ import {
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaTwitter } from 'react-icons/fa';
-import { AuthError, Provider } from '@supabase/supabase-js';
+import { Provider } from '@supabase/supabase-js';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/layout/animated-alert';
-import { AuthService } from '../../../services/auth-service';
 import { emailValidator, passwordValidator } from '../../../services/validators';
+import { useAuthForm } from '../../../hooks/useAuthLogin';
 
 interface OAuthProvider {
     name: string;
@@ -28,8 +28,7 @@ interface OAuthProvider {
 }
 
 const LoginForm = (): ReactElement => {
-    const [error, setError] = useState<AuthError | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const { loginUserWithToken, loginUserWithEmail, error, loading } = useAuthForm();
 
     const oAuthProviders: OAuthProvider[] = [
         { name: 'Google', provider: 'google', icon: <FcGoogle />, colorScheme: 'gray' },
@@ -51,27 +50,6 @@ const LoginForm = (): ReactElement => {
 
     const { ref: emailRef, ...emailControl } = register('email', emailValidator);
     const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
-
-    const loginUserWithToken = async (provider: Provider) => {
-        try {
-            await AuthService.oauthLogin(provider);
-        } catch (error) {
-            setError(error as AuthError);
-        }
-    };
-
-    const loginUserWithEmail = async (email: string, password: string) => {
-        setError(null);
-        setLoading(true);
-
-        try {
-            await AuthService.emailLogin(email, password);
-        } catch (error) {
-            setError(error as AuthError);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <>

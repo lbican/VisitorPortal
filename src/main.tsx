@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         element: <AdminPanel />,
         children: [
             {
-                path: '/dashboard',
+                path: '/',
                 element: <Dashboard />,
             },
             {

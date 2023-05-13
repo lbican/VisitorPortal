@@ -1,43 +1,61 @@
-import React from 'react';
-import { Text, HStack, Box } from '@chakra-ui/react';
-import { BsCalendarDate } from 'react-icons/bs';
-import { AiOutlineUser, AiOutlineMail } from 'react-icons/ai';
-import { UserProfile } from '../../context/auth-context';
+import React, { useState } from 'react';
+import { Button, HStack } from '@chakra-ui/react';
+import { useAuth, UserProfile } from '../../context/auth-context';
+import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
+import { motion } from 'framer-motion';
+import ProfileEditor from '../../pages/profile/profile-editor';
+import { UserService } from '../../services/user-service';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
-    const contactDetails = [
-        { icon: AiOutlineUser, text: props.username },
-        { icon: AiOutlineMail, text: props.email },
-        { icon: BsCalendarDate, text: props.created_at },
-    ];
+    const { user } = useAuth();
+    const [isHovered, setIsHovered] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const isEditable = () => {
+        return props.id === user?.id;
+    };
 
     return (
-        <Box
-            gridColumn="span 8"
-            px={8}
-            py={4}
-            width="full"
-            height="full"
-            borderRadius="lg"
-            textAlign="left"
-            mt={10}
-        >
-            <Text fontSize="4xl" fontWeight="bold" color="gray.800" _dark={{ color: 'white' }}>
-                {props.full_name}
-            </Text>
-            {contactDetails.map((detail, index) => (
-                <HStack
-                    key={index}
-                    spacing={4}
-                    my={2}
-                    color="gray.700"
-                    _dark={{ color: 'gray.200' }}
-                >
-                    <detail.icon size={20} />
-                    <Text fontSize="lg">{detail.text}</Text>
-                </HStack>
-            ))}
-        </Box>
+        <>
+            <HStack
+                justifyContent="flex-end"
+                px={8}
+                my={4}
+                width="full"
+                height="full"
+                borderRadius="lg"
+                textAlign="left"
+            >
+                {isEditable() && (
+                    <Button
+                        as={motion.button}
+                        leftIcon={isHovered || isEditing ? <AiFillEdit /> : <AiOutlineEdit />}
+                        colorScheme="blue"
+                        variant="solid"
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setIsEditing(!isEditing)}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        Edit
+                    </Button>
+                )}
+            </HStack>
+            {isEditing && (
+                <ProfileEditor
+                    userProfile={user}
+                    onSubmit={(data) => {
+                        UserService.updateUserProfile(user?.id, data)
+                            .then((res) => {
+                                console.log('Success!');
+                            })
+                            .catch(() => {
+                                console.log('Error!');
+                            });
+                    }}
+                />
+            )}
+        </>
     );
 };
 

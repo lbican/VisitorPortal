@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from 'react';
+// profile-page.tsx
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import Profile from '../../components/profile/profile';
-import { UserService } from '../../services/user-service';
-import { UserProfile } from '../../context/auth-context';
+import Skeleton from 'react-loading-skeleton';
+import useUserProfile from '../../hooks/useUserProfile';
+import EmptyState from '../../components/empty-state';
 
 const ProfilePage: React.FC = () => {
-    const { username } = useParams<{ username: string }>();
-    const [user, setUser] = useState<UserProfile | null>(null);
+    const { username = '' } = useParams<{ username: string }>();
+    const { userProfile, isLoading } = useUserProfile(username);
 
-    useEffect(() => {
-        UserService.getUserProfile(username)
-            .then((user) => setUser(user))
-            .catch((error) => console.error(error));
-    }, []);
-
-    if (!user) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return <Skeleton height={500} />;
     }
 
-    return <Profile {...user} />;
+    return userProfile ? (
+        <Profile {...userProfile} />
+    ) : (
+        <EmptyState
+            code={404}
+            shortMessage="Error has occured"
+            message="Requested user was not found"
+            hideButton={true}
+        />
+    );
 };
 
 export default ProfilePage;

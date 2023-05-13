@@ -6,8 +6,7 @@ interface ProfileImageProps {
     children: React.ReactNode;
 }
 
-const DEFAULT_BANNER =
-    'https://images.unsplash.com/photo-1666795599746-0f62dfa29a07?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80';
+const DEFAULT_BANNER = 'https://source.unsplash.com/1600x800/?mountains';
 
 const ProfileBanner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
     return (
@@ -17,10 +16,13 @@ const ProfileBanner: React.FC<ProfileImageProps> = ({ banner_url, children }) =>
                 bg: '#3e3e3e',
             }}
             style={{
-                backgroundImage: `url(${banner_url || DEFAULT_BANNER})`,
+                backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%), url(${
+                    banner_url || DEFAULT_BANNER
+                })`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
+                filter: 'brightness(0.8)', // Adjust the brightness value as needed
             }}
             height="100%"
             width="100%"

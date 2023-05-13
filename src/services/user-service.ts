@@ -2,6 +2,7 @@ import { Session, User } from '@supabase/supabase-js';
 import supabase from '../../database';
 import { UserProfile } from '../context/auth-context';
 import { StorageService } from './storage-service';
+import _ from 'lodash';
 
 export class UserService {
     private session: Session | null;
@@ -55,5 +56,26 @@ export class UserService {
         }
 
         return Promise.resolve(data as UserProfile);
+    };
+
+    static updateUserProfile = async (
+        id: string | undefined,
+        userProfileUpdate: Partial<UserProfile>
+    ): Promise<void> => {
+        if (!id) {
+            return Promise.reject('User id cannot be undefined!');
+        }
+
+        // Remove undefined properties from the update object
+        const cleanedProfileUpdate = _.pickBy(userProfileUpdate, _.identity);
+
+        // Ensure that the id field is not being updated
+        delete cleanedProfileUpdate.id;
+
+        const { error } = await supabase.from('Profiles').update(cleanedProfileUpdate).eq('id', id);
+
+        if (error) {
+            return Promise.reject(error);
+        }
     };
 }
