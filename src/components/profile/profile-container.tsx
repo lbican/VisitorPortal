@@ -17,15 +17,16 @@ const ProfileContainer: React.FC<ProfileProps> = ({ avatar_url, full_name, usern
                 size="2xl"
                 border="2px solid"
                 borderColor="gray.800"
+                referrerPolicy="no-referrer"
                 _dark={{
                     borderColor: 'gray.200',
                 }}
             />
             <VStack spacing={0} py={10} alignItems="flex-start">
-                <Text fontSize="3xl" fontWeight="bold" color="gray.800" _dark={{ color: 'white' }}>
+                <Text fontSize="3xl" fontWeight="bold" color="white">
                     {full_name}
                 </Text>
-                <Text>@{username}</Text>
+                <Text color="white">@{username}</Text>
             </VStack>
         </HStack>
     );

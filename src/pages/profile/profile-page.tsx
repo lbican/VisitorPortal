@@ -1,21 +1,23 @@
-// profile-page.tsx
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Profile from '../../components/profile/profile';
-import Skeleton from 'react-loading-skeleton';
 import useUserProfile from '../../hooks/useUserProfile';
 import EmptyState from '../../components/empty-state';
+import { UserProfileProvider } from '../../context/user-profile-context';
 
 const ProfilePage: React.FC = () => {
     const { username = '' } = useParams<{ username: string }>();
-    const { userProfile, isLoading } = useUserProfile(username);
+    const { userProfile, refetch } = useUserProfile(username);
 
-    if (isLoading) {
-        return <Skeleton height={500} />;
-    }
+    const contextValue = {
+        userProfile,
+        refetch,
+    };
 
     return userProfile ? (
-        <Profile {...userProfile} />
+        <UserProfileProvider value={contextValue}>
+            <Profile {...userProfile} />
+        </UserProfileProvider>
     ) : (
         <EmptyState
             code={404}

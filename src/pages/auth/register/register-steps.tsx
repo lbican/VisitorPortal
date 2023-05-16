@@ -31,7 +31,7 @@ const RegisterSteps = (): ReactElement => {
     return (
         <FormProvider>
             <Flex flexDir="column" width="100%">
-                <Steps activeStep={activeStep}>
+                <Steps colorScheme="blue" activeStep={activeStep}>
                     {steps.map(({ label, content }) => (
                         <Step label={label} key={label}>
                             <AnimatePresence>{content}</AnimatePresence>

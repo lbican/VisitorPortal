@@ -8,6 +8,7 @@ import {
     FormErrorMessage,
     FormLabel,
     Input,
+    Link,
     Text,
     VStack,
 } from '@chakra-ui/react';
@@ -19,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/layout/animated-alert';
 import { emailValidator, passwordValidator } from '../../../services/validators';
 import { useAuthForm } from '../../../hooks/useAuthLogin';
+import { NavLink } from 'react-router-dom';
 
 interface OAuthProvider {
     name: string;
@@ -70,10 +72,13 @@ const LoginForm = (): ReactElement => {
                     <Input type="password" ref={passwordRef} {...passwordControl} />
                     <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
                 </FormControl>
+                <Link as={NavLink} to="/register" alignSelf="flex-end">
+                    Don't have an account? Register
+                </Link>
                 <Button
                     isLoading={loading}
+                    colorScheme="blue"
                     alignSelf="flex-end"
-                    backgroundColor="green.500"
                     variant="solid"
                     type="submit"
                 >

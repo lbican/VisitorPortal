@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { Button, HStack } from '@chakra-ui/react';
+import React from 'react';
+import { Button, HStack, useDisclosure } from '@chakra-ui/react';
 import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import ProfileEditor from '../../pages/profile/profile-editor';
-import { UserService } from '../../services/user-service';
+import useHover from '../../hooks/useHover';
+import ProfileUpdateModal from '../profile-update-modal';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
     const { user } = useAuth();
-    const [isHovered, setIsHovered] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [isHovered, hoverRef] = useHover();
 
     const isEditable = () => {
         return props.id === user?.id;
@@ -29,32 +31,18 @@ const ProfileDetails: React.FC<UserProfile> = (props) => {
                 {isEditable() && (
                     <Button
                         as={motion.button}
-                        leftIcon={isHovered || isEditing ? <AiFillEdit /> : <AiOutlineEdit />}
+                        leftIcon={isHovered || isOpen ? <AiFillEdit /> : <AiOutlineEdit />}
                         colorScheme="blue"
                         variant="solid"
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => setIsEditing(!isEditing)}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onClick={onOpen}
+                        ref={hoverRef}
                     >
                         Edit
                     </Button>
                 )}
             </HStack>
-            {isEditing && (
-                <ProfileEditor
-                    userProfile={user}
-                    onSubmit={(data) => {
-                        UserService.updateUserProfile(user?.id, data)
-                            .then((res) => {
-                                console.log('Success!');
-                            })
-                            .catch(() => {
-                                console.log('Error!');
-                            });
-                    }}
-                />
-            )}
+            <ProfileUpdateModal isOpen={isOpen} onClose={onClose} userProfile={user} />
         </>
     );
 };

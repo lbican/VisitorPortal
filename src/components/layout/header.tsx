@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
-import { Button, Flex, HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
+import { Flex, HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { FiMenu } from 'react-icons/fi';
 import InteractiveAvatar from '../interactive-avatar';
 import ColorModeSwitcher from '../color-mode-switcher';
 import { useAuth } from '../../context/auth-context';
-import { NavLink } from 'react-router-dom';
 
 interface Props {
     onOpen: () => void;
@@ -41,18 +40,7 @@ const Header: React.FC<Props> = ({ onOpen, headerRef }) => {
 
             <HStack spacing={2}>
                 <ColorModeSwitcher />
-                {user ? (
-                    <InteractiveAvatar user={user} signOut={signOut} />
-                ) : (
-                    <>
-                        <Button colorScheme="green" variant="ghost" as={NavLink} to="/register">
-                            Register
-                        </Button>
-                        <Button colorScheme="green" as={NavLink} to="/login">
-                            Sign in
-                        </Button>
-                    </>
-                )}
+                {user && <InteractiveAvatar user={user} signOut={signOut} />}
             </HStack>
         </Flex>
     );

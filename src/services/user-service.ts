@@ -2,7 +2,7 @@ import { Session, User } from '@supabase/supabase-js';
 import supabase from '../../database';
 import { UserProfile } from '../context/auth-context';
 import { StorageService } from './storage-service';
-import _ from 'lodash';
+import { pickBy, identity } from 'lodash';
 
 export class UserService {
     private session: Session | null;
@@ -67,7 +67,7 @@ export class UserService {
         }
 
         // Remove undefined properties from the update object
-        const cleanedProfileUpdate = _.pickBy(userProfileUpdate, _.identity);
+        const cleanedProfileUpdate = pickBy(userProfileUpdate, identity);
 
         // Ensure that the id field is not being updated
         delete cleanedProfileUpdate.id;
@@ -76,6 +76,8 @@ export class UserService {
 
         if (error) {
             return Promise.reject(error);
+        } else {
+            await supabase.auth.refreshSession();
         }
     };
 }
