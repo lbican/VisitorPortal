@@ -3,7 +3,6 @@ import { Button, HStack, useDisclosure } from '@chakra-ui/react';
 import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import { motion } from 'framer-motion';
-import ProfileEditor from '../../pages/profile/profile-editor';
 import useHover from '../../hooks/useHover';
 import ProfileUpdateModal from '../profile-update-modal';
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Modal,
@@ -10,14 +10,14 @@ import {
     ModalFooter,
     useToast,
 } from '@chakra-ui/react';
-import { AiFillSave, AiOutlineSave } from 'react-icons/ai';
-import useHover from '../hooks/useHover';
+import { AiOutlineSave } from 'react-icons/ai';
 import { UserProfile } from '../context/auth-context';
 import ProfileEditor from '../pages/profile/profile-editor';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useProfileProvider } from '../context/user-profile-context';
 import { UserService } from '../services/user-service';
 import { useForm } from 'react-hook-form';
+import { isEqual, pick } from 'lodash';
 
 interface ContentModalProps {
     userProfile: UserProfile | null;
@@ -26,8 +26,8 @@ interface ContentModalProps {
 }
 
 const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, onClose }) => {
-    const [isHovered, hoverRef] = useHover();
     const [loading, setLoading] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { refetch } = useProfileProvider();
@@ -37,51 +37,70 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
         handleSubmit,
         register,
         formState: { errors },
+        watch,
     } = useForm<Partial<UserProfile>>();
 
-    const handleFormSubmit = (data: Partial<UserProfile>) => {
-        setLoading(true);
-        UserService.updateUserProfile(userProfile?.id, data)
-            .then(() => {
-                toast({
-                    title: 'Account updated!',
-                    description: 'You have successfully updated your account',
-                    status: 'success',
-                    duration: 9000,
-                    position: 'top-right',
-                    isClosable: true,
-                });
+    const currentValues = watch();
 
-                if (data.username !== userProfile?.username) {
-                    navigate(`/user/${data.username}`, {
-                        replace: true,
-                        state: { from: location.pathname },
-                    });
-                } else {
-                    refetch();
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                toast({
-                    title: 'Failed to update account',
-                    description: 'An error has occurred, please try again later',
-                    status: 'error',
-                    duration: 9000,
-                    position: 'top-right',
-                    isClosable: true,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
-                onClose();
+    useEffect(() => {
+        const pickedUserProfile = pick(userProfile, ['username', 'full_name', 'email']);
+        setIsDisabled(isEqual(pickedUserProfile, currentValues));
+    }, [currentValues]);
+
+    const handleFormSubmit = (data: Partial<UserProfile>) => {
+        if (isDisabled) {
+            toast({
+                title: 'Cannot update profile',
+                description: 'Please make some changes before updating profile',
+                status: 'warning',
+                duration: 9000,
+                position: 'top-right',
+                isClosable: true,
             });
+        } else {
+            setLoading(true);
+            UserService.updateUserProfile(userProfile?.id, data)
+                .then(() => {
+                    toast({
+                        title: 'Account updated!',
+                        description: 'You have successfully updated your account',
+                        status: 'success',
+                        duration: 9000,
+                        position: 'top-right',
+                        isClosable: true,
+                    });
+
+                    if (data.username !== userProfile?.username) {
+                        navigate(`/user/${data.username}`, {
+                            replace: true,
+                            state: { from: location.pathname },
+                        });
+                    } else {
+                        refetch();
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    toast({
+                        title: 'Failed to update account',
+                        description: 'An error has occurred, please try again later',
+                        status: 'error',
+                        duration: 9000,
+                        position: 'top-right',
+                        isClosable: true,
+                    });
+                })
+                .finally(() => {
+                    setLoading(false);
+                    onClose();
+                });
+        }
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="slideInRight">
             <ModalOverlay />
-            <ModalContent as="form" onSubmit={handleSubmit(handleFormSubmit)}>
+            <ModalContent>
                 <ModalHeader>Update your profile</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
@@ -93,9 +112,8 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
                         Close
                     </Button>
                     <Button
-                        leftIcon={isHovered ? <AiFillSave /> : <AiOutlineSave />}
-                        ref={hoverRef}
-                        type="submit"
+                        leftIcon={<AiOutlineSave />}
+                        onClick={handleSubmit(handleFormSubmit)}
                         colorScheme="green"
                         alignSelf="flex-end"
                         isLoading={loading}
