@@ -6,7 +6,7 @@ import AdminPanel from './pages/root/admin-panel';
 import Dashboard from './pages/dashboard/dashboard';
 import Team from './pages/team/team';
 import Properties from './pages/properties/properties';
-import Calendar from './pages/calendar/calendar';
+import CalendarPage from './pages/calendar/calendar-page';
 import LoginPage from './pages/auth/login/login-page';
 import RegisterPage from './pages/auth/register/register-page';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/calendar',
-                element: <Calendar />,
+                element: <CalendarPage />,
             },
             {
                 path: '/user/:username',

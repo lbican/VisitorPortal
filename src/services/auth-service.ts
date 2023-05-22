@@ -1,6 +1,6 @@
 import { Provider, Session, User } from '@supabase/supabase-js';
 import supabase from '../../database';
-import { UserRegistration } from '../utils/interfaces/typings';
+import { IUserRegistration } from '../utils/interfaces/typings';
 
 interface EmailAuthData {
     user: User | null;
@@ -43,7 +43,7 @@ export class AuthService {
         return Promise.resolve(data);
     }
 
-    static async signUpUser(user: UserRegistration): Promise<EmailAuthData> {
+    static async signUpUser(user: IUserRegistration): Promise<EmailAuthData> {
         const { data, error } = await supabase.auth.signUp({
             email: user.email,
             password: user.password,

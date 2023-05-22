@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import EmptyState from '../../components/empty-state';
-import SplitScreen from '../../components/split-screen';
+import EmptyState from '../../components/common/empty-state';
+import SplitScreen from '../../components/common/split-screen';
 
 const ErrorPage = (): ReactElement => {
     return (

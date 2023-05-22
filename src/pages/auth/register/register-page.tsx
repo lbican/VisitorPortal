@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect } from 'react';
-import SplitScreen from '../../../components/split-screen';
+import SplitScreen from '../../../components/common/split-screen';
 import RegisterSteps from './register-steps';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';

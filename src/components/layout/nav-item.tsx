@@ -9,14 +9,14 @@ export interface NavItemProps {
     route: string;
 }
 
-interface NavItemColors {
+interface INavItemColors {
     bgColor: string[];
     color: string[];
     hoverBg: string[];
     hoverColor: string[];
 }
 
-const isSelected = (route: string, locationPath: string): NavItemColors => {
+const isSelected = (route: string, locationPath: string): INavItemColors => {
     if (route === locationPath) {
         return {
             bgColor: ['blue.500', 'blue.500'],

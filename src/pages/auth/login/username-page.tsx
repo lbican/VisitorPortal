@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import SplitScreen from '../../../components/split-screen';
+import SplitScreen from '../../../components/common/split-screen';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
 import AnimatedAlert from '../../../components/layout/animated-alert';
 import { AuthError } from '@supabase/supabase-js';

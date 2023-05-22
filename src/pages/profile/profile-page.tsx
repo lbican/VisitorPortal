@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Profile from '../../components/profile/profile';
 import useUserProfile from '../../hooks/useUserProfile';
-import EmptyState from '../../components/empty-state';
+import EmptyState from '../../components/common/empty-state';
 import { UserProfileProvider } from '../../context/user-profile-context';
 import { Skeleton } from '@chakra-ui/react';
 

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Avatar, Box, Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
-import { UserRegistration } from '../../../../utils/interfaces/typings';
+import { IUserRegistration } from '../../../../utils/interfaces/typings';
 import { motion } from 'framer-motion';
 import { AuthError } from '@supabase/supabase-js';
 import AnimatedAlert from '../../../../components/layout/animated-alert';
@@ -13,7 +13,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<AuthError | null>(null);
 
-    const user: UserRegistration = {
+    const user: IUserRegistration = {
         username: form?.formState.steps.account.value.username || '',
         first_name: form?.formState.steps.account.value.first_name || '',
         last_name: form?.formState.steps.account.value.last_name || '',
@@ -23,7 +23,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
         repeat_password: form?.formState.steps.security.value.password || '',
     };
 
-    const signUpUser = async (user: UserRegistration) => {
+    const signUpUser = async (user: IUserRegistration) => {
         setLoading(true);
         setError(null);
 

@@ -11,11 +11,11 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
-import { UserProfile } from '../context/auth-context';
-import ProfileEditor from '../pages/profile/profile-editor';
+import { UserProfile } from '../../context/auth-context';
+import ProfileEditor from '../../pages/profile/profile-editor';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useProfileProvider } from '../context/user-profile-context';
-import { UserService } from '../services/user-service';
+import { useProfileProvider } from '../../context/user-profile-context';
+import { UserService } from '../../services/user-service';
 import { useForm } from 'react-hook-form';
 import { isEqual, pick } from 'lodash';
 
