@@ -3,9 +3,11 @@ import { Image, Skeleton } from '@chakra-ui/react';
 interface Props {
     imageLink: string;
     imageAlt: string;
+    height?: string;
+    width?: string;
 }
 
-const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt }) => {
+const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt, height, width }) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
@@ -15,6 +17,8 @@ const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt }) => {
                 alt={imageAlt}
                 objectFit="cover"
                 src={imageLink}
+                height={height}
+                width={width}
                 onLoad={(): void => {
                     setLoaded(true);
                 }}

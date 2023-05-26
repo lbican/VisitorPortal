@@ -4,7 +4,7 @@ import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import useHover from '../../hooks/useHover';
-import ProfileUpdateModal from '../common/profile-update-modal';
+import ProfileUpdateModal from './profile-update-modal';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
     const { user } = useAuth();
@@ -41,7 +41,7 @@ const ProfileDetails: React.FC<UserProfile> = (props) => {
                     </Button>
                 )}
             </HStack>
-            <ProfileUpdateModal isOpen={isOpen} onClose={onClose} userProfile={user} />
+            {user && <ProfileUpdateModal isOpen={isOpen} onClose={onClose} userProfile={user} />}
         </>
     );
 };

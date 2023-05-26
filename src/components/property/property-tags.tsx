@@ -5,7 +5,7 @@ import { MdLocationPin } from 'react-icons/all';
 
 interface IPropertyTagsProps {
     type: PropertyType;
-    location: string;
+    location?: string;
 }
 
 const PropertyTags: React.FC<IPropertyTagsProps> = ({ type, location }) => {
@@ -30,10 +30,12 @@ const PropertyTags: React.FC<IPropertyTagsProps> = ({ type, location }) => {
             <Tag size="md" variant="solid" colorScheme={colorScheme}>
                 {type}
             </Tag>
-            <Tag size="md" variant="solid" colorScheme="blue">
-                <TagLeftIcon as={MdLocationPin} />
-                <TagLabel>{location}</TagLabel>
-            </Tag>
+            {location && (
+                <Tag size="md" variant="solid" colorScheme="blue">
+                    <TagLeftIcon as={MdLocationPin} />
+                    <TagLabel>{location}</TagLabel>
+                </Tag>
+            )}
         </HStack>
     );
 };

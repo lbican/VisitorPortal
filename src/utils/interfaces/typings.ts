@@ -15,7 +15,7 @@ export interface User extends Omit<IUserRegistration, 'password' | 'repeat_passw
 export enum PropertyType {
     HOUSE = 'House',
     HOTEL = 'Hotel',
-    APARTMENT = 'Apartment',
+    APARTMENT = 'Apartments',
 }
 
 export interface IPropertyRoom {
@@ -27,9 +27,12 @@ export interface IPropertyRoom {
 export interface IProperty {
     id: string;
     name: string;
-    location: string;
+    location?: string;
     type: PropertyType;
-    imageUrl: string;
-    rating: number;
+    image_url: string;
+    rating?: number;
+    description?: string;
     rooms: IPropertyRoom[];
 }
+
+export type TProperty = Omit<IProperty, 'rooms'>;

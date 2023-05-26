@@ -4,7 +4,21 @@ import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isWithinInterval } from 'date-fns';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
-import OptionSelector from '../../components/common/option-selector';
+import Select from 'react-select';
+import { MOCK_PROPERTIES } from '../../utils/mocks/properties';
+
+const options = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' },
+];
+
+const properties = MOCK_PROPERTIES.map((property) => {
+    return {
+        value: property.name,
+        label: property.name,
+    };
+});
 
 interface ITileProps {
     view: View;
@@ -30,17 +44,9 @@ const CalendarPage = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     Calendar
                 </Heading>
-                <HStack spacing={2}>
-                    <OptionSelector
-                        options={['Option One', 'Option Two', 'Option Three']}
-                        defaultOption="Select Option"
-                        onSelect={(selectedOption: string) => console.log(selectedOption)}
-                    />
-                    <OptionSelector
-                        options={['Unit one', 'Unit two']}
-                        defaultOption="Select Unit"
-                        onSelect={(selectedOption: string) => console.log(selectedOption)}
-                    />
+                <HStack>
+                    <Select placeholder="Select property" options={properties} />
+                    <Select placeholder="Select unit" options={options} />
                 </HStack>
             </HStack>
             <Calendar

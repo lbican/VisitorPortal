@@ -25,7 +25,7 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             position="relative"
         >
             <Image
-                src={property.imageUrl}
+                src={property.image_url}
                 objectFit="cover"
                 alt={`Picture of ${property.name}`}
                 roundedTop="lg"
@@ -50,7 +50,7 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
                     </Text>
                 </Flex>
 
-                <Rating rating={property.rating} />
+                {property.rating ? <Rating rating={property.rating} /> : <Text>No rating</Text>}
             </Box>
         </Box>
     );

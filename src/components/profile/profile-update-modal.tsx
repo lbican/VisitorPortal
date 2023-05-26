@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Button,
     Modal,
@@ -8,7 +8,6 @@ import {
     ModalCloseButton,
     ModalBody,
     ModalFooter,
-    useToast,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { UserProfile } from '../../context/auth-context';
@@ -18,9 +17,11 @@ import { useProfileProvider } from '../../context/user-profile-context';
 import { UserService } from '../../services/user-service';
 import { useForm } from 'react-hook-form';
 import { isEqual, pick } from 'lodash';
+import useToastNotification from '../../hooks/useToastNotification';
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface ContentModalProps {
-    userProfile: UserProfile | null;
+    userProfile: UserProfile;
     isOpen: boolean;
     onClose: () => void;
 }
@@ -31,7 +32,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
     const navigate = useNavigate();
     const location = useLocation();
     const { refetch } = useProfileProvider();
-    const toast = useToast();
+    const notification = useToastNotification();
 
     const {
         handleSubmit,
@@ -47,58 +48,54 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
         setIsDisabled(isEqual(pickedUserProfile, currentValues));
     }, [currentValues]);
 
-    const handleFormSubmit = (data: Partial<UserProfile>) => {
-        if (isDisabled) {
-            toast({
-                title: 'Cannot update profile',
-                description: 'Please make some changes before updating profile',
-                status: 'warning',
-                duration: 9000,
-                position: 'top-right',
-                isClosable: true,
+    const handleSuccess = (data: Partial<UserProfile>) => {
+        notification.success('Account updated!', 'You have successfully updated your account.');
+
+        if (data.username !== userProfile?.username) {
+            navigate(`/user/${data.username}`, {
+                replace: true,
+                state: { from: location.pathname },
             });
         } else {
-            setLoading(true);
-            UserService.updateUserProfile(userProfile?.id, data)
-                .then(() => {
-                    toast({
-                        title: 'Account updated!',
-                        description: 'You have successfully updated your account',
-                        status: 'success',
-                        duration: 9000,
-                        position: 'top-right',
-                        isClosable: true,
-                    });
-
-                    if (data.username !== userProfile?.username) {
-                        navigate(`/user/${data.username}`, {
-                            replace: true,
-                            state: { from: location.pathname },
-                        });
-                    } else {
-                        refetch();
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    toast({
-                        title: 'Failed to update account',
-                        description: 'An error has occurred, please try again later',
-                        status: 'error',
-                        duration: 9000,
-                        position: 'top-right',
-                        isClosable: true,
-                    });
-                })
-                .finally(() => {
-                    setLoading(false);
-                    onClose();
-                });
+            refetch();
         }
     };
 
+    const handleError = (error: PostgrestError | null) => {
+        console.error(error);
+        notification.error(
+            'Could not update profile',
+            'An error has occurred, please try again later'
+        );
+    };
+
+    const handleFinally = () => {
+        setLoading(false);
+        onClose();
+    };
+
+    const handleFormSubmit = useCallback(
+        (data: Partial<UserProfile>) => {
+            if (isDisabled) {
+                notification.warning(
+                    'Could not update profile.',
+                    'Please make some changes before updating profile.'
+                );
+                return;
+            }
+
+            setLoading(true);
+
+            UserService.updateUserProfile(userProfile?.id, data)
+                .then(() => handleSuccess(data))
+                .catch(handleError)
+                .finally(handleFinally);
+        },
+        [isDisabled, navigate, location, userProfile, notification, refetch, onClose]
+    );
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="slideInRight">
+        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>Update your profile</ModalHeader>
