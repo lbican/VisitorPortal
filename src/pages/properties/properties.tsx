@@ -8,13 +8,14 @@ import useUserProperties from '../../hooks/useUserProperties';
 import PropertyService from '../../services/property-service';
 import CustomContextMenu from '../../components/common/custom-context-menu';
 import AlertDialogComponent from '../../components/common/alert-dialog-component';
+import { IProperty } from '../../utils/interfaces/typings';
 
 const Properties = (): ReactElement => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
     const { user } = useAuth();
     const { properties, refetch, isLoading, setProperties } = useUserProperties(user?.id);
-    const [currentPropertyId, setCurrentPropertyId] = useState<string | null>(null);
+    const [currentProperty, setCurrentProperty] = useState<IProperty | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const deleteProperty = (propertyId: string) => {
@@ -30,14 +31,14 @@ const Properties = (): ReactElement => {
             .finally(() => setIsDeleting(false));
     };
 
-    const openDeleteAlert = (propertyId: string) => {
-        setCurrentPropertyId(propertyId);
+    const openDeleteAlert = (property: IProperty) => {
+        setCurrentProperty(property);
         onOpenAlert();
     };
 
     const confirmDeleteProperty = () => {
-        if (currentPropertyId) {
-            deleteProperty(currentPropertyId);
+        if (currentProperty) {
+            deleteProperty(currentProperty.id);
         }
     };
 
@@ -57,7 +58,7 @@ const Properties = (): ReactElement => {
                 isOpen={isOpenAlert}
                 onClose={onCloseAlert}
                 onConfirm={confirmDeleteProperty}
-                dialogBody="Are you sure you want to delete a property?"
+                dialogBody={`Are you sure you want to delete ${currentProperty?.name}`}
                 dialogHeader="Confirm deletion"
             />
             <Divider mb={4} />
@@ -69,7 +70,7 @@ const Properties = (): ReactElement => {
                         {properties.map((property) => (
                             <CustomContextMenu
                                 key={property.id}
-                                onMenuDelete={() => openDeleteAlert(property.id)}
+                                onMenuDelete={() => openDeleteAlert(property)}
                             >
                                 <Property property={property} />
                             </CustomContextMenu>
