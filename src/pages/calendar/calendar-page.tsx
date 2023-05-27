@@ -1,11 +1,13 @@
 import React, { ReactElement, useState } from 'react';
-import { Heading, HStack, Text } from '@chakra-ui/react';
+import { Heading, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isWithinInterval } from 'date-fns';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import Select from 'react-select';
-import { MOCK_PROPERTIES } from '../../utils/mocks/properties';
+import useUserProperties from '../../hooks/useUserProperties';
+import { useAuth } from '../../context/auth-context';
+import { IProperty } from '../../utils/interfaces/typings';
 
 const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -13,20 +15,29 @@ const options = [
     { value: 'vanilla', label: 'Vanilla' },
 ];
 
-const properties = MOCK_PROPERTIES.map((property) => {
-    return {
-        value: property.name,
-        label: property.name,
-    };
-});
+interface ILabel {
+    value: string;
+    label: string;
+}
 
 interface ITileProps {
     view: View;
     date: Date;
 }
 
+const mapPropertiesToLabels = (properties: IProperty[]): ILabel[] => {
+    return properties.map((property) => {
+        return {
+            value: property.name,
+            label: property.name,
+        };
+    });
+};
+
 const CalendarPage = (): ReactElement => {
     const [date, onChange] = useState<Date[]>([]);
+    const { user } = useAuth();
+    const { properties, error, isLoading } = useUserProperties(user?.id);
 
     const startDate = new Date(2023, 5, 10); // June 10, 2023
     const endDate = new Date(2023, 5, 20); // June 20, 2023
@@ -45,7 +56,17 @@ const CalendarPage = (): ReactElement => {
                     Calendar
                 </Heading>
                 <HStack>
-                    <Select placeholder="Select property" options={properties} />
+                    <Select
+                        styles={{
+                            menu: (provided) => ({
+                                ...provided,
+                                backgroundColor: useColorModeValue('white', 'gray'),
+                            }),
+                        }}
+                        placeholder="Select property"
+                        options={mapPropertiesToLabels(properties)}
+                        isLoading={isLoading}
+                    />
                     <Select placeholder="Select unit" options={options} />
                 </HStack>
             </HStack>

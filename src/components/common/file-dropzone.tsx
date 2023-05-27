@@ -6,11 +6,10 @@ import FileService, { IUploadedImage } from '../../services/file-service';
 
 interface FileDropzoneProps {
     fileService: FileService;
-    disabled: boolean;
     setSelectedImage: (image: IUploadedImage) => void;
 }
 
-const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, disabled, fileService }) => {
+const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileService }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -28,8 +27,8 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, disabled,
 
     const { getRootProps, getInputProps, isFocused } = useDropzone({
         accept: { 'image/*': [] },
+        maxFiles: 1,
         onDrop,
-        disabled: disabled,
     });
 
     return (

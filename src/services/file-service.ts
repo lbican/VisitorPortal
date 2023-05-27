@@ -33,7 +33,6 @@ class FileService {
     }
 
     async deleteFiles(paths: string[]): Promise<void> {
-        console.log(paths);
         const { error } = await supabase.storage.from(this.bucket).remove(paths);
 
         if (error) {

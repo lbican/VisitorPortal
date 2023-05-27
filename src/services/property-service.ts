@@ -1,13 +1,19 @@
 import supabase from '../../database';
-import { TProperty } from '../utils/interfaces/typings';
-
+import { IProperty, TNewProperty } from '../utils/interfaces/typings';
 
 class PropertyService {
-    async createProperty(property: TProperty, userId: string): Promise<TProperty | null> {
+    static async createProperty(
+        property: TNewProperty,
+        userId: string | undefined
+    ): Promise<TNewProperty | null> {
+        console.log(property);
+        if (!userId) {
+            return Promise.reject('User is not logged in!');
+        }
         const { data, error } = await supabase.from('Property').insert(property).select();
 
         if (error) {
-            throw error;
+            return Promise.reject(error);
         }
 
         if (data && data.length > 0) {
@@ -19,13 +25,34 @@ class PropertyService {
             });
 
             if (linkError) {
-                throw linkError;
+                console.error(linkError);
+                return Promise.reject(linkError);
             }
 
-            return propertyData as TProperty;
+            return propertyData as TNewProperty;
         }
 
         return null;
+    }
+
+    static async getPropertiesForUser(userId?: string): Promise<IProperty[]> {
+        if (!userId) {
+            return Promise.reject('Unknown user provided!');
+        }
+
+        const { data, error } = await supabase.rpc('get_properties_for_user', {
+            p_user_id: userId,
+        });
+
+        if (error) {
+            return Promise.reject(error);
+        }
+
+        if (!data) {
+            return [];
+        }
+
+        return data;
     }
 }
 

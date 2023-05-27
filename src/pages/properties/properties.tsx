@@ -1,12 +1,15 @@
 import React, { ReactElement } from 'react';
-import { Button, Divider, Flex, Heading, HStack, useDisclosure } from '@chakra-ui/react';
+import { Button, Divider, Flex, Heading, HStack, useDisclosure, Text } from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { MOCK_PROPERTIES } from '../../utils/mocks/properties';
 import PropertyActionModal from '../../components/property/modal/property-action-modal';
+import { useAuth } from '../../context/auth-context';
+import useUserProperties from '../../hooks/useUserProperties';
 
 const Properties = (): ReactElement => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { user } = useAuth();
+    const { properties, refetch, isLoading, error } = useUserProperties(user?.id);
 
     return (
         <>
@@ -18,13 +21,17 @@ const Properties = (): ReactElement => {
                     Add new property
                 </Button>
             </HStack>
-            <PropertyActionModal property={null} isOpen={isOpen} onClose={onClose} />
+            <PropertyActionModal isOpen={isOpen} onClose={onClose} refetch={refetch} />
             <Divider mb={4} />
-            <Flex alignItems="flex-start" flexWrap="wrap">
-                {MOCK_PROPERTIES.map((MOCK_PROPERTY) => (
-                    <Property key={MOCK_PROPERTY.id} property={MOCK_PROPERTY} />
-                ))}
-            </Flex>
+            {isLoading ? (
+                <Text>Loading...</Text>
+            ) : (
+                <Flex alignItems="flex-start" flexWrap="wrap">
+                    {properties.map((property) => (
+                        <Property key={property.id} property={property} />
+                    ))}
+                </Flex>
+            )}
         </>
     );
 };

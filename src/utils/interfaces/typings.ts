@@ -18,7 +18,7 @@ export enum PropertyType {
     APARTMENT = 'Apartments',
 }
 
-export interface IPropertyRoom {
+export interface IUnit {
     id: string;
     name: string;
     capacity: number;
@@ -32,7 +32,7 @@ export interface IProperty {
     image_url: string;
     rating?: number;
     description?: string;
-    rooms: IPropertyRoom[];
+    rooms: IUnit[];
 }
 
-export type TProperty = Omit<IProperty, 'rooms'>;
+export type TNewProperty = Omit<IProperty, 'rooms' | 'id'>;

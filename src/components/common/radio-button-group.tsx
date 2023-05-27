@@ -46,7 +46,6 @@ interface RadioGroupProps {
 const RadioButtonGroup: React.FC<RadioGroupProps> = ({ options, onSelect }) => {
     const { getRootProps, getRadioProps } = useRadioGroup({
         name: 'Property type',
-        defaultValue: 'House',
         onChange: onSelect,
     });
 

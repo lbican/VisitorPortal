@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { Image, Skeleton } from '@chakra-ui/react';
+import { BorderProps, Image, LayoutProps, Skeleton } from '@chakra-ui/react';
 interface Props {
     imageLink: string;
     imageAlt: string;
-    height?: string;
-    width?: string;
+    height?: LayoutProps['height'];
+    width?: LayoutProps['width'];
+    borderRadius?: BorderProps['borderRadius'];
 }
 
-const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt, height, width }) => {
+const ProgressiveImage: React.FC<Props> = ({
+    imageLink,
+    imageAlt,
+    height,
+    width,
+    borderRadius,
+}) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
@@ -19,6 +26,7 @@ const ProgressiveImage: React.FC<Props> = ({ imageLink, imageAlt, height, width 
                 src={imageLink}
                 height={height}
                 width={width}
+                borderRadius={borderRadius}
                 onLoad={(): void => {
                     setLoaded(true);
                 }}
