@@ -18,7 +18,6 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             marginRight={4}
             marginBottom={4}
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             borderWidth="1px"
             rounded="lg"
             shadow="lg"

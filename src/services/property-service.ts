@@ -54,6 +54,14 @@ class PropertyService {
 
         return data;
     }
+
+    static async deletePropertyById(propertyId: string): Promise<void> {
+        const { error } = await supabase.from('Property').delete().eq('id', propertyId);
+
+        if (error) {
+            return Promise.reject(error);
+        }
+    }
 }
 
 export default PropertyService;

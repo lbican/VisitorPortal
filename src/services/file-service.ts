@@ -7,19 +7,17 @@ export interface IUploadedImage {
 
 class FileService {
     bucket: string;
+    userId: string;
 
-    constructor(bucket: string) {
+    constructor(bucket: string, userId = 'common') {
         this.bucket = bucket;
+        this.userId = userId;
     }
 
     async uploadFile(file: File): Promise<IUploadedImage> {
         const { data, error } = await supabase.storage
             .from(this.bucket)
-            .upload(`public/${file.name}`, file);
-
-        if (error) {
-            throw error;
-        }
+            .upload(`${this.userId}/${file.name}`, file);
 
         if (data) {
             const url = supabase.storage.from(this.bucket).getPublicUrl(data?.path);
@@ -29,7 +27,7 @@ class FileService {
             };
         }
 
-        throw new Error('File upload failed');
+        return Promise.reject(error);
     }
 
     async deleteFiles(paths: string[]): Promise<void> {

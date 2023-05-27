@@ -26,7 +26,7 @@ const useUserProperties = (userId?: string) => {
         fetchUserProperties();
     }, [fetchUserProperties]);
 
-    return { properties, isLoading, error, refetch: fetchUserProperties };
+    return { properties, setProperties, isLoading, error, refetch: fetchUserProperties };
 };
 
 export default useUserProperties;

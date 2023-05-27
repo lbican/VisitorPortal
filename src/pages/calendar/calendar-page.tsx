@@ -28,7 +28,7 @@ interface ITileProps {
 const mapPropertiesToLabels = (properties: IProperty[]): ILabel[] => {
     return properties.map((property) => {
         return {
-            value: property.name,
+            value: property.id,
             label: property.name,
         };
     });

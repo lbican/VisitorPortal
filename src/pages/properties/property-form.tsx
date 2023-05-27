@@ -17,6 +17,7 @@ import { GiTrashCan } from 'react-icons/all';
 import ProgressiveImage from '../../components/common/progressive-image';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../hooks/useToastNotification';
+import { useAuth } from '../../context/auth-context';
 
 interface PropertyFormProps {
     property: TNewProperty | null;
@@ -28,7 +29,8 @@ interface PropertyFormProps {
 const PropertyForm: React.FC<PropertyFormProps> = ({ register, errors, control }): ReactElement => {
     const [image, setImage] = useState<IUploadedImage | null>(null);
     const [loading, setLoading] = useState(false);
-    const fileService = new FileService('property_images');
+    const { user } = useAuth();
+    const fileService = new FileService('property_images', user?.id);
     const notification = useToastNotification();
 
     return (

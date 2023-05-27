@@ -34,16 +34,17 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
         control,
         formState: { errors },
         register,
+        reset,
     } = useForm<TNewProperty>();
 
     const handleFormSubmit = (data: TNewProperty) => {
         setLoading(true);
         PropertyService.createProperty(data, user?.id)
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 notification.success('Property added', 'Successfully added new property!');
                 onClose();
                 refetch();
+                reset();
             })
             .catch((error) => {
                 notification.error(
