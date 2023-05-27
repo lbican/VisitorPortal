@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Modal,
@@ -21,17 +21,19 @@ import { isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { usePropertyStore } from '../../../mobx/propertyStoreContext';
 
+// Used for determining if modal is opened and close it
 interface ContentModalProps {
-    refetch: () => void;
     isOpen: boolean;
     onClose: () => void;
 }
 
-const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, refetch }) => {
-    const { editingProperty } = usePropertyStore();
+const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
-    const { user } = useAuth();
     const notification = useToastNotification();
+    const store = usePropertyStore();
+    const { user } = useAuth();
+
+    //Form controls
     const {
         handleSubmit,
         control,
@@ -40,28 +42,26 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
         reset,
     } = useForm<TNewProperty>({
         shouldUseNativeValidation: false,
-        defaultValues: getFormValues(editingProperty),
+        defaultValues: getFormValues(store.editingProperty),
     });
 
     useEffect(() => {
-        reset(getFormValues(editingProperty));
-    }, [editingProperty, reset]);
+        reset(getFormValues(store.editingProperty));
+    }, [store.editingProperty, reset]);
 
-    const addNewProperty = useCallback(
-        async (propertyData: TNewProperty) => {
-            await PropertyService.createProperty(propertyData, user?.id);
+    const addNewProperty = async (propertyData: TNewProperty) => {
+        store.createProperty(propertyData, user?.id).then(() => {
             notification.success('Added new property', 'Successfully added new property!');
-        },
-        [user, notification]
-    );
+        });
+    };
 
-    const updateProperty = useCallback(
-        async (propertyData: TNewProperty) => {
-            await PropertyService.updateProperty(propertyData, editingProperty?.id);
+    const updateProperty = async (propertyData: TNewProperty) => {
+        const data = await PropertyService.updateProperty(propertyData, store.editingProperty?.id);
+        if (data) {
             notification.success('Updated property', 'Successfully updated property!');
-        },
-        [editingProperty, notification]
-    );
+            return data;
+        }
+    };
 
     const disposeModalAndUpdateData = () => {
         onClose();
@@ -71,12 +71,12 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
     const handleFormSubmit = (data: TNewProperty) => {
         setSubmitting(true);
 
-        const actionPromise = editingProperty ? updateProperty(data) : addNewProperty(data);
+        const actionPromise = store.editingProperty ? updateProperty(data) : addNewProperty(data);
 
         actionPromise
             .then(disposeModalAndUpdateData)
             .catch((error) => {
-                const errorMsg = editingProperty ? 'update' : 'add';
+                const errorMsg = store.editingProperty ? 'update' : 'add';
                 notification.error(
                     'An error has occurred',
                     isObject(error) ? `Unable to ${errorMsg} property` : error
@@ -90,14 +90,16 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">
-                    <ModalHeader>Create new property</ModalHeader>
+                    <ModalHeader>
+                        {store.editingProperty ? 'Update your' : 'Create new'} property
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <PropertyForm
                             register={register}
                             control={control}
                             errors={errors}
-                            existingUrl={editingProperty?.image_url}
+                            existingUrl={store.editingProperty?.image_url}
                         />
                     </ModalBody>
 
@@ -113,7 +115,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
                             alignSelf="flex-end"
                             isLoading={submitting}
                         >
-                            {editingProperty ? 'Save changes' : 'Create'}
+                            {store.editingProperty ? 'Save changes' : 'Create'}
                         </Button>
                     </ModalFooter>
                 </Box>

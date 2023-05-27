@@ -39,8 +39,11 @@ class PropertyStore {
     }
 
     @action
-    createProperty(propertyData: TNewProperty, userId: string) {
-        return PropertyService.createProperty(propertyData, userId);
+    async createProperty(propertyData: TNewProperty, userId?: string) {
+        const data = await PropertyService.createProperty(propertyData, userId);
+        if (data) {
+            this.setProperties([...this.properties, data]);
+        }
     }
 
     @action
@@ -72,7 +75,9 @@ class PropertyStore {
             .catch((error) => {
                 console.error(error);
             })
-            .finally(() => this.setIsFetching(false));
+            .finally(() => {
+                this.setIsFetching(false);
+            });
     }
 }
 
