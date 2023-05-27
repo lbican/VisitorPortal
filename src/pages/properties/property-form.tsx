@@ -20,14 +20,26 @@ import useToastNotification from '../../hooks/useToastNotification';
 import { useAuth } from '../../context/auth-context';
 
 interface PropertyFormProps {
-    property: TNewProperty | null;
     register: UseFormRegister<TNewProperty>;
     errors: FieldErrors<TNewProperty>;
     control: Control<TNewProperty>;
+    existingUrl?: string;
 }
 
-const PropertyForm: React.FC<PropertyFormProps> = ({ register, errors, control }): ReactElement => {
-    const [image, setImage] = useState<IUploadedImage | null>(null);
+const PropertyForm: React.FC<PropertyFormProps> = ({
+    register,
+    errors,
+    control,
+    existingUrl,
+}): ReactElement => {
+    const [image, setImage] = useState<IUploadedImage | undefined>(
+        existingUrl
+            ? {
+                  path: existingUrl,
+                  url: existingUrl,
+              }
+            : undefined
+    );
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
     const fileService = new FileService('property_images', user?.id);
@@ -144,7 +156,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ register, errors, control }
                                         'Image deleted',
                                         'Image has been successfully deleted'
                                     );
-                                    setImage(null);
+                                    setImage(undefined);
                                 })
                                 .catch(() => {
                                     notification.error(

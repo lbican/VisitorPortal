@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Modal,
@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
-import { TNewProperty } from '../../../utils/interfaces/typings';
+import { IProperty, PropertyType, TNewProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from '../../../pages/properties/property-form';
 import PropertyService from '../../../services/property-service';
 import { useAuth } from '../../../context/auth-context';
@@ -23,9 +23,34 @@ interface ContentModalProps {
     refetch: () => void;
     isOpen: boolean;
     onClose: () => void;
+    property?: IProperty;
 }
 
-const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, refetch }) => {
+const getFormValues = (property?: TNewProperty) => {
+    return property
+        ? {
+              name: property.name,
+              type: property.type,
+              rating: property.rating,
+              location: property.location,
+              description: property.description,
+              image_url: property.image_url,
+          }
+        : {
+              name: '',
+              type: PropertyType.APARTMENT,
+              rating: 0,
+              location: '',
+              description: undefined,
+              image_url: '',
+          };
+};
+const PropertyActionModal: React.FC<ContentModalProps> = ({
+    isOpen,
+    onClose,
+    refetch,
+    property,
+}) => {
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
     const notification = useToastNotification();
@@ -35,13 +60,26 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
         formState: { errors },
         register,
         reset,
-    } = useForm<TNewProperty>();
+    } = useForm<TNewProperty>({
+        shouldUseNativeValidation: false,
+        defaultValues: getFormValues(property),
+    });
+
+    useEffect(() => {
+        reset(getFormValues(property));
+    }, [property, reset]);
 
     const handleFormSubmit = (data: TNewProperty) => {
         setLoading(true);
-        PropertyService.createProperty(data, user?.id)
+
+        const actionPromise = property
+            ? PropertyService.updateProperty(property.id, data)
+            : PropertyService.createProperty(data, user?.id);
+
+        actionPromise
             .then(() => {
-                notification.success('Property added', 'Successfully added new property!');
+                const actionMessage = property ? 'Updated property' : 'Added new property';
+                notification.success(actionMessage, `Successfully ${actionMessage.toLowerCase()}!`);
                 onClose();
                 refetch();
                 reset();
@@ -49,7 +87,9 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
             .catch((error) => {
                 notification.error(
                     'An error has occured',
-                    isObject(error) ? 'Unable to add new property' : error
+                    isObject(error)
+                        ? `Unable to ${property ? 'update' : 'add'} new property`
+                        : error
                 );
             })
             .finally(() => setLoading(false));
@@ -65,9 +105,9 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
                     <ModalBody>
                         <PropertyForm
                             register={register}
-                            property={null}
                             control={control}
                             errors={errors}
+                            existingUrl={property?.image_url}
                         />
                     </ModalBody>
 
@@ -83,7 +123,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, ref
                             alignSelf="flex-end"
                             isLoading={loading}
                         >
-                            Create
+                            {property ? 'Save changes' : 'Create'}
                         </Button>
                     </ModalFooter>
                 </Box>

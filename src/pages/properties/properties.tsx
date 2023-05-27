@@ -16,7 +16,13 @@ const Properties = (): ReactElement => {
     const { user } = useAuth();
     const { properties, refetch, isLoading, setProperties } = useUserProperties(user?.id);
     const [currentProperty, setCurrentProperty] = useState<IProperty | null>(null);
+    const [editingProperty, setEditingProperty] = useState<IProperty | undefined>();
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const openEditModal = (property: IProperty) => {
+        setEditingProperty(property);
+        onOpen();
+    };
 
     const deleteProperty = (propertyId: string) => {
         setIsDeleting(true);
@@ -52,7 +58,15 @@ const Properties = (): ReactElement => {
                     Add new property
                 </Button>
             </HStack>
-            <PropertyActionModal isOpen={isOpen} onClose={onClose} refetch={refetch} />
+            <PropertyActionModal
+                property={editingProperty}
+                isOpen={isOpen}
+                onClose={() => {
+                    onClose();
+                    setEditingProperty(undefined);
+                }}
+                refetch={refetch}
+            />
             <AlertDialogComponent
                 isLoading={isDeleting}
                 isOpen={isOpenAlert}
@@ -70,6 +84,7 @@ const Properties = (): ReactElement => {
                         {properties.map((property) => (
                             <CustomContextMenu
                                 key={property.id}
+                                onMenuEdit={() => openEditModal(property)}
                                 onMenuDelete={() => openDeleteAlert(property)}
                             >
                                 <Property property={property} />

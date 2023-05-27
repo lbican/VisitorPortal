@@ -35,6 +35,13 @@ class PropertyService {
         return null;
     }
 
+    static async updateProperty(
+        propertyId: string,
+        property: TNewProperty
+    ): Promise<TNewProperty | null> {
+        return Promise.resolve(null);
+    }
+
     static async getPropertiesForUser(userId?: string): Promise<IProperty[]> {
         if (!userId) {
             return Promise.reject('Unknown user provided!');
