@@ -10,7 +10,7 @@ const useUserProperties = (userId?: string) => {
 
     const fetchUserProperties = useCallback(() => {
         setIsLoading(true);
-        PropertyService.getPropertiesForUser(userId)
+        PropertyService.getPropertiesByUserId(userId)
             .then((properties) => {
                 setProperties(properties);
             })

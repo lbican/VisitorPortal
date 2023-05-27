@@ -5,7 +5,7 @@ class PropertyService {
     static async createProperty(
         property: TNewProperty,
         userId: string | undefined
-    ): Promise<TNewProperty | null> {
+    ): Promise<IProperty> {
         console.log(property);
         if (!userId) {
             return Promise.reject('User is not logged in!');
@@ -29,20 +29,20 @@ class PropertyService {
                 return Promise.reject(linkError);
             }
 
-            return propertyData as TNewProperty;
+            return propertyData as IProperty;
         }
 
-        return null;
+        return Promise.reject('Unknown error has occurred');
     }
 
     static async updateProperty(
-        propertyId: string,
-        property: TNewProperty
+        property: TNewProperty,
+        propertyId?: string
     ): Promise<TNewProperty | null> {
         return Promise.resolve(null);
     }
 
-    static async getPropertiesForUser(userId?: string): Promise<IProperty[]> {
+    static async getPropertiesByUserId(userId?: string): Promise<IProperty[]> {
         if (!userId) {
             return Promise.reject('Unknown user provided!');
         }

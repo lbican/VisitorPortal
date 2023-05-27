@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Button,
     Modal,
@@ -12,46 +12,24 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
-import { IProperty, PropertyType, TNewProperty } from '../../../utils/interfaces/typings';
+import { TNewProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from '../../../pages/properties/property-form';
 import PropertyService from '../../../services/property-service';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { isObject } from 'lodash';
+import getFormValues from './modal-values';
+import { usePropertyStore } from '../../../mobx/propertyStoreContext';
 
 interface ContentModalProps {
     refetch: () => void;
     isOpen: boolean;
     onClose: () => void;
-    property?: IProperty;
 }
 
-const getFormValues = (property?: TNewProperty) => {
-    return property
-        ? {
-              name: property.name,
-              type: property.type,
-              rating: property.rating,
-              location: property.location,
-              description: property.description,
-              image_url: property.image_url,
-          }
-        : {
-              name: '',
-              type: PropertyType.APARTMENT,
-              rating: 0,
-              location: '',
-              description: undefined,
-              image_url: '',
-          };
-};
-const PropertyActionModal: React.FC<ContentModalProps> = ({
-    isOpen,
-    onClose,
-    refetch,
-    property,
-}) => {
-    const [loading, setLoading] = useState(false);
+const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose, refetch }) => {
+    const { editingProperty } = usePropertyStore();
+    const [submitting, setSubmitting] = useState(false);
     const { user } = useAuth();
     const notification = useToastNotification();
     const {
@@ -62,37 +40,49 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({
         reset,
     } = useForm<TNewProperty>({
         shouldUseNativeValidation: false,
-        defaultValues: getFormValues(property),
+        defaultValues: getFormValues(editingProperty),
     });
 
     useEffect(() => {
-        reset(getFormValues(property));
-    }, [property, reset]);
+        reset(getFormValues(editingProperty));
+    }, [editingProperty, reset]);
+
+    const addNewProperty = useCallback(
+        async (propertyData: TNewProperty) => {
+            await PropertyService.createProperty(propertyData, user?.id);
+            notification.success('Added new property', 'Successfully added new property!');
+        },
+        [user, notification]
+    );
+
+    const updateProperty = useCallback(
+        async (propertyData: TNewProperty) => {
+            await PropertyService.updateProperty(propertyData, editingProperty?.id);
+            notification.success('Updated property', 'Successfully updated property!');
+        },
+        [editingProperty, notification]
+    );
+
+    const disposeModalAndUpdateData = () => {
+        onClose();
+        reset();
+    };
 
     const handleFormSubmit = (data: TNewProperty) => {
-        setLoading(true);
+        setSubmitting(true);
 
-        const actionPromise = property
-            ? PropertyService.updateProperty(property.id, data)
-            : PropertyService.createProperty(data, user?.id);
+        const actionPromise = editingProperty ? updateProperty(data) : addNewProperty(data);
 
         actionPromise
-            .then(() => {
-                const actionMessage = property ? 'Updated property' : 'Added new property';
-                notification.success(actionMessage, `Successfully ${actionMessage.toLowerCase()}!`);
-                onClose();
-                refetch();
-                reset();
-            })
+            .then(disposeModalAndUpdateData)
             .catch((error) => {
+                const errorMsg = editingProperty ? 'update' : 'add';
                 notification.error(
-                    'An error has occured',
-                    isObject(error)
-                        ? `Unable to ${property ? 'update' : 'add'} new property`
-                        : error
+                    'An error has occurred',
+                    isObject(error) ? `Unable to ${errorMsg} property` : error
                 );
             })
-            .finally(() => setLoading(false));
+            .finally(() => setSubmitting(false));
     };
 
     return (
@@ -107,7 +97,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({
                             register={register}
                             control={control}
                             errors={errors}
-                            existingUrl={property?.image_url}
+                            existingUrl={editingProperty?.image_url}
                         />
                     </ModalBody>
 
@@ -121,9 +111,9 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({
                             onClick={handleSubmit(handleFormSubmit)}
                             colorScheme="green"
                             alignSelf="flex-end"
-                            isLoading={loading}
+                            isLoading={submitting}
                         >
-                            {property ? 'Save changes' : 'Create'}
+                            {editingProperty ? 'Save changes' : 'Create'}
                         </Button>
                     </ModalFooter>
                 </Box>
