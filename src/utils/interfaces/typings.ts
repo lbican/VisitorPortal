@@ -35,4 +35,4 @@ export interface IProperty {
     rooms: IUnit[];
 }
 
-export type TNewProperty = Omit<IProperty, 'rooms' | 'id'>;
+export type TFormProperty = Omit<IProperty, 'rooms' | 'id'>;

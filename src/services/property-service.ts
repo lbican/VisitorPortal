@@ -1,10 +1,10 @@
 import supabase from '../../database';
-import { IProperty, TNewProperty } from '../utils/interfaces/typings';
+import { IProperty, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
 
 class PropertyService {
     static async createProperty(
-        property: TNewProperty,
+        property: TFormProperty,
         userId: string | undefined
     ): Promise<IProperty> {
         if (!userId) {
@@ -36,10 +36,23 @@ class PropertyService {
     }
 
     static async updateProperty(
-        property: TNewProperty,
-        propertyId?: string
+        property: TFormProperty,
+        propertyId: string
     ): Promise<IProperty | null> {
-        throw new Error('Method not implemented');
+        const { data, error } = await supabase
+            .from('Property')
+            .update(property)
+            .eq('id', propertyId)
+            .select()
+            .single();
+
+        // Check for error
+        if (error) {
+            console.error('Error updating property:', error);
+            throw new Error(error.message);
+        }
+
+        return data as IProperty;
     }
 
     static async getPropertiesByUserId(userId?: string): Promise<IProperty[]> {
@@ -47,7 +60,7 @@ class PropertyService {
             throw new Error('Unknown user provided!');
         }
 
-        const { data, error } = await supabase.rpc('get_properties_for_user', {
+        const { data, error } = await supabase.rpc('get_properties_by_user_id', {
             p_user_id: userId,
         });
 

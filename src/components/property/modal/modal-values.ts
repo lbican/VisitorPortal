@@ -1,6 +1,6 @@
-import { PropertyType, TNewProperty } from '../../../utils/interfaces/typings';
+import { PropertyType, TFormProperty } from '../../../utils/interfaces/typings';
 
-const getFormValues = (property?: TNewProperty) => {
+const getFormValues = (property?: TFormProperty) => {
     return property
         ? {
               name: property.name,

@@ -1,6 +1,6 @@
 import { action, observable, makeAutoObservable } from 'mobx';
 import PropertyService from '../services/property-service';
-import { IProperty, TNewProperty } from '../utils/interfaces/typings';
+import { IProperty, TFormProperty } from '../utils/interfaces/typings';
 
 class PropertyStore {
     @observable properties: IProperty[] = [];
@@ -39,15 +39,22 @@ class PropertyStore {
     }
 
     @action
-    async createProperty(propertyData: TNewProperty, userId?: string) {
+    async createProperty(propertyData: TFormProperty, userId?: string) {
         const data = await PropertyService.createProperty(propertyData, userId);
         this.setProperties([...this.properties, data]);
         return data;
     }
 
     @action
-    updateProperty(propertyData: TNewProperty, propertyId: string) {
-        return PropertyService.updateProperty(propertyData, propertyId);
+    async updateProperty(propertyData: TFormProperty, propertyId: string): Promise<void> {
+        const data = await PropertyService.updateProperty(propertyData, propertyId);
+
+        if (data) {
+            const updatedProperties = this.properties.map((property) =>
+                property.id === data.id ? data : property
+            );
+            this.setProperties(updatedProperties);
+        }
     }
 
     @action

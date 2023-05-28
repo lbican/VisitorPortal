@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
-import { IProperty, TNewProperty } from '../../../utils/interfaces/typings';
+import { TFormProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from '../../../pages/properties/property-form';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
@@ -39,7 +39,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         formState: { errors },
         register,
         reset,
-    } = useForm<TNewProperty>({
+    } = useForm<TFormProperty>({
         shouldUseNativeValidation: false,
         defaultValues: getFormValues(store.editingProperty),
     });
@@ -48,7 +48,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         reset(getFormValues(store.editingProperty));
     }, [store.editingProperty, reset]);
 
-    const addNewProperty = async (propertyData: TNewProperty): Promise<void> => {
+    const addNewProperty = async (propertyData: TFormProperty): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
             store
                 .createProperty(propertyData, user?.id)
@@ -62,10 +62,13 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         });
     };
 
-    const updateProperty = async (propertyData: IProperty): Promise<void> => {
+    const updateProperty = async (
+        propertyData: TFormProperty,
+        propertyId: string
+    ): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
             store
-                .updateProperty(propertyData, propertyData.id)
+                .updateProperty(propertyData, propertyId)
                 .then(() => {
                     notification.success('Updated property', 'Successfully updated property!');
                     resolve();
@@ -81,11 +84,11 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         reset();
     };
 
-    const handleFormSubmit = (data: IProperty | TNewProperty) => {
+    const handleFormSubmit = (data: TFormProperty) => {
         setSubmitting(true);
         const actionPromise = store.editingProperty
-            ? updateProperty(data as IProperty)
-            : addNewProperty(data as TNewProperty);
+            ? updateProperty(data, store.editingProperty.id)
+            : addNewProperty(data);
 
         actionPromise
             .then(disposeModalAndUpdateData)

@@ -9,7 +9,7 @@ import {
     Button,
 } from '@chakra-ui/react';
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
-import { TNewProperty } from '../../utils/interfaces/typings';
+import { TFormProperty } from '../../utils/interfaces/typings';
 import FileDropzone from '../../components/common/file-dropzone';
 import RadioButtonGroup from '../../components/common/radio-button-group';
 import FileService, { IUploadedImage } from '../../services/file-service';
@@ -21,9 +21,9 @@ import { useAuth } from '../../context/auth-context';
 import PropertyService from '../../services/property-service';
 
 interface PropertyFormProps {
-    register: UseFormRegister<TNewProperty>;
-    errors: FieldErrors<TNewProperty>;
-    control: Control<TNewProperty>;
+    register: UseFormRegister<TFormProperty>;
+    errors: FieldErrors<TFormProperty>;
+    control: Control<TFormProperty>;
     existingPath?: string;
 }
 
