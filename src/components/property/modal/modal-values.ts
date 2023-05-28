@@ -8,7 +8,7 @@ const getFormValues = (property?: TNewProperty) => {
               rating: property.rating,
               location: property.location,
               description: property.description,
-              image_url: property.image_url,
+              image_path: property.image_path,
           }
         : {
               name: '',
@@ -16,7 +16,7 @@ const getFormValues = (property?: TNewProperty) => {
               rating: 0,
               location: '',
               description: undefined,
-              image_url: '',
+              image_path: '',
           };
 };
 

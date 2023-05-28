@@ -34,10 +34,12 @@ const Properties = observer((): ReactElement => {
 
     const confirmDeleteProperty = () => {
         if (store.currentProperty) {
-            store.deleteProperty(store.currentProperty.id).then(() => {
-                onCloseAlert();
-                notification.success('Success!', 'Successfully deleted property');
-            });
+            store
+                .deleteProperty(store.currentProperty.id, store.currentProperty.image_path)
+                .then(() => {
+                    onCloseAlert();
+                    notification.success('Success!', 'Successfully deleted property');
+                });
         }
     };
 

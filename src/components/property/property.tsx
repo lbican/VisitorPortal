@@ -4,10 +4,13 @@ import Rating from '../common/rating';
 import PropertyTags from './property-tags';
 import { motion } from 'framer-motion';
 import { IProperty } from '../../utils/interfaces/typings';
+import PropertyService from '../../services/property-service';
 
 interface PropertyProps {
     property: IProperty;
 }
+
+const UNRESOLVED_IMAGE = 'https://placehold.co/600x400?text=Unknown+image';
 
 const Property: React.FC<PropertyProps> = ({ property }) => {
     return (
@@ -24,7 +27,7 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             position="relative"
         >
             <Image
-                src={property.image_url}
+                src={PropertyService.getPropertyImage(property.image_path)?.url || UNRESOLVED_IMAGE}
                 objectFit="cover"
                 alt={`Picture of ${property.name}`}
                 roundedTop="lg"

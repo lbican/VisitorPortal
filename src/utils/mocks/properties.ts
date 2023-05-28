@@ -7,7 +7,7 @@ export const MOCK_PROPERTIES: IProperty[] = [
         location: 'Vir',
         rating: 3,
         type: PropertyType.APARTMENT,
-        image_url:
+        image_path:
             'https://cf.bstatic.com/xdata/images/hotel/max1024x768/370901700.jpg?k=9e4e5128410b37a73eb7d6047ccc0d900d080fbee9023b9b104286f97021e5b8&o=&hp=1',
         rooms: [
             {
@@ -28,7 +28,7 @@ export const MOCK_PROPERTIES: IProperty[] = [
         location: 'Palo Alto',
         rating: 5,
         type: PropertyType.HOUSE,
-        image_url:
+        image_path:
             'https://photos.zillowstatic.com/fp/bb2c56474e1ff5fc422ee49579a5a035-cc_ft_960.jpg',
         rooms: [
             {
@@ -49,7 +49,7 @@ export const MOCK_PROPERTIES: IProperty[] = [
         location: 'Malibu',
         rating: 4,
         type: PropertyType.APARTMENT,
-        image_url: 'https://images.pexels.com/photos/3315287/pexels-photo-3315287.jpeg',
+        image_path: 'https://images.pexels.com/photos/3315287/pexels-photo-3315287.jpeg',
         rooms: [
             {
                 name: 'Studio apartment 1A',
@@ -64,7 +64,7 @@ export const MOCK_PROPERTIES: IProperty[] = [
         location: 'Zadar',
         rating: 4,
         type: PropertyType.HOTEL,
-        image_url: 'https://images.pexels.com/photos/2507011/pexels-photo-2507011.jpeg',
+        image_path: 'https://images.pexels.com/photos/2507011/pexels-photo-2507011.jpeg',
         rooms: [
             {
                 name: 'Suite 101',

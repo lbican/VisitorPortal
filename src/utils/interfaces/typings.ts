@@ -29,7 +29,7 @@ export interface IProperty {
     name: string;
     location?: string;
     type: PropertyType;
-    image_url: string;
+    image_path: string;
     rating?: number;
     description?: string;
     rooms: IUnit[];

@@ -8,7 +8,6 @@ class PropertyStore {
     @observable editingProperty: IProperty | undefined = undefined;
     @observable isDeleting = false;
     @observable isFetching = false;
-    @observable formSubmitting = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -40,19 +39,10 @@ class PropertyStore {
     }
 
     @action
-    setIsSubmitting(value: boolean) {
-        this.formSubmitting = value;
-    }
-
-    @action
     async createProperty(propertyData: TNewProperty, userId?: string) {
-        this.setIsSubmitting(true);
         const data = await PropertyService.createProperty(propertyData, userId);
-        if (data) {
-            this.setProperties([...this.properties, data]);
-        }
-
-        this.setIsSubmitting(false);
+        this.setProperties([...this.properties, data]);
+        return data;
     }
 
     @action
@@ -61,9 +51,9 @@ class PropertyStore {
     }
 
     @action
-    deleteProperty(propertyId: string) {
+    deleteProperty(propertyId: string, imagePath: string) {
         this.setIsDeleting(true);
-        return PropertyService.deletePropertyById(propertyId)
+        return PropertyService.deleteProperty(propertyId, imagePath)
             .then(() => {
                 this.setProperties(this.properties.filter((prop) => prop.id !== propertyId));
                 this.setIsDeleting(false);

@@ -14,24 +14,16 @@ class FileService {
         this.userId = userId;
     }
 
-    async uploadFile(file: File): Promise<IUploadedImage> {
+    async uploadFile(file: File): Promise<string> {
         const { data, error } = await supabase.storage
             .from(this.bucket)
             .upload(`${this.userId}/${file.name}`, file);
 
         if (data) {
-            const url = this.getPublicUrl(data.path);
-            return {
-                url: url.data.publicUrl,
-                path: data.path,
-            };
+            return data.path;
         }
 
         return Promise.reject(error);
-    }
-
-    getPublicUrl(path: string) {
-        return supabase.storage.from(this.bucket).getPublicUrl(path);
     }
 
     async deleteFiles(paths: string[]): Promise<void> {

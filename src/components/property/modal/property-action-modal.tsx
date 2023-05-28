@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Modal,
@@ -12,9 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
-import { TNewProperty } from '../../../utils/interfaces/typings';
+import { IProperty, TNewProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from '../../../pages/properties/property-form';
-import PropertyService from '../../../services/property-service';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { isObject } from 'lodash';
@@ -28,6 +27,7 @@ interface ContentModalProps {
 }
 
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
+    const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const store = usePropertyStore();
     const { user } = useAuth();
@@ -48,18 +48,32 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         reset(getFormValues(store.editingProperty));
     }, [store.editingProperty, reset]);
 
-    const addNewProperty = async (propertyData: TNewProperty) => {
-        store.createProperty(propertyData, user?.id).then(() => {
-            notification.success('Added new property', 'Successfully added new property!');
+    const addNewProperty = async (propertyData: TNewProperty): Promise<void> => {
+        return new Promise<void>((resolve, reject) => {
+            store
+                .createProperty(propertyData, user?.id)
+                .then(() => {
+                    notification.success('Added new property', 'Successfully added new property!');
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                });
         });
     };
 
-    const updateProperty = async (propertyData: TNewProperty) => {
-        const data = await PropertyService.updateProperty(propertyData, store.editingProperty?.id);
-        if (data) {
-            notification.success('Updated property', 'Successfully updated property!');
-            return data;
-        }
+    const updateProperty = async (propertyData: IProperty): Promise<void> => {
+        return new Promise<void>((resolve, reject) => {
+            store
+                .updateProperty(propertyData, propertyData.id)
+                .then(() => {
+                    notification.success('Updated property', 'Successfully updated property!');
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     };
 
     const disposeModalAndUpdateData = () => {
@@ -67,16 +81,24 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         reset();
     };
 
-    const handleFormSubmit = (data: TNewProperty) => {
-        const actionPromise = store.editingProperty ? updateProperty(data) : addNewProperty(data);
+    const handleFormSubmit = (data: IProperty | TNewProperty) => {
+        setSubmitting(true);
+        const actionPromise = store.editingProperty
+            ? updateProperty(data as IProperty)
+            : addNewProperty(data as TNewProperty);
 
-        actionPromise.then(disposeModalAndUpdateData).catch((error) => {
-            const errorMsg = store.editingProperty ? 'update' : 'add';
-            notification.error(
-                'An error has occurred',
-                isObject(error) ? `Unable to ${errorMsg} property` : error
-            );
-        });
+        actionPromise
+            .then(disposeModalAndUpdateData)
+            .catch((error) => {
+                const errorMsg = store.editingProperty ? 'update' : 'add';
+                notification.error(
+                    'An error has occurred',
+                    isObject(error) ? `Unable to ${errorMsg} property` : error
+                );
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
     };
 
     return (
@@ -93,7 +115,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             register={register}
                             control={control}
                             errors={errors}
-                            existingUrl={store.editingProperty?.image_url}
+                            existingPath={store.editingProperty?.image_path}
                         />
                     </ModalBody>
 
@@ -107,7 +129,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             onClick={handleSubmit(handleFormSubmit)}
                             colorScheme="green"
                             alignSelf="flex-end"
-                            isLoading={store.formSubmitting}
+                            isLoading={submitting}
                         >
                             {store.editingProperty ? 'Save changes' : 'Create'}
                         </Button>

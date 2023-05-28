@@ -2,11 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Flex, HStack, Text, CircularProgress } from '@chakra-ui/react';
 import { AiOutlineUpload } from 'react-icons/all';
-import FileService, { IUploadedImage } from '../../services/file-service';
+import FileService from '../../services/file-service';
 
 interface FileDropzoneProps {
     fileService: FileService;
-    setSelectedImage: (image: IUploadedImage) => void;
+    setSelectedImage: (path: string) => void;
 }
 
 const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileService }) => {

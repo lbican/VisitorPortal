@@ -18,27 +18,23 @@ import ProgressiveImage from '../../components/common/progressive-image';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../hooks/useToastNotification';
 import { useAuth } from '../../context/auth-context';
+import PropertyService from '../../services/property-service';
 
 interface PropertyFormProps {
     register: UseFormRegister<TNewProperty>;
     errors: FieldErrors<TNewProperty>;
     control: Control<TNewProperty>;
-    existingUrl?: string;
+    existingPath?: string;
 }
 
 const PropertyForm: React.FC<PropertyFormProps> = ({
     register,
     errors,
     control,
-    existingUrl,
+    existingPath,
 }): ReactElement => {
     const [image, setImage] = useState<IUploadedImage | undefined>(
-        existingUrl
-            ? {
-                  path: existingUrl,
-                  url: existingUrl,
-              }
-            : undefined
+        PropertyService.getPropertyImage(existingPath)
     );
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
@@ -111,25 +107,25 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                     <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
                 </FormControl>
             </HStack>
-            <FormControl isInvalid={!!errors.image_url}>
+            <FormControl isInvalid={!!errors.image_path}>
                 <FormLabel htmlFor="location">Property image</FormLabel>
                 {!image && (
                     <>
                         <Controller
                             control={control}
-                            name="image_url"
+                            name="image_path"
                             rules={{ required: 'Image is required' }}
                             render={({ field }) => (
                                 <FileDropzone
                                     fileService={fileService}
-                                    setSelectedImage={(image) => {
-                                        field.onChange(image.path);
-                                        setImage(image);
+                                    setSelectedImage={(image_path) => {
+                                        field.onChange(image_path);
+                                        setImage(PropertyService.getPropertyImage(image_path));
                                     }}
                                 />
                             )}
                         />
-                        <FormErrorMessage>{errors.image_url?.message}</FormErrorMessage>
+                        <FormErrorMessage>{errors.image_path?.message}</FormErrorMessage>
                     </>
                 )}
             </FormControl>
