@@ -8,7 +8,13 @@ import {
     VStack,
     Button,
 } from '@chakra-ui/react';
-import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
+import {
+    Control,
+    Controller,
+    FieldErrors,
+    UseFormRegister,
+    UseFormSetValue,
+} from 'react-hook-form';
 import { TFormProperty } from '../../utils/interfaces/typings';
 import FileDropzone from '../../components/common/file-dropzone';
 import RadioButtonGroup from '../../components/common/radio-button-group';
@@ -24,6 +30,7 @@ interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
     errors: FieldErrors<TFormProperty>;
     control: Control<TFormProperty>;
+    setValue: UseFormSetValue<TFormProperty>;
     existingPath?: string;
 }
 
@@ -31,6 +38,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     register,
     errors,
     control,
+    setValue,
     existingPath,
 }): ReactElement => {
     const [image, setImage] = useState<IUploadedImage | undefined>(
@@ -119,8 +127,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                 <FileDropzone
                                     fileService={fileService}
                                     setSelectedImage={(image_path) => {
-                                        field.onChange(image_path);
                                         setImage(PropertyService.getPropertyImage(image_path));
+                                        field.onChange(image_path);
                                     }}
                                 />
                             )}
@@ -152,6 +160,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                         'Image deleted',
                                         'Image has been successfully deleted'
                                     );
+                                    setValue('image_path', '');
                                     setImage(undefined);
                                 })
                                 .catch(() => {

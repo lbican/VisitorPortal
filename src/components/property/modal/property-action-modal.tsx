@@ -39,6 +39,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         formState: { errors },
         register,
         reset,
+        setValue,
     } = useForm<TFormProperty>({
         shouldUseNativeValidation: false,
         defaultValues: getFormValues(store.editingProperty),
@@ -119,6 +120,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             control={control}
                             errors={errors}
                             existingPath={store.editingProperty?.image_path}
+                            setValue={setValue}
                         />
                     </ModalBody>
 
