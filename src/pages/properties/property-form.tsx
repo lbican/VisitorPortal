@@ -122,9 +122,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                             render={({ field }) => (
                                 <FileDropzone
                                     fileService={fileService}
-                                    setSelectedImage={(file) => {
-                                        field.onChange(file.url);
-                                        setImage(file);
+                                    setSelectedImage={(image) => {
+                                        field.onChange(image.path);
+                                        setImage(image);
                                     }}
                                 />
                             )}

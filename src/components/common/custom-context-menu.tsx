@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
-import { Box, MenuList, MenuItem } from '@chakra-ui/react';
-import { ContextMenu } from 'chakra-ui-contextmenu'; // Use correct import here
+import { Box, MenuList, MenuItem, Text, MenuDivider } from '@chakra-ui/react';
+import { ContextMenu } from 'chakra-ui-contextmenu';
+import { GoTrashcan } from 'react-icons/all';
+import { AiOutlineEdit } from 'react-icons/ai'; // Use correct import here
 
 type CustomContextMenuProps = {
     onMenuDelete: () => void;
@@ -16,8 +18,15 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
     <ContextMenu<HTMLDivElement>
         renderMenu={() => (
             <MenuList>
-                <MenuItem onClick={onMenuDelete}>Delete</MenuItem>
-                <MenuItem onClick={onMenuEdit}>Edit</MenuItem>
+                <MenuItem onClick={onMenuDelete}>
+                    <GoTrashcan />
+                    <Text ml={2}>Delete</Text>
+                </MenuItem>
+                <MenuItem onClick={onMenuEdit}>
+                    <AiOutlineEdit />
+                    <Text ml={2}>Edit</Text>
+                </MenuItem>
+                <MenuDivider />
                 <MenuItem>Jump to calendar</MenuItem>
             </MenuList>
         )}

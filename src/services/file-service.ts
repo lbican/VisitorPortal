@@ -20,7 +20,7 @@ class FileService {
             .upload(`${this.userId}/${file.name}`, file);
 
         if (data) {
-            const url = supabase.storage.from(this.bucket).getPublicUrl(data?.path);
+            const url = this.getPublicUrl(data.path);
             return {
                 url: url.data.publicUrl,
                 path: data.path,
@@ -28,6 +28,10 @@ class FileService {
         }
 
         return Promise.reject(error);
+    }
+
+    getPublicUrl(path: string) {
+        return supabase.storage.from(this.bucket).getPublicUrl(path);
     }
 
     async deleteFiles(paths: string[]): Promise<void> {

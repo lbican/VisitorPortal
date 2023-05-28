@@ -6,7 +6,6 @@ class PropertyService {
         property: TNewProperty,
         userId: string | undefined
     ): Promise<IProperty> {
-        console.log(property);
         if (!userId) {
             return Promise.reject('User is not logged in!');
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     Button,
     Modal,
@@ -28,7 +28,6 @@ interface ContentModalProps {
 }
 
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
-    const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const store = usePropertyStore();
     const { user } = useAuth();
@@ -69,20 +68,15 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     const handleFormSubmit = (data: TNewProperty) => {
-        setSubmitting(true);
-
         const actionPromise = store.editingProperty ? updateProperty(data) : addNewProperty(data);
 
-        actionPromise
-            .then(disposeModalAndUpdateData)
-            .catch((error) => {
-                const errorMsg = store.editingProperty ? 'update' : 'add';
-                notification.error(
-                    'An error has occurred',
-                    isObject(error) ? `Unable to ${errorMsg} property` : error
-                );
-            })
-            .finally(() => setSubmitting(false));
+        actionPromise.then(disposeModalAndUpdateData).catch((error) => {
+            const errorMsg = store.editingProperty ? 'update' : 'add';
+            notification.error(
+                'An error has occurred',
+                isObject(error) ? `Unable to ${errorMsg} property` : error
+            );
+        });
     };
 
     return (
@@ -113,7 +107,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             onClick={handleSubmit(handleFormSubmit)}
                             colorScheme="green"
                             alignSelf="flex-end"
-                            isLoading={submitting}
+                            isLoading={store.formSubmitting}
                         >
                             {store.editingProperty ? 'Save changes' : 'Create'}
                         </Button>

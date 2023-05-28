@@ -8,6 +8,7 @@ class PropertyStore {
     @observable editingProperty: IProperty | undefined = undefined;
     @observable isDeleting = false;
     @observable isFetching = false;
+    @observable formSubmitting = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -39,11 +40,19 @@ class PropertyStore {
     }
 
     @action
+    setIsSubmitting(value: boolean) {
+        this.formSubmitting = value;
+    }
+
+    @action
     async createProperty(propertyData: TNewProperty, userId?: string) {
+        this.setIsSubmitting(true);
         const data = await PropertyService.createProperty(propertyData, userId);
         if (data) {
             this.setProperties([...this.properties, data]);
         }
+
+        this.setIsSubmitting(false);
     }
 
     @action
