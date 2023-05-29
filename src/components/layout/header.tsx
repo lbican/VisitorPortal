@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { Flex, HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { FiMenu } from 'react-icons/fi';
-import InteractiveAvatar from '../common/interactive-avatar';
-import ColorModeSwitcher from '../common/color-mode-switcher';
+import InteractiveAvatar from '../common/image/interactive-avatar';
+import ColorModeSwitcher from '../common/action/color-mode-switcher';
 import { useAuth } from '../../context/auth-context';
 
 interface Props {

@@ -1,9 +1,9 @@
 import React from 'react';
-import BannerWrapper from '../common/banner-wrapper';
+import BannerWrapper from '../common/banner/banner-wrapper';
 import ProfileDetails from './profile-details';
 import { UserProfile } from '../../context/auth-context';
 import ProfileContainer from './profile-container';
-import Banner from '../common/banner';
+import Banner from '../common/banner/banner';
 
 const Profile: React.FC<UserProfile> = (props) => {
     return (

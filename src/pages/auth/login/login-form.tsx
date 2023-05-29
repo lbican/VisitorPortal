@@ -17,7 +17,7 @@ import { FaFacebook, FaTwitter } from 'react-icons/fa';
 import { Provider } from '@supabase/supabase-js';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
-import AnimatedAlert from '../../../components/layout/animated-alert';
+import AnimatedAlert from '../../../components/common/feedback/animated-alert';
 import { emailValidator, passwordValidator } from '../../../services/validators';
 import { useAuthForm } from '../../../hooks/useAuthLogin';
 import { NavLink } from 'react-router-dom';

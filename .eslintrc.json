@@ -23,7 +23,7 @@
     ],
     "rules": {
         "@typescript-eslint/no-empty-function": "off",
-        "linebreak-style": ["warn", "unix"],
+        "linebreak-style": ["warn", "windows"],
         "quotes": ["warn", "single"],
         "semi": ["warn", "always"],
         "react/no-unescaped-entities": "off",
@@ -36,7 +36,8 @@
             {
                 "singleQuote":true,
                 "printWidth": 100,
-                "tabWidth": 4
+                "tabWidth": 4,
+                "endOfLine": "crlf"
             }
         ]
     }

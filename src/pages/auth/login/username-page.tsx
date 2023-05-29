@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import SplitScreen from '../../../components/common/split-screen';
+import SplitScreen from '../../../components/layout/split-screen';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
-import AnimatedAlert from '../../../components/layout/animated-alert';
+import AnimatedAlert from '../../../components/common/feedback/animated-alert';
 import { AuthError } from '@supabase/supabase-js';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/auth-context';

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Flex, Heading, Stack, useColorModeValue } from '@chakra-ui/react';
-import ProgressiveImage from './progressive-image';
+import ProgressiveImage from '../common/image/progressive-image';
 
 interface Props {
     title?: string;

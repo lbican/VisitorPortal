@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import useHover from '../../hooks/useHover';
+import useHover from '../../../hooks/useHover';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 
 interface ReactiveButtonProps {

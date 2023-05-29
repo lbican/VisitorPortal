@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Box, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { RiSettings2Line, RiLogoutBoxLine } from 'react-icons/ri';
-import { UserProfile } from '../../context/auth-context';
+import { UserProfile } from '../../../context/auth-context';
 import { NavLink } from 'react-router-dom';
 
 interface AvatarProps {

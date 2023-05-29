@@ -5,7 +5,7 @@ import { FormContext } from '../definition/form-context';
 import { IUserRegistration } from '../../../../utils/interfaces/typings';
 import { motion } from 'framer-motion';
 import { AuthError } from '@supabase/supabase-js';
-import AnimatedAlert from '../../../../components/layout/animated-alert';
+import AnimatedAlert from '../../../../components/common/feedback/animated-alert';
 import { AuthService } from '../../../../services/auth-service';
 
 const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {

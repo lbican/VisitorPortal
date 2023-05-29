@@ -16,11 +16,11 @@ import {
     UseFormSetValue,
 } from 'react-hook-form';
 import { TFormProperty } from '../../utils/interfaces/typings';
-import FileDropzone from '../../components/common/file-dropzone';
-import RadioButtonGroup from '../../components/common/radio-button-group';
+import FileDropzone from '../../components/common/input/file-dropzone';
+import RadioButtonGroup from '../../components/common/input/radio-button-group';
 import FileService, { IUploadedImage } from '../../services/file-service';
 import { GoTrashcan } from 'react-icons/all';
-import ProgressiveImage from '../../components/common/progressive-image';
+import ProgressiveImage from '../../components/common/image/progressive-image';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../hooks/useToastNotification';
 import { useAuth } from '../../context/auth-context';

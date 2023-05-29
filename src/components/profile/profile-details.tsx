@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, HStack, useDisclosure } from '@chakra-ui/react';
+import { HStack, useDisclosure } from '@chakra-ui/react';
 import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import ProfileUpdateModal from './profile-update-modal';
-import ReactiveButton from '../common/reactive-button';
+import ReactiveButton from '../common/input/reactive-button';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
     const { user } = useAuth();
