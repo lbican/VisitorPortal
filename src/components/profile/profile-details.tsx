@@ -2,15 +2,12 @@ import React from 'react';
 import { Button, HStack, useDisclosure } from '@chakra-ui/react';
 import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
-import { motion } from 'framer-motion';
-import useHover from '../../hooks/useHover';
 import ProfileUpdateModal from './profile-update-modal';
+import ReactiveButton from '../common/reactive-button';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
     const { user } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const [isHovered, hoverRef] = useHover();
 
     const isEditable = () => {
         return props.id === user?.id;
@@ -23,22 +20,18 @@ const ProfileDetails: React.FC<UserProfile> = (props) => {
                 px={8}
                 my={4}
                 width="full"
-                height="full"
                 borderRadius="lg"
                 textAlign="left"
             >
                 {isEditable() && (
-                    <Button
-                        as={motion.button}
-                        leftIcon={isHovered || isOpen ? <AiFillEdit /> : <AiOutlineEdit />}
-                        colorScheme="blue"
-                        variant="solid"
-                        whileTap={{ scale: 0.9 }}
+                    <ReactiveButton
                         onClick={onOpen}
-                        ref={hoverRef}
-                    >
-                        Edit
-                    </Button>
+                        text="Edit"
+                        icon={<AiOutlineEdit />}
+                        hoveredIcon={<AiFillEdit />}
+                        colorScheme="blue"
+                        isActive={isOpen}
+                    />
                 )}
             </HStack>
             {user && <ProfileUpdateModal isOpen={isOpen} onClose={onClose} userProfile={user} />}

@@ -8,7 +8,7 @@ interface ProfileImageProps {
 
 const DEFAULT_BANNER = 'https://source.unsplash.com/1600x800/?mountains';
 
-const ProfileBanner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
+const Banner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
     return (
         <Box
             bg="#edf3f8"
@@ -36,4 +36,4 @@ const ProfileBanner: React.FC<ProfileImageProps> = ({ banner_url, children }) =>
     );
 };
 
-export default ProfileBanner;
+export default Banner;

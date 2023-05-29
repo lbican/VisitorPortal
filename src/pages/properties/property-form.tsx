@@ -19,7 +19,7 @@ import { TFormProperty } from '../../utils/interfaces/typings';
 import FileDropzone from '../../components/common/file-dropzone';
 import RadioButtonGroup from '../../components/common/radio-button-group';
 import FileService, { IUploadedImage } from '../../services/file-service';
-import { GiTrashCan } from 'react-icons/all';
+import { GoTrashcan } from 'react-icons/all';
 import ProgressiveImage from '../../components/common/progressive-image';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../hooks/useToastNotification';
@@ -150,7 +150,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         variant="solid"
                         colorScheme="red"
                         isLoading={loading}
-                        leftIcon={<GiTrashCan />}
+                        leftIcon={<GoTrashcan />}
                         onClick={() => {
                             setLoading(true);
                             fileService

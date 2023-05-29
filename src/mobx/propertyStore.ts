@@ -48,6 +48,7 @@ class PropertyStore {
     @action
     async updateProperty(propertyData: TFormProperty, propertyId: string): Promise<void> {
         const data = await PropertyService.updateProperty(propertyData, propertyId);
+        this.setCurrentProperty(data);
 
         if (data) {
             const updatedProperties = this.properties.map((property) =>
@@ -69,6 +70,22 @@ class PropertyStore {
                 console.error(error);
                 this.setIsDeleting(false);
             });
+    }
+
+    @action
+    getCurrentProperty(propertyId: string) {
+        if (this.currentProperty?.id !== propertyId) {
+            const propertyIndex = this.properties.findIndex((property) => {
+                return property.id == propertyId;
+            });
+
+            if (propertyIndex > -1) {
+                this.setCurrentProperty(this.properties[propertyIndex]);
+                return;
+            }
+
+            //TODO - Implement logic that will get current property if not clicked from properties menu
+        }
     }
 
     @action

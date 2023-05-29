@@ -1,18 +1,18 @@
 import React from 'react';
-import ProfileWrapper from './profile-wrapper';
+import BannerWrapper from '../common/banner-wrapper';
 import ProfileDetails from './profile-details';
 import { UserProfile } from '../../context/auth-context';
 import ProfileContainer from './profile-container';
-import ProfileBanner from './profile-banner';
+import Banner from '../common/banner';
 
 const Profile: React.FC<UserProfile> = (props) => {
     return (
-        <ProfileWrapper>
-            <ProfileBanner>
+        <BannerWrapper>
+            <Banner>
                 <ProfileContainer {...props} />
-            </ProfileBanner>
+            </Banner>
             <ProfileDetails {...props} />
-        </ProfileWrapper>
+        </BannerWrapper>
     );
 };
 

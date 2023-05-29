@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex } from '@chakra-ui/react';
 
-const ProfileWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const BannerWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <Flex
             shadow="lg"
@@ -20,4 +20,4 @@ const ProfileWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =
     );
 };
 
-export default ProfileWrapper;
+export default BannerWrapper;

@@ -1,5 +1,9 @@
 import { PropertyType, TFormProperty } from '../../../utils/interfaces/typings';
 
+/**
+ * Returns default form values for editing or creating new property
+ * @param property - Property we want to edit
+ */
 const getFormValues = (property?: TFormProperty) => {
     return property
         ? {

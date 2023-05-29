@@ -10,8 +10,9 @@ import CustomContextMenu from '../../components/common/custom-context-menu';
 import { observer } from 'mobx-react-lite';
 import { usePropertyStore } from '../../mobx/propertyStoreContext';
 import useToastNotification from '../../hooks/useToastNotification';
+import { NavLink } from 'react-router-dom';
 
-const Properties = observer((): ReactElement => {
+const Properties = (): ReactElement => {
     const store = usePropertyStore();
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
     const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
@@ -76,12 +77,17 @@ const Properties = observer((): ReactElement => {
                         onMenuEdit={() => openEditModal(property)}
                         onMenuDelete={() => openDeleteAlert(property)}
                     >
-                        <Property property={property} />
+                        <NavLink
+                            to={`/properties/property/${property.id}`}
+                            onClick={() => store.setCurrentProperty(property)}
+                        >
+                            <Property property={property} />
+                        </NavLink>
                     </CustomContextMenu>
                 ))}
             </Flex>
         </>
     );
-});
+};
 
-export default Properties;
+export default observer(Properties);

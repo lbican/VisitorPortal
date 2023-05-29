@@ -16,6 +16,7 @@ import ProfilePage from './pages/profile/profile-page';
 import UsernamePage from './pages/auth/login/username-page';
 import PropertyStoreContext from './mobx/propertyStoreContext';
 import propertyStore from './mobx/propertyStore';
+import PropertyPage from './pages/properties/property-page';
 
 const router = createBrowserRouter([
     {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: '/properties',
                 element: <Properties />,
+            },
+            {
+                path: '/properties/property/:pid',
+                element: <PropertyPage />,
             },
             {
                 path: '/calendar',
