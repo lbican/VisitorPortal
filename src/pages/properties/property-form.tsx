@@ -6,7 +6,7 @@ import {
     HStack,
     Input,
     VStack,
-    Button,
+    FormHelperText,
 } from '@chakra-ui/react';
 import {
     Control,
@@ -19,12 +19,11 @@ import { TFormProperty } from '../../utils/interfaces/typings';
 import FileDropzone from '../../components/common/input/file-dropzone';
 import RadioButtonGroup from '../../components/common/input/radio-button-group';
 import FileService, { IUploadedImage } from '../../services/file-service';
-import { GoTrashcan } from 'react-icons/all';
-import ProgressiveImage from '../../components/common/image/progressive-image';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../hooks/useToastNotification';
 import { useAuth } from '../../context/auth-context';
 import PropertyService from '../../services/property-service';
+import FormImage from '../../components/property/form-image';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -41,13 +40,30 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     setValue,
     existingPath,
 }): ReactElement => {
+    const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<IUploadedImage | undefined>(
         PropertyService.getPropertyImage(existingPath)
     );
-    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
     const fileService = new FileService('property_images', user?.id);
     const notification = useToastNotification();
+
+    const deletePropertyImage = () => {
+        if (image) {
+            setLoading(true);
+            fileService
+                .deleteFiles([image.path])
+                .then(() => {
+                    notification.info('Image deleted', 'Image has been successfully deleted');
+                    setValue('image_path', '');
+                    setImage(undefined);
+                })
+                .catch(() => {
+                    notification.error('Could not delete image', 'Please try again later');
+                })
+                .finally(() => setLoading(false));
+        }
+    };
 
     return (
         <VStack spacing={4} justifyContent="flex-start">
@@ -117,65 +133,31 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             </HStack>
             <FormControl isInvalid={!!errors.image_path}>
                 <FormLabel htmlFor="location">Property image</FormLabel>
-                {!image && (
+                {image ? (
                     <>
-                        <Controller
-                            control={control}
-                            name="image_path"
-                            rules={{ required: 'Image is required' }}
-                            render={({ field }) => (
-                                <FileDropzone
-                                    fileService={fileService}
-                                    setSelectedImage={(image_path) => {
-                                        setImage(PropertyService.getPropertyImage(image_path));
-                                        field.onChange(image_path);
-                                    }}
-                                />
-                            )}
-                        />
-                        <FormErrorMessage>{errors.image_path?.message}</FormErrorMessage>
+                        <FormHelperText>
+                            Your property image, delete current image if you want to set a new one.
+                        </FormHelperText>
+                        <FormImage image={image} loading={loading} onClick={deletePropertyImage} />
                     </>
-                )}
-            </FormControl>
-            {image && (
-                <VStack alignItems="flex-end" mt={2} w="full">
-                    <ProgressiveImage
-                        imageLink={image.url}
-                        imageAlt="Property image"
-                        width="full"
-                        height="20rem"
-                        borderRadius="md"
+                ) : (
+                    <Controller
+                        control={control}
+                        name="image_path"
+                        rules={{ required: 'Image is required' }}
+                        render={({ field }) => (
+                            <FileDropzone
+                                fileService={fileService}
+                                setSelectedImage={(image_path) => {
+                                    setImage(PropertyService.getPropertyImage(image_path));
+                                    field.onChange(image_path);
+                                }}
+                            />
+                        )}
                     />
-                    <Button
-                        variant="solid"
-                        colorScheme="red"
-                        isLoading={loading}
-                        leftIcon={<GoTrashcan />}
-                        onClick={() => {
-                            setLoading(true);
-                            fileService
-                                .deleteFiles([image.path])
-                                .then(() => {
-                                    notification.info(
-                                        'Image deleted',
-                                        'Image has been successfully deleted'
-                                    );
-                                    setValue('image_path', '');
-                                    setImage(undefined);
-                                })
-                                .catch(() => {
-                                    notification.error(
-                                        'Could not delete image',
-                                        'Please try again later'
-                                    );
-                                })
-                                .finally(() => setLoading(false));
-                        }}
-                    >
-                        Delete image
-                    </Button>
-                </VStack>
-            )}
+                )}
+                <FormErrorMessage>{errors.image_path?.message}</FormErrorMessage>
+            </FormControl>
         </VStack>
     );
 };
