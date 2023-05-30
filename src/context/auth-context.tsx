@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthType>({
 });
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userService = new UserService(null);
+    const userService = new UserService();
     const [user, setUser] = useState<UserProfile | null>(StorageService.getUserFromStorage());
 
     useEffect(() => {

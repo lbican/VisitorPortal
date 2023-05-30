@@ -7,8 +7,8 @@ import { pickBy, identity } from 'lodash';
 export class UserService {
     private session: Session | null;
 
-    constructor(session: Session | null) {
-        this.session = session;
+    constructor(session?: Session) {
+        this.session = session || null;
     }
 
     setSession(session: Session | null): void {

@@ -40,5 +40,10 @@
                 "endOfLine": "crlf"
             }
         ]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }
