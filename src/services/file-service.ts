@@ -1,4 +1,5 @@
 import supabase from '../../database';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IUploadedImage {
     path: string;
@@ -17,7 +18,7 @@ class FileService {
     async uploadFile(file: File): Promise<string> {
         const { data, error } = await supabase.storage
             .from(this.bucket)
-            .upload(`${this.userId}/${file.name}`, file);
+            .upload(`${this.userId}/${uuidv4()}-${file.name}`, file);
 
         if (data) {
             return data.path;

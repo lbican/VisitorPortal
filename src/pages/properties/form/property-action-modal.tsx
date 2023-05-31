@@ -9,6 +9,8 @@ import {
     ModalBody,
     ModalFooter,
     Box,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
@@ -16,9 +18,10 @@ import { TFormProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from './property-form';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
-import { isObject } from 'lodash';
+import _, { isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Used for determining if modal is opened and close it
 interface ContentModalProps {
@@ -26,8 +29,28 @@ interface ContentModalProps {
     onClose: () => void;
 }
 
+function UnfinishedFormAlert(props: { onClick: () => void }) {
+    return (
+        <Alert
+            as={motion.div}
+            key="error_alert"
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
+            exit={{ opacity: 0 }}
+            status="info"
+            my={2}
+        >
+            <AlertIcon />
+            Looks like you closed your modal without completing your form, we've saved the progress
+            for you. You can reset form if this was intended.
+            <Button onClick={props.onClick}>Reset</Button>
+        </Alert>
+    );
+}
+
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
+    const [isUnfinished, setIsUnfinished] = useState(false);
     const notification = useToastNotification();
     const { user } = useAuth();
 
@@ -39,10 +62,26 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         register,
         reset,
         setValue,
+        watch,
     } = useForm<TFormProperty>({
         shouldUseNativeValidation: false,
         defaultValues: getFormValues(store.editingProperty),
     });
+
+    const savedFormValues = watch();
+
+    function isFormUnfinished(form: typeof savedFormValues) {
+        const defaultForm = getFormValues();
+        return !_.isEqual(defaultForm, form);
+    }
+
+    useEffect(() => {
+        if (isFormUnfinished(savedFormValues) && !store.editingProperty) {
+            setIsUnfinished(true);
+        } else {
+            setIsUnfinished(false);
+        }
+    }, [onClose]);
 
     useEffect(() => {
         reset(getFormValues(store.editingProperty));
@@ -114,11 +153,23 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
+                        <AnimatePresence>
+                            {isUnfinished && (
+                                <UnfinishedFormAlert
+                                    onClick={() => {
+                                        reset(getFormValues());
+                                        setIsUnfinished(false);
+                                    }}
+                                />
+                            )}
+                        </AnimatePresence>
                         <PropertyForm
                             register={register}
                             control={control}
                             errors={errors}
-                            existingPath={store.editingProperty?.image_path}
+                            existingPath={
+                                store.editingProperty?.image_path || savedFormValues.image_path
+                            }
                             setValue={setValue}
                         />
                     </ModalBody>

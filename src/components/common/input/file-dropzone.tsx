@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, Flex, HStack, Text, CircularProgress } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, CircularProgress, Alert, AlertIcon } from '@chakra-ui/react';
 import { AiOutlineUpload } from 'react-icons/all';
 import FileService from '../../../services/file-service';
 
@@ -11,15 +11,19 @@ interface FileDropzoneProps {
 
 const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileService }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         setIsLoading(true);
+        setError(false);
+        const file = acceptedFiles[0];
+
         try {
-            const file = acceptedFiles[0];
             const filePath = await fileService.uploadFile(file);
             setSelectedImage(filePath);
         } catch (error) {
             console.error('Upload error', error);
+            setError(true);
         } finally {
             setIsLoading(false);
         }
@@ -56,6 +60,12 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
                         </Box>
                     )}
                 </Box>
+                {error && (
+                    <Alert status="error">
+                        <AlertIcon />
+                        There was an error processing your request, please try again later
+                    </Alert>
+                )}
             </Flex>
         </>
     );

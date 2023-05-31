@@ -7,6 +7,7 @@ import {
     Input,
     VStack,
     FormHelperText,
+    Divider,
 } from '@chakra-ui/react';
 import {
     Control,
@@ -67,7 +68,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
 
     return (
         <VStack spacing={4} justifyContent="flex-start">
-            <HStack spacing={2} w="full">
+            <HStack spacing={4} w="full">
                 <FormControl isInvalid={!!errors.name}>
                     <FormLabel htmlFor="name">Name</FormLabel>
                     <Input
@@ -77,6 +78,18 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                     />
                     <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
                 </FormControl>
+                <FormControl isInvalid={!!errors.location}>
+                    <FormLabel htmlFor="location">Location</FormLabel>
+                    <Input
+                        type="text"
+                        id="location"
+                        {...register('location', { required: 'Location is required' })}
+                    />
+                    <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
+                </FormControl>
+            </HStack>
+            <Divider />
+            <HStack spacing={4} w="full">
                 <FormControl isInvalid={!!errors.rating}>
                     <FormLabel htmlFor="rating">Property rating</FormLabel>
                     <Controller
@@ -101,17 +114,6 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         )}
                     />
                     <FormErrorMessage>{errors.rating?.message}</FormErrorMessage>
-                </FormControl>
-            </HStack>
-            <HStack spacing={2} w="full">
-                <FormControl isInvalid={!!errors.location}>
-                    <FormLabel htmlFor="location">Location</FormLabel>
-                    <Input
-                        type="text"
-                        id="location"
-                        {...register('location', { required: 'Location is required' })}
-                    />
-                    <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={!!errors.type}>
                     <FormLabel htmlFor="type">Type</FormLabel>
