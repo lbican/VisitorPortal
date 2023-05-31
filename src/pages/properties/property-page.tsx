@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { usePropertyStore } from '../../mobx/propertyStoreContext';
 import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
 import BannerWrapper from '../../components/common/banner/banner-wrapper';
 import { Box, Heading, HStack, useDisclosure, VStack } from '@chakra-ui/react';
-import PropertyTags from '../../components/property/property-tags';
+import PropertyTags from '../../components/property/form/property-tags';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
-import PropertyActionModal from '../../components/property/modal/property-action-modal';
+import PropertyActionModal from './form/property-action-modal';
 import ReactiveButton from '../../components/common/input/reactive-button';
+import { propertyStore as store } from '../../mobx/propertyStore';
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
-    const store = usePropertyStore();
     const { onOpen, isOpen, onClose } = useDisclosure();
 
     useEffect(() => {

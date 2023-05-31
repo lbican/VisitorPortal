@@ -1,6 +1,6 @@
-import { IUploadedImage } from '../../services/file-service';
+import { IUploadedImage } from '../../../services/file-service';
 import { Button, VStack } from '@chakra-ui/react';
-import ProgressiveImage from '../common/image/progressive-image';
+import ProgressiveImage from '../../common/image/progressive-image';
 import { GoTrashcan } from 'react-icons/all';
 import React from 'react';
 

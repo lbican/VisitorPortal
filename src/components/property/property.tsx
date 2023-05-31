@@ -1,7 +1,7 @@
 import { Box, Flex, Image, Tag, Text, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import Rating from '../common/input/rating';
-import PropertyTags from './property-tags';
+import PropertyTags from './form/property-tags';
 import { motion } from 'framer-motion';
 import { IProperty } from '../../utils/interfaces/typings';
 import PropertyService from '../../services/property-service';

@@ -102,6 +102,15 @@ class PropertyStore {
                 this.setIsFetching(false);
             });
     }
+
+    @action
+    resetStore() {
+        this.properties = [];
+        this.currentProperty = null;
+        this.editingProperty = undefined;
+        this.isDeleting = false;
+        this.isFetching = false;
+    }
 }
 
-export default new PropertyStore();
+export const propertyStore = new PropertyStore();

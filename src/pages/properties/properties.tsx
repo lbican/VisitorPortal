@@ -2,18 +2,17 @@ import React, { ReactElement, useEffect } from 'react';
 import { Button, Divider, Flex, Heading, HStack, useDisclosure } from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';
-import PropertyActionModal from '../../components/property/modal/property-action-modal';
+import PropertyActionModal from './form/property-action-modal';
 import { useAuth } from '../../context/auth-context';
 import AlertDialogComponent from '../../components/common/feedback/alert-dialog-component';
 import { IProperty } from '../../utils/interfaces/typings';
 import CustomContextMenu from '../../components/common/action/custom-context-menu';
 import { observer } from 'mobx-react-lite';
-import { usePropertyStore } from '../../mobx/propertyStoreContext';
+import { propertyStore as store } from '../../mobx/propertyStore';
 import useToastNotification from '../../hooks/useToastNotification';
 import { NavLink } from 'react-router-dom';
 
 const Properties = (): ReactElement => {
-    const store = usePropertyStore();
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
     const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
     const { user } = useAuth();

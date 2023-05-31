@@ -13,12 +13,12 @@ import {
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import { TFormProperty } from '../../../utils/interfaces/typings';
-import PropertyForm from '../../../pages/properties/property-form';
+import PropertyForm from './property-form';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { isObject } from 'lodash';
 import getFormValues from './modal-values';
-import { usePropertyStore } from '../../../mobx/propertyStoreContext';
+import { propertyStore as store } from '../../../mobx/propertyStore';
 
 // Used for determining if modal is opened and close it
 interface ContentModalProps {
@@ -29,7 +29,6 @@ interface ContentModalProps {
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
-    const store = usePropertyStore();
     const { user } = useAuth();
 
     //Form controls

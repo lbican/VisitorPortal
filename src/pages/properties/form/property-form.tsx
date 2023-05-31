@@ -15,15 +15,15 @@ import {
     UseFormRegister,
     UseFormSetValue,
 } from 'react-hook-form';
-import { TFormProperty } from '../../utils/interfaces/typings';
-import FileDropzone from '../../components/common/input/file-dropzone';
-import RadioButtonGroup from '../../components/common/input/radio-button-group';
-import FileService, { IUploadedImage } from '../../services/file-service';
+import { TFormProperty } from '../../../utils/interfaces/typings';
+import FileDropzone from '../../../components/common/input/file-dropzone';
+import RadioButtonGroup from '../../../components/common/input/radio-button-group';
+import FileService, { IUploadedImage } from '../../../services/file-service';
 import ReactStars from 'react-stars';
-import useToastNotification from '../../hooks/useToastNotification';
-import { useAuth } from '../../context/auth-context';
-import PropertyService from '../../services/property-service';
-import FormImage from '../../components/property/form-image';
+import useToastNotification from '../../../hooks/useToastNotification';
+import { useAuth } from '../../../context/auth-context';
+import PropertyService from '../../../services/property-service';
+import FormImage from '../../../components/property/form/form-image';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;

@@ -14,8 +14,6 @@ import themeConfig from './utils/theme/theme-config';
 import { AuthContextProvider } from './context/auth-context';
 import ProfilePage from './pages/profile/profile-page';
 import UsernamePage from './pages/auth/login/username-page';
-import PropertyStoreContext from './mobx/propertyStoreContext';
-import propertyStore from './mobx/propertyStore';
 import PropertyPage from './pages/properties/property-page';
 
 const router = createBrowserRouter([
@@ -68,9 +66,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <ChakraProvider theme={themeConfig}>
             <AuthContextProvider>
-                <PropertyStoreContext.Provider value={propertyStore}>
-                    <RouterProvider router={router} />
-                </PropertyStoreContext.Provider>
+                <RouterProvider router={router} />
             </AuthContextProvider>
         </ChakraProvider>
     </React.StrictMode>

@@ -3,6 +3,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useMemo, useSta
 import supabase from '../../database';
 import { UserService } from '../services/user-service';
 import { StorageService } from '../services/storage-service';
+import { propertyStore } from '../mobx/propertyStore';
 
 export interface UserProfile {
     id: string;
@@ -51,6 +52,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
         supabase.auth
             .signOut()
             .then(() => {
+                propertyStore.resetStore();
                 StorageService.removeUserFromStorage();
                 setUser(null);
             })
