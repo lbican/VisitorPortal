@@ -1,13 +1,13 @@
 import React, { ReactElement, useState } from 'react';
 import {
+    Divider,
     FormControl,
     FormErrorMessage,
+    FormHelperText,
     FormLabel,
     HStack,
     Input,
     VStack,
-    FormHelperText,
-    Divider,
 } from '@chakra-ui/react';
 import {
     Control,
@@ -16,15 +16,16 @@ import {
     UseFormRegister,
     UseFormSetValue,
 } from 'react-hook-form';
-import { TFormProperty } from '../../../utils/interfaces/typings';
+import { PropertyType, TFormProperty } from '../../../utils/interfaces/typings';
 import FileDropzone from '../../../components/common/input/file-dropzone';
-import RadioButtonGroup from '../../../components/common/input/radio-button-group';
+import PropertyButtonGroup from '../../../components/common/input/property-button-group';
 import FileService, { IUploadedImage } from '../../../services/file-service';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { useAuth } from '../../../context/auth-context';
 import PropertyService from '../../../services/property-service';
 import FormImage from '../../../components/property/form/form-image';
+import { propertyStore } from '../../../mobx/propertyStore';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -122,8 +123,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         name="type"
                         rules={{ required: 'Type is required' }}
                         render={({ field }) => (
-                            <RadioButtonGroup
-                                options={['House', 'Apartments', 'Hotel']}
+                            <PropertyButtonGroup
+                                defaultValue={
+                                    propertyStore.editingProperty?.type || PropertyType.APARTMENT
+                                }
                                 onSelect={(option) => {
                                     field.onChange(option);
                                 }}
