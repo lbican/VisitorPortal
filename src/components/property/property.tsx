@@ -48,7 +48,8 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
                         {property.name}
                     </Box>
                     <Text fontSize="sm" as="b">
-                        Rooms: <Tag borderRadius="full">0</Tag>
+                        {'Units: '}
+                        <Tag borderRadius="full">{property.rooms ? property.rooms.length : 0}</Tag>
                     </Text>
                 </Flex>
 

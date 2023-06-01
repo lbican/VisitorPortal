@@ -19,6 +19,7 @@ import useToastNotification from '../../../hooks/useToastNotification';
 import { isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
+import { useSteps } from 'chakra-ui-steps';
 
 // Used for determining if modal is opened and close it
 interface ContentModalProps {
@@ -26,26 +27,53 @@ interface ContentModalProps {
     onClose: () => void;
 }
 
+type FieldNames = 'name' | 'location' | 'type' | 'image_path' | 'rating' | 'description';
+
+const stepFields: Record<number, FieldNames[]> = {
+    0: ['name', 'location'], // fields in Step 1
+    1: ['type', 'rating'], // fields in Step 2
+    2: ['image_path', 'description'], // fields in Step 3
+};
+
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const { user } = useAuth();
+    const stepLabels = ['Basic Information', 'Rating & Type', 'Image', 'Rooms'];
 
     //Form controls
     const {
         handleSubmit,
         control,
-        formState: { errors },
+        formState: { errors, isValid },
         register,
         reset,
         setValue,
         watch,
+        trigger,
     } = useForm<TFormProperty>({
+        mode: 'all',
         shouldUseNativeValidation: false,
+        criteriaMode: 'all',
         defaultValues: getFormValues(store.editingProperty),
     });
 
     const savedFormValues = watch();
+    const { nextStep, prevStep, activeStep, setStep } = useSteps({
+        initialStep: 0,
+    });
+
+    const validateAndChangeStep = async (goToNext: boolean) => {
+        const result = await trigger(stepFields[activeStep]);
+
+        if (result) {
+            if (goToNext) {
+                nextStep();
+            } else {
+                prevStep();
+            }
+        }
+    };
 
     useEffect(() => {
         reset(getFormValues(store.editingProperty));
@@ -53,6 +81,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
 
     useEffect(() => {
         if (!store.editingProperty) {
+            setStep(0);
             reset(getFormValues());
         }
     }, [onClose]);
@@ -114,7 +143,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="scale">
+        <Modal isOpen={isOpen} onClose={onClose} size="4xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">
@@ -131,13 +160,30 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                                 store.editingProperty?.image_path || savedFormValues.image_path
                             }
                             setValue={setValue}
+                            activeStep={activeStep}
                         />
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="red" variant="outline" mr={3} onClick={onClose}>
+                        <Button colorScheme="red" variant="outline" mr={2} onClick={onClose}>
                             Close
                         </Button>
+                        <Button
+                            onClick={() => validateAndChangeStep(false)}
+                            isDisabled={activeStep === 0}
+                            mr={2}
+                        >
+                            Previous
+                        </Button>
+                        {activeStep !== stepLabels.length - 1 && (
+                            <Button
+                                mr={2}
+                                onClick={() => validateAndChangeStep(true)}
+                                isDisabled={activeStep === stepLabels.length - 1}
+                            >
+                                Next
+                            </Button>
+                        )}
                         <Button
                             type="submit"
                             leftIcon={<AiOutlineSave />}
@@ -145,6 +191,11 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             colorScheme="green"
                             alignSelf="flex-end"
                             isLoading={submitting}
+                            isDisabled={
+                                store.editingProperty
+                                    ? !isValid || submitting
+                                    : activeStep !== stepLabels.length - 1 || !isValid || submitting
+                            }
                         >
                             {store.editingProperty ? 'Save changes' : 'Create'}
                         </Button>
