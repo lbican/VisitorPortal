@@ -38,9 +38,9 @@ const stepFields: Record<number, FieldNames[]> = {
 
 const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
+    const STEPS_LENGTH = 4;
     const notification = useToastNotification();
     const { user } = useAuth();
-    const stepLabels = ['Basic Information', 'Rating & Type', 'Image', 'Rooms'];
 
     //Form controls
     const {
@@ -75,7 +75,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         }
     };
 
-    const closeModal = () => {
+    const cleanupStateAndCloseModal = () => {
         setStep(0);
         reset();
         onClose();
@@ -117,7 +117,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     const disposeModalAndUpdateData = () => {
-        closeModal();
+        cleanupStateAndCloseModal();
     };
 
     const handleFormSubmit = (data: TFormProperty) => {
@@ -144,11 +144,11 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     function isSubmitDisabled() {
         return store.editingProperty
             ? !isValid || submitting
-            : activeStep !== stepLabels.length - 1 || !isValid || submitting;
+            : activeStep !== STEPS_LENGTH - 1 || !isValid || submitting;
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={closeModal} size="3xl" motionPreset="scale">
+        <Modal isOpen={isOpen} onClose={cleanupStateAndCloseModal} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">
@@ -168,7 +168,12 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="red" variant="outline" mr={2} onClick={closeModal}>
+                        <Button
+                            colorScheme="red"
+                            variant="outline"
+                            mr={2}
+                            onClick={cleanupStateAndCloseModal}
+                        >
                             Close
                         </Button>
                         {activeStep !== 0 && (
@@ -181,12 +186,12 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                                 Previous
                             </Button>
                         )}
-                        {activeStep !== stepLabels.length - 1 && (
+                        {activeStep !== STEPS_LENGTH - 1 && (
                             <Button
                                 rightIcon={<MdChevronRight />}
                                 mr={2}
                                 onClick={() => validateAndChangeStep(true)}
-                                isDisabled={activeStep === stepLabels.length - 1}
+                                isDisabled={activeStep === STEPS_LENGTH - 1}
                             >
                                 Next
                             </Button>

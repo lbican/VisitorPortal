@@ -1,10 +1,18 @@
 import supabase from '../../database';
 import { IProperty, IUnit, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
+import { produce } from 'immer';
 
 interface IFormPropertyUnit extends IUnit {
     property_id: string;
 }
+
+interface UserProperty {
+    user_id: string;
+    property_id: string;
+}
+
+type TPropertyWithoutUnits = Omit<TFormProperty, 'units'>;
 
 class PropertyService {
     static async createProperty(
@@ -17,43 +25,58 @@ class PropertyService {
 
         const { units, ...newProperty } = property;
 
-        const { data, error } = await supabase.from('Property').insert(newProperty).select();
+        // Insert property
+        const propertyData = (await this.insertIntoTableAndReturnSingle<TPropertyWithoutUnits>(
+            'Property',
+            newProperty
+        )) as IProperty;
+
+        // Link user with property
+        await this.insertIntoTableAndReturnSingle<UserProperty>('User_has_Property', {
+            user_id: userId,
+            property_id: propertyData.id,
+        });
+
+        // Add units
+        const propertyUnits: IFormPropertyUnit[] = units.map((unit) => {
+            return {
+                ...unit,
+                property_id: propertyData.id,
+            };
+        });
+        await this.insertIntoTable<IFormPropertyUnit>('Unit', propertyUnits);
+
+        return produce(propertyData, (draftState) => {
+            draftState.units = propertyUnits;
+        });
+    }
+
+    private static async insertIntoTableAndReturnSingle<T>(table: string, data: T): Promise<T> {
+        const { data: insertedData, error } = await supabase
+            .from(table)
+            .insert(data)
+            .select()
+            .single();
 
         if (error) {
+            console.error(error);
             throw new Error(error.message);
         }
 
-        if (data && data.length > 0) {
-            const propertyData = data[0];
-
-            const { error: linkError } = await supabase.from('User_has_Property').insert({
-                user_id: userId,
-                property_id: propertyData.id,
-            });
-
-            if (linkError) {
-                console.error(linkError);
-                throw new Error(linkError.message);
-            }
-
-            const propertyUnits: IFormPropertyUnit[] = units.map((unit) => {
-                return {
-                    ...unit,
-                    property_id: propertyData.id,
-                };
-            });
-
-            const { error: unitError } = await supabase.from('Unit').insert(propertyUnits);
-
-            if (unitError) {
-                console.error(unitError);
-                throw new Error(unitError.message);
-            }
-
-            return propertyData as IProperty;
+        if (!insertedData) {
+            throw new Error('No data was returned from the insert operation');
         }
 
-        throw new Error('Unknown error has occurred');
+        return insertedData;
+    }
+
+    private static async insertIntoTable<T>(table: string, data: T[]): Promise<void> {
+        const { error } = await supabase.from(table).insert(data);
+
+        if (error) {
+            console.error(error);
+            throw new Error(error.message);
+        }
     }
 
     static async updateProperty(
