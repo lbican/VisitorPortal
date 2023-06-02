@@ -33,7 +33,7 @@ const RadioCard: React.FC<RadioCardProps> = (props) => {
                 _checked={{
                     outline: '1px solid hotpink',
                 }}
-                p={2}
+                p={5}
                 justifyContent="center"
             >
                 {props.icon}

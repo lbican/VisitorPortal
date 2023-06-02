@@ -5,8 +5,13 @@ import {
     FormHelperText,
     FormLabel,
     HStack,
+    IconButton,
     Input,
-    Text,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
     VStack,
 } from '@chakra-ui/react';
 import { Steps, Step } from 'chakra-ui-steps';
@@ -27,6 +32,7 @@ import { useAuth } from '../../../context/auth-context';
 import PropertyService from '../../../services/property-service';
 import FormImage from '../../../components/property/form/form-image';
 import { propertyStore } from '../../../mobx/propertyStore';
+import { AiOutlinePlus } from 'react-icons/ai';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -71,22 +77,24 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     };
 
     return (
-        <Steps activeStep={activeStep} colorScheme="teal" size="lg">
+        <Steps activeStep={activeStep} colorScheme="teal" size="lg" orientation="vertical">
             <Step label="Basic Information">
                 <VStack spacing={4} justifyContent="flex-start" mt={4}>
                     <HStack spacing={4} w="full">
                         <FormControl isInvalid={!!errors.name}>
                             <FormLabel htmlFor="name">Name</FormLabel>
                             <Input
+                                isInvalid={!!errors.name}
                                 type="text"
                                 id="name"
-                                {...register('name', { required: 'name is required' })}
+                                {...register('name', { required: 'Name is required' })}
                             />
                             <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
                         </FormControl>
                         <FormControl isInvalid={!!errors.location}>
                             <FormLabel htmlFor="location">Location</FormLabel>
                             <Input
+                                isInvalid={!!errors.location}
                                 type="text"
                                 id="location"
                                 {...register('location', { required: 'Location is required' })}
@@ -97,54 +105,52 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                 </VStack>
             </Step>
             <Step label="Rating & Type">
-                <VStack spacing={4} justifyContent="flex-start" mt={4}>
-                    <HStack spacing={4} w="full">
-                        <FormControl isInvalid={!!errors.rating}>
-                            <FormLabel htmlFor="rating">Property rating</FormLabel>
-                            <Controller
-                                control={control}
-                                name="rating"
-                                defaultValue={0}
-                                rules={{
-                                    required: 'Rating is required',
-                                    min: {
-                                        value: 1,
-                                        message: 'Rating has to be greater than 1',
-                                    },
-                                }}
-                                render={({ field }) => (
-                                    <ReactStars
-                                        count={5}
-                                        size={28}
-                                        half={false}
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                    />
-                                )}
-                            />
-                            <FormErrorMessage>{errors.rating?.message}</FormErrorMessage>
-                        </FormControl>
-                        <FormControl isInvalid={!!errors.type}>
-                            <FormLabel htmlFor="type">Type</FormLabel>
-                            <Controller
-                                control={control}
-                                name="type"
-                                rules={{ required: 'Type is required' }}
-                                render={({ field }) => (
-                                    <PropertyButtonGroup
-                                        defaultValue={
-                                            propertyStore.editingProperty?.type ||
-                                            PropertyType.APARTMENT
-                                        }
-                                        onSelect={(option) => {
-                                            field.onChange(option);
-                                        }}
-                                    />
-                                )}
-                            />
-                            <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
-                        </FormControl>
-                    </HStack>
+                <VStack justifyContent="center" spacing={4} w="full" mt={4} ml={2}>
+                    <FormControl isInvalid={!!errors.type}>
+                        <FormLabel htmlFor="type">Type</FormLabel>
+                        <Controller
+                            control={control}
+                            name="type"
+                            rules={{ required: 'Type is required' }}
+                            render={({ field }) => (
+                                <PropertyButtonGroup
+                                    defaultValue={
+                                        propertyStore.editingProperty?.type ||
+                                        PropertyType.APARTMENT
+                                    }
+                                    onSelect={(option) => {
+                                        field.onChange(option);
+                                    }}
+                                />
+                            )}
+                        />
+                        <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.rating}>
+                        <FormLabel htmlFor="rating">Property rating</FormLabel>
+                        <Controller
+                            control={control}
+                            name="rating"
+                            defaultValue={0}
+                            rules={{
+                                required: 'Rating is required',
+                                min: {
+                                    value: 1,
+                                    message: 'Rating has to be greater than 1',
+                                },
+                            }}
+                            render={({ field }) => (
+                                <ReactStars
+                                    count={5}
+                                    size={28}
+                                    half={false}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
+                            )}
+                        />
+                        <FormErrorMessage>{errors.rating?.message}</FormErrorMessage>
+                    </FormControl>
                 </VStack>
             </Step>
             <Step label="Image">
@@ -185,7 +191,27 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             </Step>
             <Step label="Units">
                 <VStack spacing={4} mt={4}>
-                    <Text>SOON!</Text>
+                    <HStack w="full">
+                        <FormControl>
+                            <FormLabel htmlFor="unit_name">Unit name</FormLabel>
+                            <Input isInvalid={!!errors.name} type="text" id="unit_name" />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="location">Unit capacity</FormLabel>
+                            <NumberInput id="capacity">
+                                <NumberInputField />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                        </FormControl>
+                        <IconButton
+                            colorScheme="blue"
+                            aria-label="Add new Unit"
+                            icon={<AiOutlinePlus />}
+                        />
+                    </HStack>
                 </VStack>
             </Step>
         </Steps>

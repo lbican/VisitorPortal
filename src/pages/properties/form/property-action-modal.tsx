@@ -20,6 +20,7 @@ import { isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import { useSteps } from 'chakra-ui-steps';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/all';
 
 // Used for determining if modal is opened and close it
 interface ContentModalProps {
@@ -78,13 +79,12 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     useEffect(() => {
         reset(getFormValues(store.editingProperty));
     }, [store.editingProperty, reset]);
-
+    /*
     useEffect(() => {
         if (!store.editingProperty) {
-            setStep(0);
-            reset(getFormValues());
+
         }
-    }, [onClose]);
+    }, [onClose]);*/
 
     const addNewProperty = async (propertyData: TFormProperty): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
@@ -143,7 +143,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="4xl" motionPreset="scale">
+        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">
@@ -168,15 +168,19 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                         <Button colorScheme="red" variant="outline" mr={2} onClick={onClose}>
                             Close
                         </Button>
-                        <Button
-                            onClick={() => validateAndChangeStep(false)}
-                            isDisabled={activeStep === 0}
-                            mr={2}
-                        >
-                            Previous
-                        </Button>
+                        {activeStep !== 0 && (
+                            <Button
+                                leftIcon={<MdChevronLeft />}
+                                onClick={() => validateAndChangeStep(false)}
+                                isDisabled={activeStep === 0}
+                                mr={2}
+                            >
+                                Previous
+                            </Button>
+                        )}
                         {activeStep !== stepLabels.length - 1 && (
                             <Button
+                                rightIcon={<MdChevronRight />}
                                 mr={2}
                                 onClick={() => validateAndChangeStep(true)}
                                 isDisabled={activeStep === stepLabels.length - 1}
