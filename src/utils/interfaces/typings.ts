@@ -32,7 +32,7 @@ export interface IProperty {
     image_path: string;
     rating?: number;
     description?: string;
-    rooms: IUnit[];
+    units: IUnit[];
 }
 
-export type TFormProperty = Omit<IProperty, 'rooms' | 'id'>;
+export type TFormProperty = Omit<IProperty, 'id'>;

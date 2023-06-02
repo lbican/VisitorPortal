@@ -1,5 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import {
+    Button,
+    Divider,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -19,8 +21,10 @@ import {
     Control,
     Controller,
     FieldErrors,
+    useFieldArray,
     UseFormRegister,
     UseFormSetValue,
+    UseFormWatch,
 } from 'react-hook-form';
 import { PropertyType, TFormProperty } from '../../../utils/interfaces/typings';
 import FileDropzone from '../../../components/common/input/file-dropzone';
@@ -32,32 +36,39 @@ import { useAuth } from '../../../context/auth-context';
 import PropertyService from '../../../services/property-service';
 import FormImage from '../../../components/property/form/form-image';
 import { propertyStore } from '../../../mobx/propertyStore';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import { v4 as uuidv4 } from 'uuid';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
     errors: FieldErrors<TFormProperty>;
     control: Control<TFormProperty>;
     setValue: UseFormSetValue<TFormProperty>;
+    watch: UseFormWatch<TFormProperty>;
     activeStep: number;
-    existingPath?: string;
 }
-
 const PropertyForm: React.FC<PropertyFormProps> = ({
     register,
     errors,
     control,
     setValue,
-    existingPath,
+    watch,
     activeStep,
 }): ReactElement => {
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<IUploadedImage | undefined>(
-        PropertyService.getPropertyImage(existingPath)
+        PropertyService.getPropertyImage(watch().image_path)
     );
     const { user } = useAuth();
     const fileService = new FileService('property_images', user?.id);
     const notification = useToastNotification();
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'units',
+    });
+
+    const addUnit = () => append({ id: uuidv4(), name: '', capacity: 1 });
 
     const deletePropertyImage = () => {
         if (image) {
@@ -191,27 +202,57 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             </Step>
             <Step label="Units">
                 <VStack spacing={4} mt={4}>
-                    <HStack w="full">
-                        <FormControl>
-                            <FormLabel htmlFor="unit_name">Unit name</FormLabel>
-                            <Input isInvalid={!!errors.name} type="text" id="unit_name" />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="location">Unit capacity</FormLabel>
-                            <NumberInput id="capacity">
-                                <NumberInputField />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
-                        </FormControl>
-                        <IconButton
-                            colorScheme="blue"
-                            aria-label="Add new Unit"
-                            icon={<AiOutlinePlus />}
-                        />
-                    </HStack>
+                    {fields.map((field, index) => (
+                        <HStack key={field.id} w="full">
+                            <FormControl isInvalid={!!errors.units && !!errors.units[index]?.name}>
+                                <FormLabel htmlFor={`unit_name_${index}`}>Unit name</FormLabel>
+                                <Input
+                                    type="text"
+                                    id={`unit_name_${index}`}
+                                    {...register(`units.${index}.name`, {
+                                        required: 'Name is required',
+                                    })}
+                                />
+                                <FormErrorMessage>
+                                    {errors.units && errors.units[index]?.name?.message}
+                                </FormErrorMessage>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel htmlFor={`capacity_${index}`}>Unit capacity</FormLabel>
+                                <NumberInput
+                                    id={`capacity_${index}`}
+                                    min={1}
+                                    max={16}
+                                    keepWithinRange={true}
+                                >
+                                    <NumberInputField {...register(`units.${index}.capacity`)} />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                                <FormErrorMessage>
+                                    {errors.units && errors.units[index]?.message}
+                                </FormErrorMessage>
+                            </FormControl>
+                            <Divider orientation="vertical" w="2px" height="5rem" />
+                            <IconButton
+                                colorScheme="red"
+                                aria-label="Remove Unit"
+                                icon={<AiOutlineMinus />}
+                                onClick={() => remove(index)}
+                            />
+                        </HStack>
+                    ))}
+                    <Button
+                        alignSelf="flex-end"
+                        colorScheme="blue"
+                        aria-label="Add new Unit"
+                        leftIcon={<AiOutlinePlus />}
+                        onClick={addUnit}
+                    >
+                        Add unit
+                    </Button>
                 </VStack>
             </Step>
         </Steps>

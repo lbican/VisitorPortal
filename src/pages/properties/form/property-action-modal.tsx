@@ -59,7 +59,6 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         defaultValues: getFormValues(store.editingProperty),
     });
 
-    const savedFormValues = watch();
     const { nextStep, prevStep, activeStep, setStep } = useSteps({
         initialStep: 0,
     });
@@ -76,15 +75,15 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         }
     };
 
+    const closeModal = () => {
+        setStep(0);
+        reset();
+        onClose();
+    };
+
     useEffect(() => {
         reset(getFormValues(store.editingProperty));
-    }, [store.editingProperty, reset]);
-    /*
-    useEffect(() => {
-        if (!store.editingProperty) {
-
-        }
-    }, [onClose]);*/
+    }, [store.editingProperty]);
 
     const addNewProperty = async (propertyData: TFormProperty): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
@@ -118,11 +117,11 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     const disposeModalAndUpdateData = () => {
-        onClose();
-        reset();
+        closeModal();
     };
 
     const handleFormSubmit = (data: TFormProperty) => {
+        console.log(data);
         setSubmitting(true);
         const actionPromise = store.editingProperty
             ? updateProperty(data, store.editingProperty.id)
@@ -142,8 +141,14 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
             });
     };
 
+    function isSubmitDisabled() {
+        return store.editingProperty
+            ? !isValid || submitting
+            : activeStep !== stepLabels.length - 1 || !isValid || submitting;
+    }
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="scale">
+        <Modal isOpen={isOpen} onClose={closeModal} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">
@@ -156,16 +161,14 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             register={register}
                             control={control}
                             errors={errors}
-                            existingPath={
-                                store.editingProperty?.image_path || savedFormValues.image_path
-                            }
+                            watch={watch}
                             setValue={setValue}
                             activeStep={activeStep}
                         />
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="red" variant="outline" mr={2} onClick={onClose}>
+                        <Button colorScheme="red" variant="outline" mr={2} onClick={closeModal}>
                             Close
                         </Button>
                         {activeStep !== 0 && (
@@ -195,11 +198,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             colorScheme="green"
                             alignSelf="flex-end"
                             isLoading={submitting}
-                            isDisabled={
-                                store.editingProperty
-                                    ? !isValid || submitting
-                                    : activeStep !== stepLabels.length - 1 || !isValid || submitting
-                            }
+                            isDisabled={isSubmitDisabled()}
                         >
                             {store.editingProperty ? 'Save changes' : 'Create'}
                         </Button>

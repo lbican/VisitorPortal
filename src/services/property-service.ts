@@ -1,6 +1,10 @@
 import supabase from '../../database';
-import { IProperty, TFormProperty } from '../utils/interfaces/typings';
+import { IProperty, IUnit, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
+
+interface IFormPropertyUnit extends IUnit {
+    property_id: string;
+}
 
 class PropertyService {
     static async createProperty(
@@ -10,7 +14,10 @@ class PropertyService {
         if (!userId) {
             throw new Error('User is not logged in!');
         }
-        const { data, error } = await supabase.from('Property').insert(property).select();
+
+        const { units, ...newProperty } = property;
+
+        const { data, error } = await supabase.from('Property').insert(newProperty).select();
 
         if (error) {
             throw new Error(error.message);
@@ -27,6 +34,20 @@ class PropertyService {
             if (linkError) {
                 console.error(linkError);
                 throw new Error(linkError.message);
+            }
+
+            const propertyUnits: IFormPropertyUnit[] = units.map((unit) => {
+                return {
+                    ...unit,
+                    property_id: propertyData.id,
+                };
+            });
+
+            const { error: unitError } = await supabase.from('Unit').insert(propertyUnits);
+
+            if (unitError) {
+                console.error(unitError);
+                throw new Error(unitError.message);
             }
 
             return propertyData as IProperty;
