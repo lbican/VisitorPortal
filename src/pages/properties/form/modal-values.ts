@@ -13,6 +13,7 @@ const getFormValues = (property?: TFormProperty) => {
               location: property.location,
               description: property.description,
               image_path: property.image_path,
+              units: property.units,
           }
         : {
               name: '',
@@ -21,6 +22,7 @@ const getFormValues = (property?: TFormProperty) => {
               location: '',
               description: undefined,
               image_path: '',
+              units: [],
           };
 };
 

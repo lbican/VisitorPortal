@@ -1,102 +1,53 @@
 import supabase from '../../database';
-import { IProperty, IUnit, TFormProperty } from '../utils/interfaces/typings';
+import { IProperty, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
-import { produce } from 'immer';
-
-interface IFormPropertyUnit extends IUnit {
-    property_id: string;
-}
-
-interface UserProperty {
-    user_id: string;
-    property_id: string;
-}
-
-type TPropertyWithoutUnits = Omit<TFormProperty, 'units'>;
 
 class PropertyService {
     static async createProperty(
-        property: TFormProperty,
+        newProperty: TFormProperty,
         userId: string | undefined
     ): Promise<IProperty> {
-        if (!userId) {
-            throw new Error('User is not logged in!');
-        }
-
-        const { units, ...newProperty } = property;
-
-        // Insert property
-        const propertyData = (await this.insertIntoTableAndReturnSingle<TPropertyWithoutUnits>(
-            'Property',
-            newProperty
-        )) as IProperty;
-
-        // Link user with property
-        await this.insertIntoTableAndReturnSingle<UserProperty>('User_has_Property', {
-            user_id: userId,
-            property_id: propertyData.id,
+        const { data, error } = await supabase.rpc('create_property', {
+            p_description: null,
+            p_image_path: newProperty.image_path,
+            p_location: newProperty.location,
+            p_name: newProperty.name,
+            p_rating: newProperty.rating,
+            p_type: newProperty.type,
+            p_units: newProperty.units,
+            p_user_id: userId,
         });
-
-        // Add units
-        const propertyUnits: IFormPropertyUnit[] = units.map((unit) => {
-            return {
-                ...unit,
-                property_id: propertyData.id,
-            };
-        });
-        await this.insertIntoTable<IFormPropertyUnit>('Unit', propertyUnits);
-
-        return produce(propertyData, (draftState) => {
-            draftState.units = propertyUnits;
-        });
-    }
-
-    private static async insertIntoTableAndReturnSingle<T>(table: string, data: T): Promise<T> {
-        const { data: insertedData, error } = await supabase
-            .from(table)
-            .insert(data)
-            .select()
-            .single();
 
         if (error) {
             console.error(error);
             throw new Error(error.message);
         }
 
-        if (!insertedData) {
-            throw new Error('No data was returned from the insert operation');
-        }
-
-        return insertedData;
-    }
-
-    private static async insertIntoTable<T>(table: string, data: T[]): Promise<void> {
-        const { error } = await supabase.from(table).insert(data);
-
-        if (error) {
-            console.error(error);
-            throw new Error(error.message);
-        }
+        console.log(data);
+        return data;
     }
 
     static async updateProperty(
         property: TFormProperty,
         propertyId: string
     ): Promise<IProperty | null> {
-        const { data, error } = await supabase
-            .from('Property')
-            .update(property)
-            .eq('id', propertyId)
-            .select()
-            .single();
+        const { data, error } = await supabase.rpc('update_property', {
+            p_id: propertyId,
+            p_name: property.name,
+            p_description: property.description,
+            p_rating: property.rating,
+            p_location: property.location,
+            p_type: property.type,
+            p_image_path: property.image_path,
+            p_units: property.units,
+        });
 
-        // Check for error
         if (error) {
-            console.error('Error updating property:', error);
+            console.error(error);
             throw new Error(error.message);
         }
 
-        return data as IProperty;
+        return data;
     }
 
     static async getPropertiesByUserId(userId?: string): Promise<IProperty[]> {
