@@ -39,6 +39,10 @@ const Properties = (): ReactElement => {
                 .then(() => {
                     onCloseAlert();
                     notification.success('Success!', 'Successfully deleted property');
+                })
+                .catch((e) => {
+                    console.error(e);
+                    notification.error('Error!', 'Could not delete property');
                 });
         }
     };

@@ -16,7 +16,7 @@ import { TFormProperty } from '../../../utils/interfaces/typings';
 import PropertyForm from './property-form';
 import { useAuth } from '../../../context/auth-context';
 import useToastNotification from '../../../hooks/useToastNotification';
-import { isObject } from 'lodash';
+import { isEqual, isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import { useSteps } from 'chakra-ui-steps';
@@ -99,6 +99,16 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
         });
     };
 
+    const canExecuteUpdate = () => {
+        if (!store.editingProperty) {
+            return true;
+        }
+
+        const formValues = watch();
+
+        return !isEqual(formValues, getFormValues(store.editingProperty));
+    };
+
     const updateProperty = async (
         propertyData: TFormProperty,
         propertyId: string
@@ -121,7 +131,14 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
     };
 
     const handleFormSubmit = (data: TFormProperty) => {
-        console.log(data);
+        if (!canExecuteUpdate()) {
+            notification.warning(
+                'Could not update',
+                'Please make changes before attempting to update'
+            );
+            return;
+        }
+
         setSubmitting(true);
         const actionPromise = store.editingProperty
             ? updateProperty(data, store.editingProperty.id)
@@ -179,7 +196,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                         {activeStep !== 0 && (
                             <Button
                                 leftIcon={<MdChevronLeft />}
-                                onClick={() => validateAndChangeStep(false)}
+                                onClick={() => void validateAndChangeStep(false)}
                                 isDisabled={activeStep === 0}
                                 mr={2}
                             >
@@ -190,7 +207,7 @@ const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) =
                             <Button
                                 rightIcon={<MdChevronRight />}
                                 mr={2}
-                                onClick={() => validateAndChangeStep(true)}
+                                onClick={() => void validateAndChangeStep(true)}
                                 isDisabled={activeStep === STEPS_LENGTH - 1}
                             >
                                 Next
