@@ -59,17 +59,14 @@ class PropertyStore {
     }
 
     @action
-    deleteProperty(propertyId: string, imagePath: string) {
+    async deleteProperty(propertyId: string, imagePath: string) {
         this.setIsDeleting(true);
-        return PropertyService.deleteProperty(propertyId, imagePath)
-            .then(() => {
-                this.setProperties(this.properties.filter((prop) => prop.id !== propertyId));
-                this.setIsDeleting(false);
-            })
-            .catch((error) => {
-                console.error(error);
-                this.setIsDeleting(false);
-            });
+        try {
+            await PropertyService.deleteProperty(propertyId, imagePath);
+            this.setProperties(this.properties.filter((prop) => prop.id !== propertyId));
+        } finally {
+            this.setIsDeleting(false);
+        }
     }
 
     @action

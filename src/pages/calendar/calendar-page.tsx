@@ -4,15 +4,18 @@ import {
     Heading,
     HStack,
     Tag,
-    TagLeftIcon,
     TagLabel,
     Text,
     TagRightIcon,
     Flex,
+    Button,
+    Image,
+    useDisclosure,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
-import { isWithinInterval } from 'date-fns';
+import { isBefore, isWithinInterval } from 'date-fns';
+import EmptyCalendarImage from '../../assets/empty_calendar.svg';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IUnit } from '../../utils/interfaces/typings';
@@ -24,7 +27,10 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
-import { BiEuro } from 'react-icons/all';
+import { BiEuro, IoMdPricetag } from 'react-icons/all';
+import { CalendarService, IDatePrice } from '../../services/calendar-service';
+import ProgressiveImage from '../../components/common/image/progressive-image';
+import PriceModal from './form/price-modal';
 
 interface ITileProps {
     view: View;
@@ -54,13 +60,28 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status }) => {
 };
 
 const CalendarPage = (): ReactElement => {
-    const [date, onChange] = useState<Date[]>([]);
+    const [calendarDate, onChange] = useState<Date[]>([]);
     const [unit, setUnit] = useState<IUnit | null>(null);
+    const [refresh, setRefresh] = useState(false);
+    const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
     const { user } = useAuth();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
         void store.fetchProperties(user?.id);
     }, [store, user]);
+
+    useEffect(() => {
+        if (unit) {
+            CalendarService.fetchDatePrices(unit.id)
+                .then((datePrices) => {
+                    setDatePrices(datePrices);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    }, [unit, refresh]);
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
         newValue && store.getCurrentProperty(newValue.value);
@@ -81,19 +102,19 @@ const CalendarPage = (): ReactElement => {
         }
     };
 
-    const startDate = new Date(2023, 5, 10); // June 10, 2023
-    const endDate = new Date(2023, 5, 20); // June 20, 2023
-
-    const tileDisabled = ({ date, view }: ITileProps) => {
-        return (
-            view === 'month' && // Disable only date tiles and leave month and year navigation enabled
-            isWithinInterval(date, { start: startDate, end: endDate })
-        ); // Check if date is within interval
-    };
-
     const datePrice = ({ date, view }: ITileProps) => {
-        if (view === 'month' && isWithinInterval(date, { start: startDate, end: endDate })) {
-            return <PriceTag price={30} status={PriceStatus.SOLD} />;
+        if (view === 'month') {
+            for (const datePrice of datePrices) {
+                if (
+                    isWithinInterval(date, {
+                        start: datePrice.date_range[0],
+                        end: datePrice.date_range[1],
+                    }) &&
+                    isBefore(date, datePrice.date_range[1])
+                ) {
+                    return <PriceTag price={datePrice.price} status={PriceStatus.AVAILABLE} />;
+                }
+            }
         }
 
         return <PriceTag status={PriceStatus.UNSET} />;
@@ -122,24 +143,47 @@ const CalendarPage = (): ReactElement => {
                         isDisabled={!store.currentProperty}
                         width="12rem"
                     />
+                    <Button colorScheme="green" onClick={onOpen} leftIcon={<IoMdPricetag />}>
+                        Assign price
+                    </Button>
                 </HStack>
             </HStack>
             <Divider mb={4} />
-            <Calendar
-                tileContent={datePrice}
-                locale="en"
-                tileDisabled={tileDisabled}
-                selectRange={true}
-                onChange={(value) => {
-                    onChange(value as Date[]);
-                }}
-                value={date as Value}
-                minDetail="year"
-            />
-            {date.length > 0 && (
+            {unit ? (
+                <Calendar
+                    tileContent={datePrice}
+                    locale="en"
+                    selectRange={true}
+                    onChange={(value) => {
+                        onChange(value as Date[]);
+                    }}
+                    value={calendarDate as Value}
+                    minDetail="year"
+                />
+            ) : (
+                <Image
+                    src={EmptyCalendarImage}
+                    alt="Empty calendar"
+                    objectFit="cover"
+                    w="full"
+                    height="40rem"
+                />
+            )}
+            {unit && (
+                <PriceModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    unit={unit}
+                    date_range={[calendarDate[0], calendarDate[1]]}
+                    onValueSubmitted={() => {
+                        setRefresh(!refresh);
+                    }}
+                />
+            )}
+            {calendarDate.length > 0 && (
                 <Text as="p">
-                    <Text as="b">Start:</Text> {date[0].toDateString()}|<Text as="b">End:</Text>{' '}
-                    {date[1].toDateString()}
+                    <Text as="b">Start:</Text> {calendarDate[0].toDateString()}|
+                    <Text as="b">End:</Text> {calendarDate[1].toDateString()}
                 </Text>
             )}
         </>

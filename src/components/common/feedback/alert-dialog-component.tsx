@@ -17,6 +17,8 @@ interface AlertDialogProps {
     isLoading: boolean;
     dialogHeader: string;
     dialogBody: string;
+    dialogDeclineText?: string;
+    dialogConfirmText?: string;
 }
 
 const AlertDialogComponent: FC<AlertDialogProps> = ({
@@ -26,6 +28,8 @@ const AlertDialogComponent: FC<AlertDialogProps> = ({
     isLoading,
     dialogHeader,
     dialogBody,
+    dialogDeclineText = 'No',
+    dialogConfirmText = 'Yes',
 }) => {
     const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -46,10 +50,10 @@ const AlertDialogComponent: FC<AlertDialogProps> = ({
                     <AlertDialogBody>{dialogBody}</AlertDialogBody>
                     <AlertDialogFooter>
                         <Button ref={cancelRef} onClick={onClose}>
-                            No
+                            {dialogDeclineText}
                         </Button>
                         <Button colorScheme="red" ml={3} onClick={onConfirm} isLoading={isLoading}>
-                            Yes
+                            {dialogConfirmText}
                         </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>

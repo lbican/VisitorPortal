@@ -23,7 +23,7 @@ import { useSteps } from 'chakra-ui-steps';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/all';
 
 // Used for determining if modal is opened and close it
-interface ContentModalProps {
+interface PropertyActionModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
@@ -36,7 +36,7 @@ const stepFields: Record<number, FieldNames[]> = {
     2: ['image_path', 'description'], // fields in Step 3
 };
 
-const PropertyActionModal: React.FC<ContentModalProps> = ({ isOpen, onClose }) => {
+const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
     const STEPS_LENGTH = 4;
     const notification = useToastNotification();
