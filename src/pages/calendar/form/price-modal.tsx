@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
     Button,
     FormControl,
-    Text,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -20,6 +19,8 @@ import {
 import { IUnit } from '../../../utils/interfaces/typings';
 import { useForm } from 'react-hook-form';
 import { CalendarService, IDatePrice } from '../../../services/calendar-service';
+import useToastNotification from '../../../hooks/useToastNotification';
+import { MdOutlineSave } from 'react-icons/all';
 
 interface PriceModalProps {
     isOpen: boolean;
@@ -37,6 +38,7 @@ const PriceModal: React.FC<PriceModalProps> = ({
     onValueSubmitted,
 }) => {
     const [submitting, setSubmitting] = useState(false);
+    const notification = useToastNotification();
 
     const { register, handleSubmit } = useForm({
         shouldUseNativeValidation: false,
@@ -47,16 +49,24 @@ const PriceModal: React.FC<PriceModalProps> = ({
 
     const savePrice = async (data: { price: number }) => {
         setSubmitting(true);
+        const formattedStart = date_range[0].toLocaleDateString();
+        const formattedEnd = date_range[1].toLocaleDateString();
+
         CalendarService.insertDatePrice({
             price: data.price,
             date_range: date_range,
             unit_id: unit.id,
         })
             .then((data) => {
+                notification.success(
+                    'Price assigned!',
+                    `Assigned prices for ${formattedStart} - ${formattedEnd}`
+                );
                 onValueSubmitted(data);
                 onClose();
             })
             .catch((error) => {
+                notification.error('Error has occurred', 'Could not assign prices!');
                 console.error(error);
             })
             .finally(() => {
@@ -85,8 +95,9 @@ const PriceModal: React.FC<PriceModalProps> = ({
 
                 <ModalFooter>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="green"
                         mr={3}
+                        leftIcon={<MdOutlineSave />}
                         onClick={handleSubmit(savePrice)}
                         isLoading={submitting}
                     >

@@ -11,6 +11,8 @@ import {
     Button,
     Image,
     useDisclosure,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
@@ -60,10 +62,11 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status }) => {
 };
 
 const CalendarPage = (): ReactElement => {
-    const [calendarDate, onChange] = useState<Date[]>([]);
+    const [selectedDates, setSelectedDates] = useState<Date[]>([]);
     const [unit, setUnit] = useState<IUnit | null>(null);
     const [refresh, setRefresh] = useState(false);
     const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
+    const [loadingPrices, setLoadingPrices] = useState(false);
     const { user } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -73,12 +76,16 @@ const CalendarPage = (): ReactElement => {
 
     useEffect(() => {
         if (unit) {
+            setLoadingPrices(true);
             CalendarService.fetchDatePrices(unit.id)
                 .then((datePrices) => {
                     setDatePrices(datePrices);
                 })
                 .catch((error) => {
                     console.error(error);
+                })
+                .finally(() => {
+                    setLoadingPrices(false);
                 });
         }
     }, [unit, refresh]);
@@ -86,9 +93,12 @@ const CalendarPage = (): ReactElement => {
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
         newValue && store.getCurrentProperty(newValue.value);
         setUnit(null);
+        setSelectedDates([]);
     };
 
     const handleUnitSelect = (newValue: SingleValue<ILabel>) => {
+        setSelectedDates([]);
+        setDatePrices([]);
         if (!store.currentProperty?.units || !newValue) {
             return null;
         }
@@ -102,7 +112,11 @@ const CalendarPage = (): ReactElement => {
         }
     };
 
-    const datePrice = ({ date, view }: ITileProps) => {
+    const getTilePrices = ({ date, view }: ITileProps) => {
+        if (view === 'month' && loadingPrices) {
+            return <PriceTag price={0} status={PriceStatus.AVAILABLE} />;
+        }
+
         if (view === 'month') {
             for (const datePrice of datePrices) {
                 if (
@@ -133,7 +147,7 @@ const CalendarPage = (): ReactElement => {
                         placeholder="Select property"
                         options={mapToAutocompleteLabel<IProperty>(store.properties)}
                         isLoading={store.isFetching}
-                        width="12rem"
+                        width="14rem"
                     />
                     <Autocomplete
                         value={mapValueToLabel(unit)}
@@ -141,9 +155,14 @@ const CalendarPage = (): ReactElement => {
                         placeholder="Select unit"
                         options={mapToAutocompleteLabel<IUnit>(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
-                        width="12rem"
+                        width="14rem"
                     />
-                    <Button colorScheme="green" onClick={onOpen} leftIcon={<IoMdPricetag />}>
+                    <Button
+                        colorScheme="green"
+                        onClick={onOpen}
+                        leftIcon={<IoMdPricetag />}
+                        isDisabled={!selectedDates[0] || !selectedDates[1]}
+                    >
                         Assign price
                     </Button>
                 </HStack>
@@ -151,39 +170,45 @@ const CalendarPage = (): ReactElement => {
             <Divider mb={4} />
             {unit ? (
                 <Calendar
-                    tileContent={datePrice}
+                    tileContent={getTilePrices}
                     locale="en"
                     selectRange={true}
                     onChange={(value) => {
-                        onChange(value as Date[]);
+                        setSelectedDates(value as Date[]);
                     }}
-                    value={calendarDate as Value}
+                    value={selectedDates as Value}
                     minDetail="year"
                 />
             ) : (
-                <Image
-                    src={EmptyCalendarImage}
-                    alt="Empty calendar"
-                    objectFit="cover"
-                    w="full"
-                    height="40rem"
-                />
+                <>
+                    <Alert status="info" mb={2}>
+                        <AlertIcon />
+                        Please select property and unit to be able to edit calendar
+                    </Alert>
+                    <Image
+                        src={EmptyCalendarImage}
+                        alt="Empty calendar"
+                        objectFit="cover"
+                        w="full"
+                        height="40rem"
+                    />
+                </>
             )}
             {unit && (
                 <PriceModal
                     isOpen={isOpen}
                     onClose={onClose}
                     unit={unit}
-                    date_range={[calendarDate[0], calendarDate[1]]}
+                    date_range={[selectedDates[0], selectedDates[1]]}
                     onValueSubmitted={() => {
                         setRefresh(!refresh);
                     }}
                 />
             )}
-            {calendarDate.length > 0 && (
+            {selectedDates.length > 0 && (
                 <Text as="p">
-                    <Text as="b">Start:</Text> {calendarDate[0].toDateString()}|
-                    <Text as="b">End:</Text> {calendarDate[1].toDateString()}
+                    <Text as="b">Start:</Text> {selectedDates[0].toDateString()}|
+                    <Text as="b">End:</Text> {selectedDates[1].toDateString()}
                 </Text>
             )}
         </>
