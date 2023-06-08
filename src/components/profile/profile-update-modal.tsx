@@ -49,7 +49,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
     }, [currentValues]);
 
     const handleSuccess = (data: Partial<UserProfile>) => {
-        notification.success('Account updated!', 'You have successfully updated your account.');
+        notification.success('You have successfully updated your account.');
 
         if (data.username !== userProfile?.username) {
             navigate(`/user/${data.username}`, {
@@ -63,10 +63,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
 
     const handleError = (error: PostgrestError | null) => {
         console.error(error);
-        notification.error(
-            'Could not update profile',
-            'An error has occurred, please try again later'
-        );
+        notification.error('Could not update profile, please try again later');
     };
 
     const handleFinally = () => {
@@ -77,15 +74,11 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
     const handleFormSubmit = useCallback(
         (data: Partial<UserProfile>) => {
             if (isDisabled) {
-                notification.warning(
-                    'Could not update profile.',
-                    'Please make some changes before updating profile.'
-                );
+                notification.warning('Please make some changes before updating profile.');
                 return;
             }
 
             setLoading(true);
-
             UserService.updateUserProfile(userProfile?.id, data)
                 .then(() => handleSuccess(data))
                 .catch(handleError)

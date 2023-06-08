@@ -38,11 +38,11 @@ const Properties = (): ReactElement => {
                 .deleteProperty(store.currentProperty.id, store.currentProperty.image_path)
                 .then(() => {
                     onCloseAlert();
-                    notification.success('Success!', 'Successfully deleted property');
+                    notification.success('Successfully deleted property');
                 })
                 .catch((e) => {
                     console.error(e);
-                    notification.error('Error!', 'Could not delete property');
+                    notification.error('Could not delete property');
                 });
         }
     };

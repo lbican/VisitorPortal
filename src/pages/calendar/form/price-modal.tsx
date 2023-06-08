@@ -58,15 +58,12 @@ const PriceModal: React.FC<PriceModalProps> = ({
             unit_id: unit.id,
         })
             .then((data) => {
-                notification.success(
-                    'Price assigned!',
-                    `Assigned prices for ${formattedStart} - ${formattedEnd}`
-                );
+                notification.success(`Assigned prices for ${formattedStart} - ${formattedEnd}`);
                 onValueSubmitted(data);
                 onClose();
             })
             .catch((error) => {
-                notification.error('Error has occurred', 'Could not assign prices!');
+                notification.error('Could not assign prices!');
                 console.error(error);
             })
             .finally(() => {

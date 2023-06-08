@@ -3,6 +3,7 @@ import SplitScreen from '../../../components/layout/split-screen';
 import LoginForm from './login-form';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Spinner } from '@chakra-ui/react';
 
 export default function LoginPage(): ReactElement {
     const { user } = useAuth();
@@ -10,7 +11,7 @@ export default function LoginPage(): ReactElement {
     const location = useLocation();
 
     useEffect(() => {
-        if (user && user.username) {
+        if (user?.username) {
             const redirectTo = location.state?.from || '/';
             navigate(redirectTo, {
                 replace: true,

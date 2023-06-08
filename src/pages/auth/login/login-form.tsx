@@ -53,15 +53,13 @@ const LoginForm = (): ReactElement => {
     const { ref: emailRef, ...emailControl } = register('email', emailValidator);
     const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
 
+    const onLoginSubmit = async (value: { email: string; password: string }) => {
+        await loginUserWithEmail(value.email, value.password);
+    };
+
     return (
         <>
-            <VStack
-                spacing={6}
-                as="form"
-                onSubmit={handleSubmit(async (value) => {
-                    await loginUserWithEmail(value.email, value.password);
-                })}
-            >
+            <VStack spacing={6} as="form" onSubmit={handleSubmit(onLoginSubmit)}>
                 <FormControl id="email" isInvalid={!!errors.email}>
                     <FormLabel>Email address</FormLabel>
                     <Input type="email" ref={emailRef} {...emailControl} />

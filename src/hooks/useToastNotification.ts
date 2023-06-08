@@ -3,7 +3,7 @@ import { useToast } from '@chakra-ui/react';
 const useToastNotification = () => {
     const toast = useToast();
     return {
-        success: (title: string, description: string) =>
+        success: (description: string, title = 'Success') =>
             toast({
                 title,
                 description,
@@ -13,7 +13,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        warning: (title: string, description: string) =>
+        warning: (description: string, title = 'Warning') =>
             toast({
                 title,
                 description,
@@ -23,7 +23,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        error: (title: string, description: string) =>
+        error: (description: string, title = 'An error has occurred') =>
             toast({
                 title,
                 description,
@@ -33,7 +33,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        info: (title: string, description: string) =>
+        info: (description: string, title = 'Information') =>
             toast({
                 title,
                 description,

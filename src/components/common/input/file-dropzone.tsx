@@ -22,7 +22,7 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
             const filePath = await fileService.uploadFile(file);
             setSelectedImage(filePath);
         } catch (error) {
-            console.error('Upload error', error);
+            console.error(error);
             setError(true);
         } finally {
             setIsLoading(false);

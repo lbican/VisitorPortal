@@ -22,7 +22,7 @@ import { isEqual, isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
-import FormStepper from '../../../components/form/form-stepper';
+import FormStepper, { FormStep } from '../../../components/form/form-stepper';
 
 // Used for determining if modal is opened and close it
 interface PropertyActionModalProps {
@@ -38,7 +38,7 @@ const stepFormFields: Record<number, FieldNames[]> = {
     2: ['image_path', 'description'], // fields in Step 3
 };
 
-const steps = [
+const steps: FormStep[] = [
     { title: 'First', description: '📍 Details and Location' },
     { title: 'Second', description: '⭐ Categorization' },
     { title: 'Third', description: '🖼️ Image' },
@@ -99,7 +99,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
             store
                 .createProperty(propertyData, user?.id)
                 .then(() => {
-                    notification.success('Added new property', 'Successfully added new property!');
+                    notification.success('Successfully added new property!');
                     resolve();
                 })
                 .catch((error) => {
@@ -141,10 +141,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
 
     const handleFormSubmit = (data: TFormProperty) => {
         if (!canExecuteUpdate()) {
-            notification.warning(
-                'Could not update',
-                'Please make changes before attempting to update'
-            );
+            notification.warning('Please make changes before attempting to update');
             return;
         }
 
@@ -157,21 +154,18 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
             .then(disposeModalAndUpdateData)
             .catch((error) => {
                 const errorMsg = store.editingProperty ? 'update' : 'add';
-                notification.error(
-                    'An error has occurred',
-                    isObject(error) ? `Unable to ${errorMsg} property` : error
-                );
+                notification.error(isObject(error) ? `Unable to ${errorMsg} property` : error);
             })
             .finally(() => {
                 setSubmitting(false);
             });
     };
 
-    function isSubmitDisabled() {
+    const isSubmitDisabled = () => {
         return store.editingProperty
             ? !isValid || submitting
             : activeStep !== steps.length - 1 || !isValid || submitting;
-    }
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={cleanupStateAndCloseModal} size="3xl" motionPreset="scale">

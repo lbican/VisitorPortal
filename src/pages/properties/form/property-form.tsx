@@ -76,19 +76,25 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             fileService
                 .deleteFiles([image.path])
                 .then(() => {
-                    notification.info('Image deleted', 'Image has been successfully deleted');
+                    notification.info('Image has been successfully deleted', 'Image deleted');
                     setValue('image_path', '');
                     setImage(undefined);
                 })
                 .catch(() => {
-                    notification.error('Could not delete image', 'Please try again later');
+                    notification.error('Could not delete image, please try again later');
                 })
                 .finally(() => setLoading(false));
         }
     };
 
     return (
-        <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start" ml={2}>
+        <VStack
+            spacing={4}
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            ml={2}
+            maxWidth="64%"
+        >
             {activeStep === 0 && (
                 <VStack spacing={4}>
                     <HStack spacing={4} w="full">
