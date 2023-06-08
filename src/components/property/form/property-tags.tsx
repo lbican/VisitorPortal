@@ -1,7 +1,7 @@
 import { HStack, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
 import React from 'react';
 import { PropertyType } from '../../../utils/interfaces/typings';
-import { MdLocationPin } from 'react-icons/all';
+import { MdLocationPin } from 'react-icons/md';
 
 interface IPropertyTagsProps {
     type: PropertyType;

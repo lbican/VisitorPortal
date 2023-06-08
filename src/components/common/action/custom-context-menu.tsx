@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Box, MenuList, MenuItem, Text, MenuDivider } from '@chakra-ui/react';
 import { ContextMenu } from 'chakra-ui-contextmenu';
-import { GoTrashcan } from 'react-icons/all';
+import { GoTrashcan } from 'react-icons/go';
 import { AiOutlineEdit } from 'react-icons/ai'; // Use correct import here
 
 type CustomContextMenuProps = {

@@ -29,9 +29,8 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
-import { BiEuro, IoMdPricetag } from 'react-icons/all';
+import { IoLogoEuro, IoMdPricetag } from 'react-icons/io';
 import { CalendarService, IDatePrice } from '../../services/calendar-service';
-import ProgressiveImage from '../../components/common/image/progressive-image';
 import PriceModal from './form/price-modal';
 
 interface ITileProps {
@@ -55,7 +54,7 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status }) => {
         <Flex justifyContent="flex-end" mb={-6} px={2}>
             <Tag size="md" variant="solid" colorScheme={status} alignSelf="flex-end">
                 <TagLabel>{price ?? 'Unset'}</TagLabel>
-                {status !== PriceStatus.UNSET && <TagRightIcon boxSize="12px" as={BiEuro} />}
+                {status !== PriceStatus.UNSET && <TagRightIcon boxSize="12px" as={IoLogoEuro} />}
             </Tag>
         </Flex>
     );

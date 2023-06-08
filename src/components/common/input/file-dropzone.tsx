@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Flex, HStack, Text, CircularProgress, Alert, AlertIcon } from '@chakra-ui/react';
-import { AiOutlineUpload } from 'react-icons/all';
+import { AiOutlineUpload } from 'react-icons/ai';
 import FileService from '../../../services/file-service';
 
 interface FileDropzoneProps {

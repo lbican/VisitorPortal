@@ -20,7 +20,7 @@ import { IUnit } from '../../../utils/interfaces/typings';
 import { useForm } from 'react-hook-form';
 import { CalendarService, IDatePrice } from '../../../services/calendar-service';
 import useToastNotification from '../../../hooks/useToastNotification';
-import { MdOutlineSave } from 'react-icons/all';
+import { MdOutlineSave } from 'react-icons/md';
 
 interface PriceModalProps {
     isOpen: boolean;

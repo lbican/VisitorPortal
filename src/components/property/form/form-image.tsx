@@ -1,7 +1,7 @@
 import { IUploadedImage } from '../../../services/file-service';
 import { Button, VStack } from '@chakra-ui/react';
 import ProgressiveImage from '../../common/image/progressive-image';
-import { GoTrashcan } from 'react-icons/all';
+import { GoTrashcan } from 'react-icons/go';
 import React from 'react';
 
 function FormImage(props: { image: IUploadedImage; loading: boolean; onClick: () => void }) {

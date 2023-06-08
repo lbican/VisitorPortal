@@ -20,7 +20,7 @@ import { isEqual, isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import { useSteps } from 'chakra-ui-steps';
-import { MdChevronLeft, MdChevronRight } from 'react-icons/all';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
 // Used for determining if modal is opened and close it
 interface PropertyActionModalProps {
