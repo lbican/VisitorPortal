@@ -117,6 +117,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         onLocationChange={(location) => {
                             setValue('location', location);
                         }}
+                        locationName={watch().location}
                     />
                 </VStack>
             )}

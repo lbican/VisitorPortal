@@ -11,7 +11,7 @@ function FormImage(props: { image: IUploadedImage; loading: boolean; onClick: ()
                 imageLink={props.image.url}
                 imageAlt="Property image"
                 width="full"
-                height="20rem"
+                height="18rem"
                 borderRadius="md"
             />
             <Button
