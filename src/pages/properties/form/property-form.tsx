@@ -16,7 +16,6 @@ import {
     NumberInputStepper,
     VStack,
 } from '@chakra-ui/react';
-import { Steps, Step } from 'chakra-ui-steps';
 import {
     Control,
     Controller,
@@ -38,6 +37,7 @@ import FormImage from '../../../components/property/form/form-image';
 import { propertyStore } from '../../../mobx/propertyStore';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { v4 as uuidv4 } from 'uuid';
+import FormMap from '../../../components/form/form-map';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -88,9 +88,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     };
 
     return (
-        <Steps activeStep={activeStep} colorScheme="teal" size="lg" orientation="vertical">
-            <Step label="Basic Information">
-                <VStack spacing={4} justifyContent="flex-start" mt={4}>
+        <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start" ml={2}>
+            {activeStep === 0 && (
+                <VStack spacing={4}>
                     <HStack spacing={4} w="full">
                         <FormControl isInvalid={!!errors.name}>
                             <FormLabel htmlFor="name">Name</FormLabel>
@@ -113,9 +113,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                             <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
                         </FormControl>
                     </HStack>
+                    <FormMap
+                        onLocationChange={(location) => {
+                            setValue('location', location);
+                        }}
+                    />
                 </VStack>
-            </Step>
-            <Step label="Rating & Type">
+            )}
+            {activeStep === 1 && (
                 <VStack justifyContent="center" spacing={4} w="full" mt={4} ml={2}>
                     <FormControl isInvalid={!!errors.type}>
                         <FormLabel htmlFor="type">Type</FormLabel>
@@ -126,7 +131,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                             render={({ field }) => (
                                 <PropertyButtonGroup
                                     defaultValue={
-                                        propertyStore.editingProperty?.type ||
+                                        propertyStore.editingProperty?.type ??
                                         PropertyType.APARTMENT
                                     }
                                     onSelect={(option) => {
@@ -163,8 +168,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         <FormErrorMessage>{errors.rating?.message}</FormErrorMessage>
                     </FormControl>
                 </VStack>
-            </Step>
-            <Step label="Image">
+            )}
+            {activeStep === 2 && (
                 <VStack spacing={4} justifyContent="flex-start" mt={4}>
                     <FormControl isInvalid={!!errors.image_path}>
                         <FormLabel htmlFor="location">Property image</FormLabel>
@@ -199,8 +204,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         <FormErrorMessage>{errors.image_path?.message}</FormErrorMessage>
                     </FormControl>
                 </VStack>
-            </Step>
-            <Step label="Units">
+            )}
+            {activeStep === 3 && (
                 <VStack spacing={4} mt={4}>
                     {fields.map((field, index) => (
                         <HStack key={field.id} w="full">
@@ -214,7 +219,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                     })}
                                 />
                                 <FormErrorMessage>
-                                    {errors.units && errors.units[index]?.name?.message}
+                                    {errors.units?.[index]?.name?.message}
                                 </FormErrorMessage>
                             </FormControl>
                             <FormControl>
@@ -231,9 +236,6 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                         <NumberDecrementStepper />
                                     </NumberInputStepper>
                                 </NumberInput>
-                                <FormErrorMessage>
-                                    {errors.units && errors.units[index]?.message}
-                                </FormErrorMessage>
                             </FormControl>
                             <Divider orientation="vertical" w="2px" height="5rem" />
                             <IconButton
@@ -254,8 +256,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         Add unit
                     </Button>
                 </VStack>
-            </Step>
-        </Steps>
+            )}
+        </VStack>
     );
 };
 

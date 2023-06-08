@@ -9,6 +9,8 @@ import {
     ModalBody,
     ModalFooter,
     Box,
+    HStack,
+    useSteps,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
@@ -19,8 +21,8 @@ import useToastNotification from '../../../hooks/useToastNotification';
 import { isEqual, isObject } from 'lodash';
 import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
-import { useSteps } from 'chakra-ui-steps';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import FormStepper from '../../../components/form/form-stepper';
 
 // Used for determining if modal is opened and close it
 interface PropertyActionModalProps {
@@ -30,17 +32,28 @@ interface PropertyActionModalProps {
 
 type FieldNames = 'name' | 'location' | 'type' | 'image_path' | 'rating' | 'description';
 
-const stepFields: Record<number, FieldNames[]> = {
+const stepFormFields: Record<number, FieldNames[]> = {
     0: ['name', 'location'], // fields in Step 1
     1: ['type', 'rating'], // fields in Step 2
     2: ['image_path', 'description'], // fields in Step 3
 };
 
+const steps = [
+    { title: 'First', description: '📍 Details and Location' },
+    { title: 'Second', description: '⭐ Categorization' },
+    { title: 'Third', description: '🖼️ Image' },
+    { title: 'Fourth', description: '🏘️ Units or Rooms' },
+];
+
 const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
-    const STEPS_LENGTH = 4;
     const notification = useToastNotification();
     const { user } = useAuth();
+
+    const { activeStep, goToNext, goToPrevious, setActiveStep } = useSteps({
+        index: 0,
+        count: steps.length,
+    });
 
     //Form controls
     const {
@@ -59,24 +72,20 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
         defaultValues: getFormValues(store.editingProperty),
     });
 
-    const { nextStep, prevStep, activeStep, setStep } = useSteps({
-        initialStep: 0,
-    });
-
-    const validateAndChangeStep = async (goToNext: boolean) => {
-        const result = await trigger(stepFields[activeStep]);
+    const validateAndChangeStep = async (shouldProceed: boolean) => {
+        const result = await trigger(stepFormFields[activeStep]);
 
         if (result) {
-            if (goToNext) {
-                nextStep();
+            if (shouldProceed) {
+                goToNext();
             } else {
-                prevStep();
+                goToPrevious();
             }
         }
     };
 
     const cleanupStateAndCloseModal = () => {
-        setStep(0);
+        setActiveStep(0);
         reset();
         onClose();
     };
@@ -161,7 +170,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
     function isSubmitDisabled() {
         return store.editingProperty
             ? !isValid || submitting
-            : activeStep !== STEPS_LENGTH - 1 || !isValid || submitting;
+            : activeStep !== steps.length - 1 || !isValid || submitting;
     }
 
     return (
@@ -174,14 +183,21 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <PropertyForm
-                            register={register}
-                            control={control}
-                            errors={errors}
-                            watch={watch}
-                            setValue={setValue}
-                            activeStep={activeStep}
-                        />
+                        <HStack justifyContent="space-between">
+                            <FormStepper
+                                steps={steps}
+                                activeStep={activeStep}
+                                orientation="vertical"
+                            />
+                            <PropertyForm
+                                register={register}
+                                control={control}
+                                errors={errors}
+                                watch={watch}
+                                setValue={setValue}
+                                activeStep={activeStep}
+                            />
+                        </HStack>
                     </ModalBody>
 
                     <ModalFooter>
@@ -203,12 +219,12 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                                 Previous
                             </Button>
                         )}
-                        {activeStep !== STEPS_LENGTH - 1 && (
+                        {activeStep !== steps.length - 1 && (
                             <Button
                                 rightIcon={<MdChevronRight />}
                                 mr={2}
                                 onClick={() => void validateAndChangeStep(true)}
-                                isDisabled={activeStep === STEPS_LENGTH - 1}
+                                isDisabled={activeStep === steps.length - 1}
                             >
                                 Next
                             </Button>
