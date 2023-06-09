@@ -80,9 +80,26 @@ class PropertyStore {
                 this.setCurrentProperty(this.properties[propertyIndex]);
                 return;
             }
-
-            //TODO - Implement logic that will get current property if not clicked from properties menu
         }
+    }
+
+    @action
+    fetchCurrentProperty(propertyId: string, userId?: string) {
+        if (!userId) {
+            console.error('Unknown user provided!');
+            return;
+        }
+        this.setIsFetching(true);
+        return PropertyService.getUserProperty(propertyId, userId)
+            .then((property) => {
+                this.setCurrentProperty(property);
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                this.setIsFetching(false);
+            });
     }
 
     @action

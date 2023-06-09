@@ -4,18 +4,20 @@ import { observer } from 'mobx-react-lite';
 import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
 import BannerWrapper from '../../components/common/banner/banner-wrapper';
-import { Box, Heading, HStack, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Heading, HStack, Skeleton, useDisclosure, VStack } from '@chakra-ui/react';
 import PropertyTags from '../../components/property/form/property-tags';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
 import ReactiveButton from '../../components/common/input/reactive-button';
 import { propertyStore as store } from '../../mobx/propertyStore';
+import { useAuth } from '../../context/auth-context';
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
     const { onOpen, isOpen, onClose } = useDisclosure();
+    const { user } = useAuth();
 
     useEffect(() => {
-        store.getCurrentProperty(pid);
+        store.fetchCurrentProperty(pid, user?.id);
     }, []);
 
     if (!store.currentProperty) {
@@ -37,11 +39,15 @@ const PropertyPage = () => {
                         }
                     >
                         <VStack alignItems="flex-start">
-                            <Heading>{store.currentProperty.name}</Heading>
-                            <PropertyTags
-                                type={store.currentProperty.type}
-                                location={store.currentProperty.location}
-                            />
+                            <Skeleton isLoaded={!store.isFetching}>
+                                <Heading>{store.currentProperty.name}</Heading>
+                            </Skeleton>
+                            <Skeleton isLoaded={!store.isFetching}>
+                                <PropertyTags
+                                    type={store.currentProperty.type}
+                                    location={store.currentProperty.location}
+                                />
+                            </Skeleton>
                         </VStack>
                     </Banner>
                     <HStack
@@ -52,17 +58,19 @@ const PropertyPage = () => {
                         borderRadius="lg"
                         textAlign="left"
                     >
-                        <ReactiveButton
-                            onClick={() => {
-                                store.setEditingProperty(store.currentProperty || undefined);
-                                onOpen();
-                            }}
-                            text="Edit"
-                            icon={<AiOutlineEdit />}
-                            hoveredIcon={<AiFillEdit />}
-                            colorScheme="blue"
-                            isActive={isOpen}
-                        />
+                        <Skeleton isLoaded={!store.isFetching}>
+                            <ReactiveButton
+                                onClick={() => {
+                                    store.setEditingProperty(store.currentProperty || undefined);
+                                    onOpen();
+                                }}
+                                text="Edit"
+                                icon={<AiOutlineEdit />}
+                                hoveredIcon={<AiFillEdit />}
+                                colorScheme="blue"
+                                isActive={isOpen}
+                            />
+                        </Skeleton>
                     </HStack>
                 </BannerWrapper>
             </Box>

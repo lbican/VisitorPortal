@@ -7,6 +7,7 @@ import { AiOutlineEdit } from 'react-icons/ai'; // Use correct import here
 type CustomContextMenuProps = {
     onMenuDelete: () => void;
     onMenuEdit: () => void;
+    onJumpToCalendar: () => void;
     children?: ReactNode;
 };
 
@@ -14,6 +15,7 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
     onMenuDelete,
     children,
     onMenuEdit,
+    onJumpToCalendar,
 }) => (
     <ContextMenu<HTMLDivElement>
         renderMenu={() => (
@@ -27,7 +29,7 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
                     <Text ml={2}>Edit</Text>
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem>Jump to calendar</MenuItem>
+                <MenuItem onClick={onJumpToCalendar}>Jump to calendar</MenuItem>
             </MenuList>
         )}
     >

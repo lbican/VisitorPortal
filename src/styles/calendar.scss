@@ -1,8 +1,8 @@
-$primary-color: #006edc;
+$primary-color: #3182ce;
 $secondary-color: #d10000;
 $background-color: #ffffff;
 $border-color: #a0a096;
-$highlight-color: #e8e8e8;
+$highlight-color: #63b3ed;
 $disabled-color: #e53e3e;
 $border-radius: 6px;
 $border-radius-large: 8px;
@@ -103,7 +103,7 @@ $border-radius-large: 8px;
         text-align: center;
 
         &--range:not([disabled]) {
-            background: lighten($primary-color, 25) !important;
+            background: $highlight-color !important;
             color: white;
             border-radius: 0;
         }

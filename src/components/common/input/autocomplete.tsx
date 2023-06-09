@@ -13,7 +13,7 @@ export interface IEntity {
     name: string;
 }
 
-export const mapToAutocompleteLabel = <T extends IEntity>(entities: T[]): ILabel[] => {
+export const mapToAutocompleteLabels = <T extends IEntity>(entities: T[]): ILabel[] => {
     return entities.map((entity) => {
         return {
             value: entity.id,

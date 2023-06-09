@@ -10,11 +10,12 @@ import CustomContextMenu from '../../components/common/action/custom-context-men
 import { observer } from 'mobx-react-lite';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import useToastNotification from '../../hooks/useToastNotification';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Properties = (): ReactElement => {
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
     const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const notification = useToastNotification();
 
@@ -77,13 +78,14 @@ const Properties = (): ReactElement => {
                 {store.properties.map((property) => (
                     <CustomContextMenu
                         key={property.id}
+                        onJumpToCalendar={() => {
+                            store.setCurrentProperty(property);
+                            navigate('/calendar');
+                        }}
                         onMenuEdit={() => openEditModal(property)}
                         onMenuDelete={() => openDeleteAlert(property)}
                     >
-                        <NavLink
-                            to={`/properties/property/${property.id}`}
-                            onClick={() => store.setCurrentProperty(property)}
-                        >
+                        <NavLink to={`/properties/property/${property.id}`}>
                             <Property property={property} />
                         </NavLink>
                     </CustomContextMenu>

@@ -17,7 +17,7 @@ const Banner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
             }}
             style={{
                 backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%), url(${
-                    banner_url || DEFAULT_BANNER
+                    banner_url ?? DEFAULT_BANNER
                 })`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

@@ -13,6 +13,7 @@ import {
     useDisclosure,
     Alert,
     AlertIcon,
+    Skeleton,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
@@ -24,7 +25,7 @@ import { IProperty, IUnit } from '../../utils/interfaces/typings';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import Autocomplete, {
     ILabel,
-    mapToAutocompleteLabel,
+    mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
@@ -47,15 +48,20 @@ enum PriceStatus {
 interface PriceTagProps {
     status: PriceStatus;
     price?: number;
+    loading?: boolean;
 }
 
-const PriceTag: React.FC<PriceTagProps> = ({ price, status }) => {
+const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading }) => {
     return (
         <Flex justifyContent="flex-end" mb={-6} px={2}>
-            <Tag size="md" variant="solid" colorScheme={status} alignSelf="flex-end">
-                <TagLabel>{price ?? 'Unset'}</TagLabel>
-                {status !== PriceStatus.UNSET && <TagRightIcon boxSize="12px" as={IoLogoEuro} />}
-            </Tag>
+            <Skeleton isLoaded={!loading}>
+                <Tag size="md" variant="solid" colorScheme={status} alignSelf="flex-end">
+                    <TagLabel>{price ?? 'Unset'}</TagLabel>
+                    {status !== PriceStatus.UNSET && (
+                        <TagRightIcon boxSize="12px" as={IoLogoEuro} />
+                    )}
+                </Tag>
+            </Skeleton>
         </Flex>
     );
 };
@@ -113,7 +119,7 @@ const CalendarPage = (): ReactElement => {
 
     const getTilePrices = ({ date, view }: ITileProps) => {
         if (view === 'month' && loadingPrices) {
-            return <PriceTag price={0} status={PriceStatus.AVAILABLE} />;
+            return <PriceTag loading={loadingPrices} status={PriceStatus.AVAILABLE} />;
         }
 
         if (view === 'month') {
@@ -144,7 +150,7 @@ const CalendarPage = (): ReactElement => {
                         value={mapValueToLabel(store.currentProperty)}
                         onSelect={handlePropertySelect}
                         placeholder="Select property"
-                        options={mapToAutocompleteLabel<IProperty>(store.properties)}
+                        options={mapToAutocompleteLabels<IProperty>(store.properties)}
                         isLoading={store.isFetching}
                         width="14rem"
                     />
@@ -152,7 +158,7 @@ const CalendarPage = (): ReactElement => {
                         value={mapValueToLabel(unit)}
                         onSelect={handleUnitSelect}
                         placeholder="Select unit"
-                        options={mapToAutocompleteLabel<IUnit>(store.currentProperty?.units ?? [])}
+                        options={mapToAutocompleteLabels<IUnit>(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />

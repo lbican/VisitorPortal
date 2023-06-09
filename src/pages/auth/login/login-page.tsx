@@ -3,7 +3,6 @@ import SplitScreen from '../../../components/layout/split-screen';
 import LoginForm from './login-form';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Spinner } from '@chakra-ui/react';
 
 export default function LoginPage(): ReactElement {
     const { user } = useAuth();

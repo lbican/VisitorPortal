@@ -49,6 +49,26 @@ class PropertyService {
         return data;
     }
 
+    static async getUserProperty(propertyId: string, userId: string): Promise<IProperty | null> {
+        const { data, error } = await supabase.rpc('get_user_property', {
+            uid: userId,
+            pid: propertyId,
+        });
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        if (!data) {
+            console.log('No property found for this user');
+            return null;
+        }
+
+        console.log(data);
+
+        return data as IProperty;
+    }
+
     static async getPropertiesByUserId(userId?: string): Promise<IProperty[]> {
         if (!userId) {
             throw new Error('Unknown user provided!');
