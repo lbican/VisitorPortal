@@ -4,25 +4,25 @@ import {
     Heading,
     HStack,
     Tag,
-    TagLabel,
-    Text,
-    TagRightIcon,
-    Flex,
-    Button,
-    Image,
+    TagLeftIcon,
     useDisclosure,
+    TagLabel,
+    Flex,
+    Image,
     Alert,
     AlertIcon,
     Skeleton,
+    IconButton,
+    Tooltip,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval } from 'date-fns';
-import EmptyCalendarImage from '../../assets/empty_calendar.svg';
+import EmptyCalendarImage from '../../assets/images/empty_calendar.svg';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IUnit } from '../../utils/interfaces/typings';
-import { propertyStore as store } from '../../mobx/propertyStore';
+import { propertyStore, propertyStore as store } from '../../mobx/propertyStore';
 import Autocomplete, {
     ILabel,
     mapToAutocompleteLabels,
@@ -30,9 +30,11 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
-import { IoLogoEuro, IoMdPricetag } from 'react-icons/io';
+import { IoPricetag, IoPricetagOutline } from 'react-icons/io5';
 import { CalendarService, IDatePrice } from '../../services/calendar-service';
 import PriceModal from './form/price-modal';
+import PDFButton from '../../pdf/pdf-button';
+import { isUndefined } from 'lodash';
 
 interface ITileProps {
     view: View;
@@ -56,9 +58,15 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading }) => {
         <Flex justifyContent="flex-end" mb={-6} px={2}>
             <Skeleton isLoaded={!loading}>
                 <Tag size="md" variant="solid" colorScheme={status} alignSelf="flex-end">
-                    <TagLabel>{price ?? 'Unset'}</TagLabel>
-                    {status !== PriceStatus.UNSET && (
-                        <TagRightIcon boxSize="12px" as={IoLogoEuro} />
+                    {status !== PriceStatus.UNSET && !isUndefined(price) ? (
+                        <>
+                            <TagLeftIcon as={IoPricetag} />
+                            <TagLabel>{price} €</TagLabel>
+                        </>
+                    ) : (
+                        <>
+                            <TagLeftIcon as={IoPricetagOutline} />
+                        </>
                     )}
                 </Tag>
             </Skeleton>
@@ -69,7 +77,6 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading }) => {
 const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
     const [unit, setUnit] = useState<IUnit | null>(null);
-    const [refresh, setRefresh] = useState(false);
     const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
     const [loadingPrices, setLoadingPrices] = useState(false);
     const { user } = useAuth();
@@ -79,7 +86,7 @@ const CalendarPage = (): ReactElement => {
         void store.fetchProperties(user?.id);
     }, [store, user]);
 
-    useEffect(() => {
+    const fetchDatePrices = () => {
         if (unit) {
             setLoadingPrices(true);
             CalendarService.fetchDatePrices(unit.id)
@@ -93,7 +100,11 @@ const CalendarPage = (): ReactElement => {
                     setLoadingPrices(false);
                 });
         }
-    }, [unit, refresh]);
+    };
+
+    useEffect(() => {
+        fetchDatePrices();
+    }, [unit]);
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
         newValue && store.getCurrentProperty(newValue.value);
@@ -115,6 +126,10 @@ const CalendarPage = (): ReactElement => {
         if (unitIndex > -1) {
             setUnit(store.currentProperty.units[unitIndex]);
         }
+    };
+
+    const datesSelected = (): boolean => {
+        return !!(selectedDates[0] && selectedDates[1]);
     };
 
     const getTilePrices = ({ date, view }: ITileProps) => {
@@ -162,28 +177,48 @@ const CalendarPage = (): ReactElement => {
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />
-                    <Button
-                        colorScheme="green"
-                        onClick={onOpen}
-                        leftIcon={<IoMdPricetag />}
-                        isDisabled={!selectedDates[0] || !selectedDates[1]}
+                    <Tooltip
+                        hasArrow
+                        label={
+                            datesSelected() ? 'Assign price' : 'Select date range to assign prices'
+                        }
                     >
-                        Assign price
-                    </Button>
+                        <IconButton
+                            aria-label="Assign price"
+                            colorScheme="green"
+                            onClick={onOpen}
+                            icon={<IoPricetag />}
+                            isDisabled={!datesSelected()}
+                        />
+                    </Tooltip>
+                    <PDFButton
+                        property={propertyStore.currentProperty}
+                        unit={unit}
+                        datePrices={datePrices}
+                    />
                 </HStack>
             </HStack>
             <Divider mb={4} />
             {unit ? (
-                <Calendar
-                    tileContent={getTilePrices}
-                    locale="en"
-                    selectRange={true}
-                    onChange={(value) => {
-                        setSelectedDates(value as Date[]);
-                    }}
-                    value={selectedDates as Value}
-                    minDetail="year"
-                />
+                <>
+                    <PriceModal
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        unit={unit}
+                        date_range={[selectedDates[0], selectedDates[1]]}
+                        onValueSubmitted={() => fetchDatePrices()}
+                    />
+                    <Calendar
+                        tileContent={getTilePrices}
+                        locale="en"
+                        selectRange={true}
+                        onChange={(value) => {
+                            setSelectedDates(value as Date[]);
+                        }}
+                        value={selectedDates as Value}
+                        minDetail="year"
+                    />
+                </>
             ) : (
                 <>
                     <Alert status="info" mb={2}>
@@ -198,23 +233,6 @@ const CalendarPage = (): ReactElement => {
                         height="40rem"
                     />
                 </>
-            )}
-            {unit && (
-                <PriceModal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    unit={unit}
-                    date_range={[selectedDates[0], selectedDates[1]]}
-                    onValueSubmitted={() => {
-                        setRefresh(!refresh);
-                    }}
-                />
-            )}
-            {selectedDates.length > 0 && (
-                <Text as="p">
-                    <Text as="b">Start:</Text> {selectedDates[0].toDateString()}|
-                    <Text as="b">End:</Text> {selectedDates[1].toDateString()}
-                </Text>
             )}
         </>
     );
