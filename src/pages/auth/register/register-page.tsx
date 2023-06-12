@@ -3,15 +3,17 @@ import SplitScreen from '../../../components/layout/split-screen';
 import RegisterSteps from './register-steps';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage(): ReactElement {
     const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useTranslation();
 
     useEffect(() => {
-        if (user && user.username) {
-            const redirectTo = location.state?.from || '/';
+        if (user?.username) {
+            const redirectTo = location.state?.from ?? '/';
             navigate(redirectTo, {
                 replace: true,
             });
@@ -21,7 +23,7 @@ export default function RegisterPage(): ReactElement {
     return (
         <SplitScreen
             imageLink="https://source.unsplash.com/1600x900/?croatia"
-            title="Register your account"
+            title={t('Register your account')}
         >
             <RegisterSteps />
         </SplitScreen>

@@ -21,10 +21,12 @@ import {
     passwordValidator,
     repeatPasswordValidator,
 } from '../../../../services/validators';
+import { useTranslation } from 'react-i18next';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const [show, setShow] = React.useState(false);
     const form = useContext(FormContext);
+    const { t } = useTranslation();
 
     const {
         register,
@@ -74,7 +76,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
             >
                 <FormControl mt="2%" isInvalid={!!errors.email}>
                     <FormLabel htmlFor="email" fontWeight="normal">
-                        Email address
+                        {t('Email address')}
                     </FormLabel>
                     <Input
                         id="email"
@@ -88,13 +90,13 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
 
                 <FormControl mt="2%" isInvalid={!!errors.password}>
                     <FormLabel htmlFor="password" fontWeight="normal" mt="2%">
-                        Password
+                        {t('Password')}
                     </FormLabel>
                     <InputGroup size="md">
                         <Input
                             pr="4.5rem"
                             type={show ? 'text' : 'password'}
-                            placeholder="Enter password"
+                            placeholder={t('Enter password') ?? ''}
                             ref={passwordRef}
                             {...passwordControl}
                         />
@@ -108,7 +110,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
                 </FormControl>
                 <FormControl mt="2%" isInvalid={!!errors.repeat_password}>
                     <FormLabel htmlFor="repeat_password" fontWeight="normal">
-                        Repeat Password
+                        {t('Repeat password')}
                     </FormLabel>
                     <Input
                         id="repeat_password"
@@ -122,10 +124,10 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
                 </FormControl>
                 <HStack spacing={2} width="100%" justifyContent="flex-end" my={6}>
                     <Button size="sm" onClick={prevStep}>
-                        Previous
+                        {t('Previous')}
                     </Button>
                     <Button size="sm" type="submit">
-                        Next
+                        {t('Next')}
                     </Button>
                 </HStack>
             </Box>

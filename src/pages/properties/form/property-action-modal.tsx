@@ -23,6 +23,7 @@ import getFormValues from './modal-values';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import FormStepper, { FormStep } from '../../../components/form/form-stepper';
+import { useTranslation } from 'react-i18next';
 
 // Used for determining if modal is opened and close it
 interface PropertyActionModalProps {
@@ -38,17 +39,18 @@ const stepFormFields: Record<number, FieldNames[]> = {
     2: ['image_path', 'description'], // fields in Step 3
 };
 
-const steps: FormStep[] = [
-    { title: 'First', description: '📍 Details and Location' },
-    { title: 'Second', description: '⭐ Categorization' },
-    { title: 'Third', description: '🖼️ Image' },
-    { title: 'Fourth', description: '🏘️ Units or Rooms' },
-];
-
 const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const { user } = useAuth();
+
+    const steps: FormStep[] = [
+        { title: t('First'), description: t('📍 Details and Location') },
+        { title: t('Second'), description: t('⭐ Categorization') },
+        { title: t('Third'), description: t('🖼️ Image') },
+        { title: t('Fourth'), description: t('🏘️ Units or Rooms') },
+    ];
 
     const { activeStep, goToNext, goToPrevious, setActiveStep } = useSteps({
         index: 0,
@@ -99,7 +101,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
             store
                 .createProperty(propertyData, user?.id)
                 .then(() => {
-                    notification.success('Successfully added new property!');
+                    notification.success(t('Successfully added new property!'));
                     resolve();
                 })
                 .catch((error) => {
@@ -126,7 +128,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
             store
                 .updateProperty(propertyData, propertyId)
                 .then(() => {
-                    notification.success('Updated property', 'Successfully updated property!');
+                    notification.success(t('Successfully updated property!'));
                     resolve();
                 })
                 .catch((error) => {
@@ -141,7 +143,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
 
     const handleFormSubmit = (data: TFormProperty) => {
         if (!canExecuteUpdate()) {
-            notification.warning('Please make changes before attempting to update');
+            notification.warning(t('Please make changes before attempting to update'));
             return;
         }
 
@@ -153,8 +155,10 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
         actionPromise
             .then(disposeModalAndUpdateData)
             .catch((error) => {
-                const errorMsg = store.editingProperty ? 'update' : 'add';
-                notification.error(isObject(error) ? `Unable to ${errorMsg} property` : error);
+                const errorMsg = store.editingProperty
+                    ? t('unableToUpdateProperty')
+                    : t('unableToAddProperty');
+                notification.error(isObject(error) ? errorMsg : error);
             })
             .finally(() => {
                 setSubmitting(false);
@@ -173,7 +177,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
             <ModalContent>
                 <Box as="form">
                     <ModalHeader>
-                        {store.editingProperty ? 'Update your' : 'Create new'} property
+                        {store.editingProperty ? t('editProperty') : t('addNewProperty')}
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
@@ -201,7 +205,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                             mr={2}
                             onClick={cleanupStateAndCloseModal}
                         >
-                            Close
+                            {t('Close')}
                         </Button>
                         {activeStep !== 0 && (
                             <Button
@@ -210,7 +214,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                                 isDisabled={activeStep === 0}
                                 mr={2}
                             >
-                                Previous
+                                {t('Previous')}
                             </Button>
                         )}
                         {activeStep !== steps.length - 1 && (
@@ -220,7 +224,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                                 onClick={() => void validateAndChangeStep(true)}
                                 isDisabled={activeStep === steps.length - 1}
                             >
-                                Next
+                                {t('Next')}
                             </Button>
                         )}
                         <Button
@@ -232,7 +236,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                             isLoading={submitting}
                             isDisabled={isSubmitDisabled()}
                         >
-                            {store.editingProperty ? 'Save changes' : 'Create'}
+                            {store.editingProperty ? t('Save changes') : t('Create')}
                         </Button>
                     </ModalFooter>
                 </Box>

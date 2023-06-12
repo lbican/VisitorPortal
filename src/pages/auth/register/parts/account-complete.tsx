@@ -7,11 +7,13 @@ import { motion } from 'framer-motion';
 import { AuthError } from '@supabase/supabase-js';
 import AnimatedAlert from '../../../../components/common/feedback/animated-alert';
 import { AuthService } from '../../../../services/auth-service';
+import { useTranslation } from 'react-i18next';
 
 const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
     const form = useContext(FormContext);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<AuthError | null>(null);
+    const { t } = useTranslation();
 
     const user: IUserRegistration = {
         username: form?.formState.steps.account.value.username || '',
@@ -48,18 +50,20 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
                 <Flex py={6} gap={4}>
                     <Avatar size="2xl" src={user.avatar}></Avatar>
                     <VStack alignItems="flex-start">
-                        <Heading size="sm">Hey {user.first_name},</Heading>
-                        <Text align="left">Good to have you on board!</Text>
-                        <Heading size="sm">Your details:</Heading>
+                        <Heading size="sm">
+                            {t('Hey')} {user.first_name},
+                        </Heading>
+                        <Text align="left">{t('Good to have you on board!')}</Text>
+                        <Heading size="sm">{t('Your details:')}</Heading>
                         <Text fontSize="sm">
-                            <Text as="b">Username: </Text> {user.username}
+                            <Text as="b">{t('Username:')} </Text> {user.username}
                         </Text>
                         <Text fontSize="sm">
-                            <Text as="b">Full name: </Text>
+                            <Text as="b">{t('Full name:')} </Text>
                             {user.first_name + ' ' + user.last_name}
                         </Text>
                         <Text fontSize="sm">
-                            <Text as="b">Email: </Text>
+                            <Text as="b">{t('Email:')} </Text>
                             {user.email}
                         </Text>
                     </VStack>
@@ -67,7 +71,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
 
                 <HStack spacing={2} width="100%" justifyContent="flex-end" my={6}>
                     <Button size="sm" onClick={prevStep}>
-                        Previous
+                        {t('Previous')}
                     </Button>
                     <Button
                         isLoading={loading}
@@ -80,7 +84,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
                         type="submit"
                         bgColor="green.500"
                     >
-                        Finish registration
+                        {t('Finish registration')}
                     </Button>
                 </HStack>
                 <AnimatedAlert error={error} />

@@ -11,10 +11,12 @@ import { observer } from 'mobx-react-lite';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import useToastNotification from '../../hooks/useToastNotification';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Properties = (): ReactElement => {
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
     const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useAuth();
     const notification = useToastNotification();
@@ -39,11 +41,11 @@ const Properties = (): ReactElement => {
                 .deleteProperty(store.currentProperty.id, store.currentProperty.image_path)
                 .then(() => {
                     onCloseAlert();
-                    notification.success('Successfully deleted property');
+                    notification.success(t('Successfully deleted property'));
                 })
                 .catch((e) => {
                     console.error(e);
-                    notification.error('Could not delete property');
+                    notification.error(t('Could not delete property'));
                 });
         }
     };
@@ -52,10 +54,10 @@ const Properties = (): ReactElement => {
         <>
             <HStack mb={4} justifyContent="space-between">
                 <Heading as="h2" size="lg">
-                    Your properties
+                    {t('Your properties')}
                 </Heading>
                 <Button leftIcon={<AiOutlinePlus />} colorScheme="green" onClick={onModalOpen}>
-                    Add new property
+                    {t('Add new property')}
                 </Button>
             </HStack>
             <PropertyActionModal
@@ -70,8 +72,10 @@ const Properties = (): ReactElement => {
                 isOpen={isOpenAlert}
                 onClose={onCloseAlert}
                 onConfirm={confirmDeleteProperty}
-                dialogBody={`Are you sure you want to delete ${store.currentProperty?.name}`}
-                dialogHeader="Confirm deletion"
+                dialogBody={t('confirmDelete', { propertyName: store.currentProperty?.name })}
+                dialogHeader={t('Confirm deletion')}
+                dialogConfirmText={t('Delete')}
+                dialogDeclineText={t('Cancel')}
             />
             <Divider mb={4} />
             <Flex alignItems="flex-start" flexWrap="wrap">

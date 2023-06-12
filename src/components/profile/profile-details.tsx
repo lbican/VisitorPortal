@@ -4,10 +4,12 @@ import { useAuth, UserProfile } from '../../context/auth-context';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import ProfileUpdateModal from './profile-update-modal';
 import ReactiveButton from '../common/input/reactive-button';
+import { useTranslation } from 'react-i18next';
 
 const ProfileDetails: React.FC<UserProfile> = (props) => {
     const { user } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { t } = useTranslation();
 
     const isEditable = () => {
         return props.id === user?.id;
@@ -26,7 +28,7 @@ const ProfileDetails: React.FC<UserProfile> = (props) => {
                 {isEditable() && (
                     <ReactiveButton
                         onClick={onOpen}
-                        text="Edit"
+                        text={t('Edit')}
                         icon={<AiOutlineEdit />}
                         hoveredIcon={<AiFillEdit />}
                         colorScheme="blue"

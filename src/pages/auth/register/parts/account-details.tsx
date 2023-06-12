@@ -20,10 +20,12 @@ import {
     lastNameValidator,
     usernameValidator,
 } from '../../../../services/validators';
+import { useTranslation } from 'react-i18next';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);
     const [avatar, setAvatar] = useState<string>(form?.formState.steps.account.value.avatar ?? '');
+    const { t } = useTranslation();
 
     const handleImageClick = useCallback((image: string) => {
         setAvatar(image);
@@ -73,11 +75,11 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
             >
                 <FormControl isInvalid={!!errors.username}>
                     <FormLabel htmlFor="username" fontWeight="normal">
-                        Username
+                        {t('Username')}
                     </FormLabel>
                     <Input
                         id="username"
-                        placeholder="Username"
+                        placeholder={t('Username') ?? ''}
                         ref={usernameRef}
                         {...usernameControl}
                     />
@@ -87,11 +89,11 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
                 <Flex mt="5%">
                     <FormControl mr="5%" isInvalid={!!errors.first_name}>
                         <FormLabel htmlFor="first-name" fontWeight="normal">
-                            First name
+                            {t('First name')}
                         </FormLabel>
                         <Input
                             id="first-name"
-                            placeholder="First name"
+                            placeholder={t('First name') ?? ''}
                             ref={firstNameRef}
                             {...firstNameControl}
                         />
@@ -102,11 +104,11 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
 
                     <FormControl isInvalid={!!errors.last_name}>
                         <FormLabel htmlFor="last_name" fontWeight="normal">
-                            Last name
+                            {t('Last name')}
                         </FormLabel>
                         <Input
                             id="last_name"
-                            placeholder="Last name"
+                            placeholder={t('Last name') ?? ''}
                             ref={lastNameRef}
                             {...lastNameControl}
                         />
@@ -124,7 +126,7 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
                 </Flex>
                 <Flex width="100%" justifyContent="flex-end" my={6}>
                     <Button size="sm" type="submit">
-                        Next
+                        {t('Next')}
                     </Button>
                 </Flex>
             </Box>

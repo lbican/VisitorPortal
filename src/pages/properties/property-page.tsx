@@ -11,10 +11,12 @@ import PropertyActionModal from './form/property-action-modal';
 import ReactiveButton from '../../components/common/input/reactive-button';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import { useAuth } from '../../context/auth-context';
+import { useTranslation } from 'react-i18next';
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
     const { onOpen, isOpen, onClose } = useDisclosure();
     const { user } = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
         store.fetchCurrentProperty(pid, user?.id);
@@ -64,7 +66,7 @@ const PropertyPage = () => {
                                     store.setEditingProperty(store.currentProperty || undefined);
                                     onOpen();
                                 }}
-                                text="Edit"
+                                text={t('Edit')}
                                 icon={<AiOutlineEdit />}
                                 hoveredIcon={<AiFillEdit />}
                                 colorScheme="blue"

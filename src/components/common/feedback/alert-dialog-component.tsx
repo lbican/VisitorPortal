@@ -17,8 +17,8 @@ interface AlertDialogProps {
     isLoading: boolean;
     dialogHeader: string;
     dialogBody: string;
-    dialogDeclineText?: string;
-    dialogConfirmText?: string;
+    dialogDeclineText?: string | null;
+    dialogConfirmText?: string | null;
 }
 
 const AlertDialogComponent: FC<AlertDialogProps> = ({

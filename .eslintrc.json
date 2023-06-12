@@ -1,7 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -9,8 +10,7 @@
         "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
-    "overrides": [
-    ],
+    "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -24,7 +24,7 @@
     "rules": {
         "@typescript-eslint/no-empty-function": "off",
         "linebreak-style": ["warn", "windows"],
-        "quotes": ["warn", "single"],
+        "quotes": ["warn", "single", { "avoidEscape": true }],
         "semi": ["warn", "always"],
         "react/no-unescaped-entities": "off",
         "react/jsx-curly-brace-presence": [
@@ -34,7 +34,7 @@
         "prettier/prettier": [
             "warn",
             {
-                "singleQuote":true,
+                "singleQuote": true,
                 "printWidth": 100,
                 "tabWidth": 4,
                 "endOfLine": "crlf"

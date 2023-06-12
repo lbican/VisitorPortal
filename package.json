@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "i18n:extract": "i18next 'src/**/*.{ts,tsx,js,jsx}' -c i18next-parser.config.cjs && node fixTranslations.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "chakra-ui-steps": "^2.0.4",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.12.16",
+    "i18next": "^22.5.1",
     "immer": "^10.0.2",
     "lodash": "^4.17.21",
     "mobx": "^6.9.0",
@@ -29,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.44.3",
+    "react-i18next": "^12.3.1",
     "react-icons": "^4.9.0",
     "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.12.0",
@@ -50,6 +53,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "i18next-parser": "^8.0.0",
     "typescript": "^5.1.0",
     "vite": "^4.3.9",
     "vite-plugin-checker": "^0.6.0",

@@ -1,9 +1,11 @@
 import { useToast } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const useToastNotification = () => {
     const toast = useToast();
+    const { t } = useTranslation();
     return {
-        success: (description: string, title = 'Success') =>
+        success: (description: string, title = t('Success')) =>
             toast({
                 title,
                 description,
@@ -13,7 +15,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        warning: (description: string, title = 'Warning') =>
+        warning: (description: string, title = t('Warning')) =>
             toast({
                 title,
                 description,
@@ -23,7 +25,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        error: (description: string, title = 'An error has occurred') =>
+        error: (description: string, title = t('An error has occurred')) =>
             toast({
                 title,
                 description,
@@ -33,7 +35,7 @@ const useToastNotification = () => {
                 isClosable: true,
                 variant: 'left-accent',
             }),
-        info: (description: string, title = 'Information') =>
+        info: (description: string, title = t('Information')) =>
             toast({
                 title,
                 description,

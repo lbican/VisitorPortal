@@ -21,6 +21,7 @@ import AnimatedAlert from '../../../components/common/feedback/animated-alert';
 import { emailValidator, passwordValidator } from '../../../services/validators';
 import { useAuthForm } from '../../../hooks/useAuthLogin';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface OAuthProvider {
     name: string;
@@ -31,6 +32,7 @@ interface OAuthProvider {
 
 const LoginForm = (): ReactElement => {
     const { loginUserWithToken, loginUserWithEmail, error, loading } = useAuthForm();
+    const { t } = useTranslation();
 
     const oAuthProviders: OAuthProvider[] = [
         { name: 'Google', provider: 'google', icon: <FcGoogle />, colorScheme: 'gray' },
@@ -61,17 +63,17 @@ const LoginForm = (): ReactElement => {
         <>
             <VStack spacing={6} as="form" onSubmit={handleSubmit(onLoginSubmit)}>
                 <FormControl id="email" isInvalid={!!errors.email}>
-                    <FormLabel>Email address</FormLabel>
+                    <FormLabel>{t('Email address')}</FormLabel>
                     <Input type="email" ref={emailRef} {...emailControl} />
                     <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
                 </FormControl>
                 <FormControl id="password" isInvalid={!!errors.password}>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('Password')}</FormLabel>
                     <Input type="password" ref={passwordRef} {...passwordControl} />
                     <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
                 </FormControl>
                 <Link as={NavLink} to="/register" alignSelf="flex-end">
-                    Don't have an account? Register
+                    {t("Don't have an account? Register")}
                 </Link>
                 <Button
                     isLoading={loading}
@@ -80,14 +82,14 @@ const LoginForm = (): ReactElement => {
                     variant="solid"
                     type="submit"
                 >
-                    Sign in
+                    {t('Sign in')}
                 </Button>
                 <AnimatedAlert error={error} />
             </VStack>
             <VStack spacing={6}>
                 <Flex align="center" w="full">
                     <Divider />
-                    <Text padding="2">OR</Text>
+                    <Text padding="2">{t('OR')}</Text>
                     <Divider />
                 </Flex>
                 <ButtonGroup spacing={2}>
@@ -97,7 +99,7 @@ const LoginForm = (): ReactElement => {
                                 minWidth="33%"
                                 key={oauth.provider}
                                 colorScheme={oauth.colorScheme}
-                                onClick={() => loginUserWithToken(oauth.provider)}
+                                onClick={() => void loginUserWithToken(oauth.provider)}
                                 leftIcon={oauth.icon}
                             >
                                 {oauth.name}

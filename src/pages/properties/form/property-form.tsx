@@ -38,6 +38,7 @@ import { propertyStore } from '../../../mobx/propertyStore';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { v4 as uuidv4 } from 'uuid';
 import FormMap from '../../../components/form/form-map';
+import { useTranslation } from 'react-i18next';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -62,6 +63,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     const { user } = useAuth();
     const fileService = new FileService('property_images', user?.id);
     const notification = useToastNotification();
+    const { t } = useTranslation();
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -76,12 +78,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             fileService
                 .deleteFiles([image.path])
                 .then(() => {
-                    notification.info('Image has been successfully deleted', 'Image deleted');
+                    notification.info(
+                        t('Image has been successfully deleted'),
+                        t('Image deleted') ?? ''
+                    );
                     setValue('image_path', '');
                     setImage(undefined);
                 })
                 .catch(() => {
-                    notification.error('Could not delete image, please try again later');
+                    notification.error(t('Could not delete image, please try again later'));
                 })
                 .finally(() => setLoading(false));
         }
@@ -99,22 +104,24 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                 <VStack spacing={4}>
                     <HStack spacing={4} w="full">
                         <FormControl isInvalid={!!errors.name}>
-                            <FormLabel htmlFor="name">Name</FormLabel>
+                            <FormLabel htmlFor="name">{t('Name')}</FormLabel>
                             <Input
                                 isInvalid={!!errors.name}
                                 type="text"
                                 id="name"
-                                {...register('name', { required: 'Name is required' })}
+                                {...register('name', { required: t('Name is required') ?? true })}
                             />
                             <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
                         </FormControl>
                         <FormControl isInvalid={!!errors.location}>
-                            <FormLabel htmlFor="location">Location</FormLabel>
+                            <FormLabel htmlFor="location">{t('Location')}</FormLabel>
                             <Input
                                 isInvalid={!!errors.location}
                                 type="text"
                                 id="location"
-                                {...register('location', { required: 'Location is required' })}
+                                {...register('location', {
+                                    required: t('Location is required') ?? true,
+                                })}
                             />
                             <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
                         </FormControl>
@@ -130,11 +137,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             {activeStep === 1 && (
                 <VStack justifyContent="center" spacing={4} w="full" mt={4} ml={2}>
                     <FormControl isInvalid={!!errors.type}>
-                        <FormLabel htmlFor="type">Type</FormLabel>
+                        <FormLabel htmlFor="type">{t('Type')}</FormLabel>
                         <Controller
                             control={control}
                             name="type"
-                            rules={{ required: 'Type is required' }}
+                            rules={{ required: t('Type is required') ?? true }}
                             render={({ field }) => (
                                 <PropertyButtonGroup
                                     defaultValue={
@@ -150,16 +157,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
                     </FormControl>
                     <FormControl isInvalid={!!errors.rating}>
-                        <FormLabel htmlFor="rating">Property rating</FormLabel>
+                        <FormLabel htmlFor="rating">{t('Property rating')}</FormLabel>
                         <Controller
                             control={control}
                             name="rating"
                             defaultValue={0}
                             rules={{
-                                required: 'Rating is required',
+                                required: t('Rating is required') ?? true,
                                 min: {
                                     value: 1,
-                                    message: 'Rating has to be greater than 1',
+                                    message: t('Rating has to be greater than 1'),
                                 },
                             }}
                             render={({ field }) => (
@@ -179,12 +186,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             {activeStep === 2 && (
                 <VStack spacing={4} justifyContent="flex-start" mt={4}>
                     <FormControl isInvalid={!!errors.image_path}>
-                        <FormLabel htmlFor="location">Property image</FormLabel>
+                        <FormLabel htmlFor="location">{t('Property image')}</FormLabel>
                         {image ? (
                             <>
                                 <FormHelperText>
-                                    Your property image, delete current image if you want to set a
-                                    new one.
+                                    {t(
+                                        'Your property image, delete current image if you want to set a new one.'
+                                    )}
                                 </FormHelperText>
                                 <FormImage
                                     image={image}
@@ -196,7 +204,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                             <Controller
                                 control={control}
                                 name="image_path"
-                                rules={{ required: 'Image is required' }}
+                                rules={{ required: t('Image is required') ?? true }}
                                 render={({ field }) => (
                                     <FileDropzone
                                         fileService={fileService}
@@ -217,12 +225,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                     {fields.map((field, index) => (
                         <HStack key={field.id} w="full">
                             <FormControl isInvalid={!!errors.units && !!errors.units[index]?.name}>
-                                <FormLabel htmlFor={`unit_name_${index}`}>Unit name</FormLabel>
+                                <FormLabel htmlFor={`unit_name_${index}`}>
+                                    {t('Unit name')}
+                                </FormLabel>
                                 <Input
                                     type="text"
                                     id={`unit_name_${index}`}
                                     {...register(`units.${index}.name`, {
-                                        required: 'Name is required',
+                                        required: t('Name is required') ?? true,
                                     })}
                                 />
                                 <FormErrorMessage>
@@ -230,7 +240,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                 </FormErrorMessage>
                             </FormControl>
                             <FormControl>
-                                <FormLabel htmlFor={`capacity_${index}`}>Unit capacity</FormLabel>
+                                <FormLabel htmlFor={`capacity_${index}`}>
+                                    {t('Unit capacity')}
+                                </FormLabel>
                                 <NumberInput
                                     id={`capacity_${index}`}
                                     min={1}
@@ -260,7 +272,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                         leftIcon={<AiOutlinePlus />}
                         onClick={addUnit}
                     >
-                        Add unit
+                        {t('Add unit')}
                     </Button>
                 </VStack>
             )}

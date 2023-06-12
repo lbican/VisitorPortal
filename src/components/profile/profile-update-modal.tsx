@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     Button,
     Modal,
@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form';
 import { isEqual, pick } from 'lodash';
 import useToastNotification from '../../hooks/useToastNotification';
 import { PostgrestError } from '@supabase/supabase-js';
+import { useTranslation } from 'react-i18next';
 
 interface ContentModalProps {
     userProfile: UserProfile;
@@ -28,28 +29,25 @@ interface ContentModalProps {
 
 const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, onClose }) => {
     const [loading, setLoading] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { refetch } = useProfileProvider();
     const notification = useToastNotification();
+    const { t } = useTranslation();
 
     const {
         handleSubmit,
         register,
         formState: { errors },
-        watch,
     } = useForm<Partial<UserProfile>>();
 
-    const currentValues = watch();
-
-    useEffect(() => {
+    const isFormUnchanged = (formValues: Partial<UserProfile>) => {
         const pickedUserProfile = pick(userProfile, ['username', 'full_name', 'email']);
-        setIsDisabled(isEqual(pickedUserProfile, currentValues));
-    }, [currentValues]);
+        return isEqual(pickedUserProfile, formValues);
+    };
 
     const handleSuccess = (data: Partial<UserProfile>) => {
-        notification.success('You have successfully updated your account.');
+        notification.success(t('You have successfully updated your account.'));
 
         if (data.username !== userProfile?.username) {
             navigate(`/user/${data.username}`, {
@@ -63,7 +61,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
 
     const handleError = (error: PostgrestError | null) => {
         console.error(error);
-        notification.error('Could not update profile, please try again later');
+        notification.error(t('Could not update profile, please try again later'));
     };
 
     const handleFinally = () => {
@@ -73,8 +71,8 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
 
     const handleFormSubmit = useCallback(
         (data: Partial<UserProfile>) => {
-            if (isDisabled) {
-                notification.warning('Please make some changes before updating profile.');
+            if (isFormUnchanged(data)) {
+                notification.warning(t('Please make some changes before updating profile.'));
                 return;
             }
 
@@ -84,14 +82,14 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
                 .catch(handleError)
                 .finally(handleFinally);
         },
-        [isDisabled, navigate, location, userProfile, notification, refetch, onClose]
+        [navigate, location, userProfile, notification, refetch, onClose]
     );
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Update your profile</ModalHeader>
+                <ModalHeader>{t('Update your profile')}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <ProfileEditor userProfile={userProfile} errors={errors} register={register} />
@@ -99,7 +97,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
 
                 <ModalFooter>
                     <Button colorScheme="red" variant="outline" mr={3} onClick={onClose}>
-                        Close
+                        {t('Close')}
                     </Button>
                     <Button
                         leftIcon={<AiOutlineSave />}
@@ -109,7 +107,7 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
                         isLoading={loading}
                         loadingText="Updating..."
                     >
-                        Update
+                        {t('Update')}
                     </Button>
                 </ModalFooter>
             </ModalContent>

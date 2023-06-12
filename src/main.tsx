@@ -15,6 +15,7 @@ import { AuthContextProvider } from './context/auth-context';
 import ProfilePage from './pages/profile/profile-page';
 import UsernamePage from './pages/auth/login/username-page';
 import PropertyPage from './pages/properties/property-page';
+import './i18n/config';
 
 const router = createBrowserRouter([
     {

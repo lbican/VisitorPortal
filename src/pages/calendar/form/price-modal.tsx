@@ -15,12 +15,15 @@ import {
     NumberInputField,
     NumberInputStepper,
     FormLabel,
+    HStack,
 } from '@chakra-ui/react';
 import { IUnit } from '../../../utils/interfaces/typings';
 import { useForm } from 'react-hook-form';
 import { CalendarService, IDatePrice } from '../../../services/calendar-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { MdOutlineSave } from 'react-icons/md';
+import { useTranslation } from 'react-i18next';
+import { propertyStore as store } from '../../../mobx/propertyStore';
 
 interface PriceModalProps {
     isOpen: boolean;
@@ -39,6 +42,7 @@ const PriceModal: React.FC<PriceModalProps> = ({
 }) => {
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
+    const { t } = useTranslation();
 
     const { register, handleSubmit } = useForm({
         shouldUseNativeValidation: false,
@@ -58,12 +62,14 @@ const PriceModal: React.FC<PriceModalProps> = ({
             unit_id: unit.id,
         })
             .then((data) => {
-                notification.success(`Assigned prices for ${formattedStart} - ${formattedEnd}`);
+                notification.success(
+                    t('assignedPricesDates', { dateStart: formattedStart, dateEnd: formattedEnd })
+                );
                 onValueSubmitted(data);
                 onClose();
             })
             .catch((error) => {
-                notification.error('Could not assign prices!');
+                notification.error(t('Could not assign prices!'));
                 console.error(error);
             })
             .finally(() => {
@@ -75,11 +81,13 @@ const PriceModal: React.FC<PriceModalProps> = ({
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Create your account</ModalHeader>
+                <ModalHeader>{t('Assign price')}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
                     <FormControl>
-                        <FormLabel htmlFor="price_input">Set price for {unit.name}</FormLabel>
+                        <FormLabel htmlFor="price_input">
+                            {t('setPrice', { unitName: unit.name })}
+                        </FormLabel>
                         <NumberInput min={1} keepWithinRange={true} id="price_input">
                             <NumberInputField {...register('price')} />
                             <NumberInputStepper>
@@ -91,16 +99,20 @@ const PriceModal: React.FC<PriceModalProps> = ({
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button
-                        colorScheme="green"
-                        mr={3}
-                        leftIcon={<MdOutlineSave />}
-                        onClick={handleSubmit(savePrice)}
-                        isLoading={submitting}
-                    >
-                        Save
-                    </Button>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <HStack spacing={2}>
+                        <Button onClick={onClose} colorScheme="red" variant="outline">
+                            {t('Cancel')}
+                        </Button>
+                        <Button
+                            colorScheme="green"
+                            ml={3}
+                            leftIcon={<MdOutlineSave />}
+                            onClick={handleSubmit(savePrice)}
+                            isLoading={submitting}
+                        >
+                            {t('Save')}
+                        </Button>
+                    </HStack>
                 </ModalFooter>
             </ModalContent>
         </Modal>

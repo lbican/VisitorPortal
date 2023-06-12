@@ -7,23 +7,26 @@ import AccountSecurity from './parts/account-security';
 import AccountComplete from './parts/account-complete';
 import { AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const RegisterSteps = (): ReactElement => {
     const { nextStep, prevStep, activeStep } = useSteps({
         initialStep: 0,
     });
 
+    const { t } = useTranslation();
+
     const steps = [
         {
-            label: 'Account',
+            label: t('Account'),
             content: <AccountDetails nextStep={nextStep} />,
         },
         {
-            label: 'Security',
+            label: t('Security'),
             content: <AccountSecurity nextStep={nextStep} prevStep={prevStep} />,
         },
         {
-            label: 'Complete',
+            label: t('Complete'),
             content: <AccountComplete nextStep={nextStep} prevStep={prevStep} />,
         },
     ];
@@ -43,9 +46,9 @@ const RegisterSteps = (): ReactElement => {
                         <Alert status="success" variant="subtle">
                             <AlertIcon />
                             <Flex justifyContent="space-between" alignItems="center" w="100%">
-                                Account successfully created!
+                                {t('Account successfully created!')}
                                 <Button variant="solid" as={NavLink} to="/">
-                                    Get started
+                                    {t('Get started')}
                                 </Button>
                             </Flex>
                         </Alert>

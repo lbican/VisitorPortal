@@ -18,7 +18,7 @@ import {
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval } from 'date-fns';
-import EmptyCalendarImage from '../../assets/images/empty_calendar.svg';
+import EmptyCalendarImage from '../../assets/images/empty_cal.svg';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IUnit } from '../../utils/interfaces/typings';
@@ -35,6 +35,8 @@ import { CalendarService, IDatePrice } from '../../services/calendar-service';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
 import { isUndefined } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 interface ITileProps {
     view: View;
@@ -81,6 +83,7 @@ const CalendarPage = (): ReactElement => {
     const [loadingPrices, setLoadingPrices] = useState(false);
     const { user } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { t } = useTranslation();
 
     useEffect(() => {
         void store.fetchProperties(user?.id);
@@ -158,13 +161,13 @@ const CalendarPage = (): ReactElement => {
         <>
             <HStack justifyContent="space-between" mb={4}>
                 <Heading as="h2" size="lg">
-                    Calendar
+                    {t('Calendar')}
                 </Heading>
                 <HStack>
                     <Autocomplete
                         value={mapValueToLabel(store.currentProperty)}
                         onSelect={handlePropertySelect}
-                        placeholder="Select property"
+                        placeholder={t('Select property') ?? ''}
                         options={mapToAutocompleteLabels<IProperty>(store.properties)}
                         isLoading={store.isFetching}
                         width="14rem"
@@ -172,7 +175,7 @@ const CalendarPage = (): ReactElement => {
                     <Autocomplete
                         value={mapValueToLabel(unit)}
                         onSelect={handleUnitSelect}
-                        placeholder="Select unit"
+                        placeholder={t('Select unit') ?? ''}
                         options={mapToAutocompleteLabels<IUnit>(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
                         width="14rem"
@@ -180,7 +183,9 @@ const CalendarPage = (): ReactElement => {
                     <Tooltip
                         hasArrow
                         label={
-                            datesSelected() ? 'Assign price' : 'Select date range to assign prices'
+                            datesSelected()
+                                ? t('Assign price')
+                                : t('Select date range to assign prices')
                         }
                     >
                         <IconButton
@@ -210,7 +215,7 @@ const CalendarPage = (): ReactElement => {
                     />
                     <Calendar
                         tileContent={getTilePrices}
-                        locale="en"
+                        locale={i18n.language ?? 'en'}
                         selectRange={true}
                         onChange={(value) => {
                             setSelectedDates(value as Date[]);
@@ -221,14 +226,14 @@ const CalendarPage = (): ReactElement => {
                 </>
             ) : (
                 <>
-                    <Alert status="info" mb={2}>
+                    <Alert status="info" mb={2} rounded={4}>
                         <AlertIcon />
-                        Please select property and unit to be able to edit calendar
+                        {t('Please select property and unit to be able to edit calendar')}
                     </Alert>
                     <Image
                         src={EmptyCalendarImage}
                         alt="Empty calendar"
-                        objectFit="cover"
+                        objectFit="contain"
                         w="full"
                         height="40rem"
                     />

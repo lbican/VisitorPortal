@@ -5,6 +5,7 @@ import React from 'react';
 import { IProperty, IUnit } from '../utils/interfaces/typings';
 import { IDatePrice } from '../services/calendar-service';
 import { FaFilePdf } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface PDFButtonProps {
     property: IProperty | null;
@@ -13,13 +14,19 @@ interface PDFButtonProps {
 }
 
 const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => {
+    const { t } = useTranslation();
+
     if (!property || !unit || !datePrices) {
         return (
-            <Tooltip hasArrow label="Select property and unit to download prices">
+            <Tooltip
+                hasArrow
+                label={t('Select property and unit to download prices')}
+                placement="bottom-start"
+            >
                 <IconButton
                     isDisabled={true}
                     colorScheme="blue"
-                    aria-label="Download prices"
+                    aria-label={t('Download prices')}
                     as="a"
                     icon={<FaFilePdf />}
                 />
@@ -33,7 +40,7 @@ const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => 
             fileName={`${unit?.name}_date_prices.pdf`}
         >
             {({ url, loading, error }) => (
-                <Tooltip hasArrow label="Download your prices in PDF document">
+                <Tooltip hasArrow label={t('Download your prices in PDF document')}>
                     <IconButton
                         aria-label="Download prices"
                         as="a"
