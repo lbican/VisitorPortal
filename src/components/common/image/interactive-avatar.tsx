@@ -61,13 +61,13 @@ const InteractiveAvatar: React.FC<AvatarProps> = ({ user, signOut }) => {
                         <TagIcon
                             src={CroatiaSvg}
                             iconName="Croatia"
-                            label="Croatian"
+                            label={t('Croatian')}
                             onClick={() => changeLanguage('hr')}
                         />
                         <TagIcon
                             src={GreatBritainSvg}
                             iconName="Great Britain"
-                            label="English"
+                            label={t('English')}
                             onClick={() => changeLanguage('en')}
                         />
                     </HStack>
