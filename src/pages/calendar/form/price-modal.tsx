@@ -23,7 +23,6 @@ import { CalendarService, IDatePrice } from '../../../services/calendar-service'
 import useToastNotification from '../../../hooks/useToastNotification';
 import { MdOutlineSave } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
-import { propertyStore as store } from '../../../mobx/propertyStore';
 
 interface PriceModalProps {
     isOpen: boolean;

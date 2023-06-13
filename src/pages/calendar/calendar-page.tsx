@@ -14,6 +14,10 @@ import {
     Skeleton,
     IconButton,
     Tooltip,
+    VStack,
+    List,
+    ListItem,
+    ListIcon,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
@@ -37,6 +41,9 @@ import PDFButton from '../../pdf/pdf-button';
 import { isUndefined } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
+import { MdCheckCircle } from 'react-icons/md';
+import { FaFilePdf } from 'react-icons/fa';
+import { AiOutlineSelect } from 'react-icons/ai';
 
 interface ITileProps {
     view: View;
@@ -225,11 +232,38 @@ const CalendarPage = (): ReactElement => {
                     />
                 </>
             ) : (
-                <>
-                    <Alert status="info" mb={2} rounded={4}>
-                        <AlertIcon />
-                        {t('Please select property and unit to be able to edit calendar')}
-                    </Alert>
+                <HStack alignItems="flex-start">
+                    <VStack w="full" alignItems="flex-start">
+                        <Alert status="info" mb={2} rounded={4}>
+                            <AlertIcon />
+                            {t('Please select property and unit to be able to edit calendar')}
+                        </Alert>
+                        <Heading as="h4" variant="h4" size="lg">
+                            {t('How does it work?')}
+                        </Heading>
+                        <List spacing={4}>
+                            <ListItem>
+                                <ListIcon as={AiOutlineSelect} color="blue.200" />
+                                {t('You select property and unit')}
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={IoPricetag} color="blue.200" />
+                                {t(
+                                    'By clicking icon buttons and selecting dates you can assign prices'
+                                )}
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={FaFilePdf} color="blue.200" />
+                                {t(
+                                    'By clicking PDF button you can export your prices to PDF document'
+                                )}
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={MdCheckCircle} color="blue.200" />
+                                {t('To add new reservation click corresponding button')}
+                            </ListItem>
+                        </List>
+                    </VStack>
                     <Image
                         src={EmptyCalendarImage}
                         alt="Empty calendar"
@@ -237,7 +271,7 @@ const CalendarPage = (): ReactElement => {
                         w="full"
                         height="40rem"
                     />
-                </>
+                </HStack>
             )}
         </>
     );

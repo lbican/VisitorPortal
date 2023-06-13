@@ -1,6 +1,6 @@
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocument from './pdf-document';
-import { Button, IconButton, Tooltip } from '@chakra-ui/react';
+import { IconButton, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 import { IProperty, IUnit } from '../utils/interfaces/typings';
 import { IDatePrice } from '../services/calendar-service';
