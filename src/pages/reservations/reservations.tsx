@@ -2,13 +2,13 @@ import React, { ReactElement } from 'react';
 import { Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 
-const Team = (): ReactElement => {
+const Reservations = (): ReactElement => {
     const { t } = useTranslation();
     return (
         <Heading as="h2" size="lg">
-            {t('Team')}
+            {t('Reservations')}
         </Heading>
     );
 };
 
-export default Team;
+export default Reservations;

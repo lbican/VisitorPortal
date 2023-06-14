@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './pages/error/error-page';
 import AdminPanel from './pages/root/admin-panel';
 import Dashboard from './pages/dashboard/dashboard';
-import Team from './pages/team/team';
+import Reservations from './pages/reservations/reservations';
 import Properties from './pages/properties/properties';
 import CalendarPage from './pages/calendar/calendar-page';
 import LoginPage from './pages/auth/login/login-page';
@@ -28,8 +28,8 @@ const router = createBrowserRouter([
                 element: <Dashboard />,
             },
             {
-                path: '/team',
-                element: <Team />,
+                path: '/reservations',
+                element: <Reservations />,
             },
             {
                 path: '/properties',

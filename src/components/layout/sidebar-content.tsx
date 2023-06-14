@@ -16,9 +16,9 @@ const SidebarContent = ({ ...props }: BoxProps): ReactElement => {
             route: '/',
         },
         {
-            label: t('Team'),
+            label: t('Reservations'),
             icon: AiOutlineTeam,
-            route: '/team',
+            route: '/reservations',
         },
         {
             label: t('Properties'),

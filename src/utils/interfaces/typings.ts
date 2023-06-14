@@ -36,3 +36,31 @@ export interface IProperty {
 }
 
 export type TFormProperty = Omit<IProperty, 'id'>;
+
+export interface IReservation {
+    id: string;
+    guest: IGuest;
+    unit: IUnit;
+    date_range: [Date, Date];
+    total_price: number;
+    fulfilled: boolean;
+    adv_payment_paid: boolean;
+    created_at: Date;
+    updated_at: Date | null;
+    note: string;
+}
+
+export interface IFormReservation {
+    guest_id: string;
+    unit_id: string;
+    date_range: [Date, Date];
+    total_price: number;
+    note: string;
+}
+
+export interface IGuest {
+    id: string;
+    first_name: string;
+    last_name: string;
+    guests_num: number;
+}

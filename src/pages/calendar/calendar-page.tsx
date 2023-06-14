@@ -8,21 +8,13 @@ import {
     useDisclosure,
     TagLabel,
     Flex,
-    Image,
-    Alert,
-    AlertIcon,
     Skeleton,
     IconButton,
     Tooltip,
-    VStack,
-    List,
-    ListItem,
-    ListIcon,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval } from 'date-fns';
-import EmptyCalendarImage from '../../assets/images/empty_cal.svg';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IUnit } from '../../utils/interfaces/typings';
@@ -41,9 +33,9 @@ import PDFButton from '../../pdf/pdf-button';
 import { isUndefined } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { MdCheckCircle } from 'react-icons/md';
-import { FaFilePdf } from 'react-icons/fa';
-import { AiOutlineSelect } from 'react-icons/ai';
+import { ReservationModal } from '../reservations/form/reservation-modal';
+import { InfoDisplay } from '../../components/calendar/info-display';
+import { IoBook } from 'react-icons/io5';
 
 interface ITileProps {
     view: View;
@@ -89,7 +81,16 @@ const CalendarPage = (): ReactElement => {
     const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
     const [loadingPrices, setLoadingPrices] = useState(false);
     const { user } = useAuth();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isPriceModalOpen,
+        onOpen: onPriceModalOpen,
+        onClose: onPriceModalClose,
+    } = useDisclosure();
+    const {
+        isOpen: isReservationModalOpen,
+        onOpen: onReservationModalOpen,
+        onClose: onReservationModalClose,
+    } = useDisclosure();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -198,11 +199,29 @@ const CalendarPage = (): ReactElement => {
                         <IconButton
                             aria-label="Assign price"
                             colorScheme="green"
-                            onClick={onOpen}
+                            onClick={onPriceModalOpen}
                             icon={<IoPricetag />}
                             isDisabled={!datesSelected()}
                         />
                     </Tooltip>
+                    <Tooltip
+                        hasArrow
+                        placement="bottom-start"
+                        label={
+                            datesSelected()
+                                ? t('Add new reservation')
+                                : t('Select date range to add reservation')
+                        }
+                    >
+                        <IconButton
+                            aria-label="Add reservation"
+                            colorScheme="orange"
+                            onClick={onReservationModalOpen}
+                            icon={<IoBook />}
+                            isDisabled={!datesSelected()}
+                        />
+                    </Tooltip>
+
                     <PDFButton
                         property={propertyStore.currentProperty}
                         unit={unit}
@@ -213,13 +232,23 @@ const CalendarPage = (): ReactElement => {
             <Divider mb={4} />
             {unit ? (
                 <>
-                    <PriceModal
-                        isOpen={isOpen}
-                        onClose={onClose}
-                        unit={unit}
-                        date_range={[selectedDates[0], selectedDates[1]]}
-                        onValueSubmitted={() => fetchDatePrices()}
-                    />
+                    {datesSelected() && (
+                        <>
+                            <PriceModal
+                                isOpen={isPriceModalOpen}
+                                onClose={onPriceModalClose}
+                                unit={unit}
+                                date_range={[selectedDates[0], selectedDates[1]]}
+                                onValueSubmitted={fetchDatePrices}
+                            />
+                            <ReservationModal
+                                isOpen={isReservationModalOpen}
+                                onClose={onReservationModalClose}
+                                unit={unit}
+                                date_range={[selectedDates[0], selectedDates[1]]}
+                            />
+                        </>
+                    )}
                     <Calendar
                         tileContent={getTilePrices}
                         locale={i18n.language ?? 'en'}
@@ -232,46 +261,7 @@ const CalendarPage = (): ReactElement => {
                     />
                 </>
             ) : (
-                <HStack alignItems="flex-start">
-                    <VStack w="full" alignItems="flex-start">
-                        <Alert status="info" mb={2} rounded={4}>
-                            <AlertIcon />
-                            {t('Please select property and unit to be able to edit calendar')}
-                        </Alert>
-                        <Heading as="h4" variant="h4" size="lg">
-                            {t('How does it work?')}
-                        </Heading>
-                        <List spacing={4}>
-                            <ListItem>
-                                <ListIcon as={AiOutlineSelect} color="blue.200" />
-                                {t('You select property and unit')}
-                            </ListItem>
-                            <ListItem>
-                                <ListIcon as={IoPricetag} color="blue.200" />
-                                {t(
-                                    'By clicking icon buttons and selecting dates you can assign prices'
-                                )}
-                            </ListItem>
-                            <ListItem>
-                                <ListIcon as={FaFilePdf} color="blue.200" />
-                                {t(
-                                    'By clicking PDF button you can export your prices to PDF document'
-                                )}
-                            </ListItem>
-                            <ListItem>
-                                <ListIcon as={MdCheckCircle} color="blue.200" />
-                                {t('To add new reservation click corresponding button')}
-                            </ListItem>
-                        </List>
-                    </VStack>
-                    <Image
-                        src={EmptyCalendarImage}
-                        alt="Empty calendar"
-                        objectFit="contain"
-                        w="full"
-                        height="40rem"
-                    />
-                </HStack>
+                <InfoDisplay />
             )}
         </>
     );

@@ -29,7 +29,7 @@ interface PriceModalProps {
     onClose: () => void;
     unit: IUnit;
     date_range: [Date, Date];
-    onValueSubmitted: (datePrice: IDatePrice) => void;
+    onValueSubmitted: () => void;
 }
 
 const PriceModal: React.FC<PriceModalProps> = ({
@@ -60,11 +60,11 @@ const PriceModal: React.FC<PriceModalProps> = ({
             date_range: date_range,
             unit_id: unit.id,
         })
-            .then((data) => {
+            .then(() => {
                 notification.success(
                     t('assignedPricesDates', { dateStart: formattedStart, dateEnd: formattedEnd })
                 );
-                onValueSubmitted(data);
+                onValueSubmitted();
                 onClose();
             })
             .catch((error) => {
