@@ -75,6 +75,9 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
     useEffect(() => {
         if (locationName) {
             debouncedFetchCoordinates(locationName);
+        } else {
+            setLongitude(0);
+            setLatitude(0);
         }
     }, [locationName, debouncedFetchCoordinates]);
 
