@@ -72,7 +72,10 @@ export class UserService {
         // Ensure that the id field is not being updated
         delete cleanedProfileUpdate.id;
 
-        const { error } = await supabase.from('Profiles').update(cleanedProfileUpdate).eq('id', id);
+        const { error } = await supabase
+            .from('Profiles')
+            .update(cleanedProfileUpdate)
+            .eq('id', id);
 
         if (error) {
             return Promise.reject(error);

@@ -35,7 +35,7 @@
             "warn",
             {
                 "singleQuote": true,
-                "printWidth": 100,
+                "printWidth": 90,
                 "tabWidth": 4,
                 "endOfLine": "crlf"
             }

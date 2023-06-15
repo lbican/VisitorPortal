@@ -17,8 +17,8 @@ import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval } from 'date-fns';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
-import { IProperty, IUnit } from '../../utils/interfaces/typings';
-import { propertyStore, propertyStore as store } from '../../mobx/propertyStore';
+import { IProperty, IReservation, IUnit } from '../../utils/interfaces/typings';
+import { propertyStore as store } from '../../mobx/propertyStore';
 import Autocomplete, {
     ILabel,
     mapToAutocompleteLabels,
@@ -26,7 +26,7 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
-import { IoPricetag, IoPricetagOutline } from 'react-icons/io5';
+import { IoPricetag, IoPricetagOutline, IoBook } from 'react-icons/io5';
 import { CalendarService, IDatePrice } from '../../services/calendar-service';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
@@ -35,7 +35,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { ReservationModal } from '../reservations/form/reservation-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
-import { IoBook } from 'react-icons/io5';
+import { isSameDay } from 'date-fns/fp';
+import { ReservationService } from '../../services/reservation-service';
 
 interface ITileProps {
     view: View;
@@ -43,7 +44,7 @@ interface ITileProps {
 }
 
 enum PriceStatus {
-    SOLD = 'yellow',
+    LOADING = 'teal',
     AVAILABLE = 'green',
     UNSET = 'gray',
 }
@@ -79,7 +80,8 @@ const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
     const [unit, setUnit] = useState<IUnit | null>(null);
     const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
-    const [loadingPrices, setLoadingPrices] = useState(false);
+    const [reservations, setReservations] = useState<IReservation[]>([]);
+    const [loadingCalendar, setLoadingCalendar] = useState(false);
     const { user } = useAuth();
     const {
         isOpen: isPriceModalOpen,
@@ -97,9 +99,23 @@ const CalendarPage = (): ReactElement => {
         void store.fetchProperties(user?.id);
     }, [store, user]);
 
+    const fetchReservations = () => {
+        setLoadingCalendar(true);
+        ReservationService.fetchReservations(unit?.id)
+            .then((res) => {
+                setReservations(res);
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoadingCalendar(false);
+            });
+    };
+
     const fetchDatePrices = () => {
         if (unit) {
-            setLoadingPrices(true);
+            setLoadingCalendar(true);
             CalendarService.fetchDatePrices(unit.id)
                 .then((datePrices) => {
                     setDatePrices(datePrices);
@@ -108,7 +124,7 @@ const CalendarPage = (): ReactElement => {
                     console.error(error);
                 })
                 .finally(() => {
-                    setLoadingPrices(false);
+                    setLoadingCalendar(false);
                 });
         }
     };
@@ -139,25 +155,37 @@ const CalendarPage = (): ReactElement => {
         }
     };
 
-    const datesSelected = (): boolean => {
+    const datesSelected = (notSameDay?: boolean): boolean => {
+        if (notSameDay) {
+            return (
+                !isSameDay(selectedDates[0], selectedDates[1]) &&
+                !!(selectedDates[0] && selectedDates[1])
+            );
+        }
+
         return !!(selectedDates[0] && selectedDates[1]);
     };
 
+    const isWithinDateRange = (date: Date, date_range: [Date, Date]) =>
+        isWithinInterval(date, {
+            start: date_range[0],
+            end: date_range[1],
+        }) && isBefore(date, date_range[1]);
+
     const getTilePrices = ({ date, view }: ITileProps) => {
-        if (view === 'month' && loadingPrices) {
-            return <PriceTag loading={loadingPrices} status={PriceStatus.AVAILABLE} />;
+        if (view === 'month' && loadingCalendar) {
+            return <PriceTag loading={loadingCalendar} status={PriceStatus.LOADING} />;
         }
 
         if (view === 'month') {
             for (const datePrice of datePrices) {
-                if (
-                    isWithinInterval(date, {
-                        start: datePrice.date_range[0],
-                        end: datePrice.date_range[1],
-                    }) &&
-                    isBefore(date, datePrice.date_range[1])
-                ) {
-                    return <PriceTag price={datePrice.price} status={PriceStatus.AVAILABLE} />;
+                if (isWithinDateRange(date, datePrice.date_range)) {
+                    return (
+                        <PriceTag
+                            price={datePrice.price}
+                            status={PriceStatus.AVAILABLE}
+                        />
+                    );
                 }
             }
         }
@@ -184,7 +212,9 @@ const CalendarPage = (): ReactElement => {
                         value={mapValueToLabel(unit)}
                         onSelect={handleUnitSelect}
                         placeholder={t('Select unit') ?? ''}
-                        options={mapToAutocompleteLabels<IUnit>(store.currentProperty?.units ?? [])}
+                        options={mapToAutocompleteLabels<IUnit>(
+                            store.currentProperty?.units ?? []
+                        )}
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />
@@ -208,7 +238,7 @@ const CalendarPage = (): ReactElement => {
                         hasArrow
                         placement="bottom-start"
                         label={
-                            datesSelected()
+                            datesSelected(true)
                                 ? t('Add new reservation')
                                 : t('Select date range to add reservation')
                         }
@@ -218,12 +248,12 @@ const CalendarPage = (): ReactElement => {
                             colorScheme="orange"
                             onClick={onReservationModalOpen}
                             icon={<IoBook />}
-                            isDisabled={!datesSelected()}
+                            isDisabled={!datesSelected(true)}
                         />
                     </Tooltip>
-
+                    R
                     <PDFButton
-                        property={propertyStore.currentProperty}
+                        property={store.currentProperty}
                         unit={unit}
                         datePrices={datePrices}
                     />
@@ -242,10 +272,12 @@ const CalendarPage = (): ReactElement => {
                                 onValueSubmitted={fetchDatePrices}
                             />
                             <ReservationModal
+                                property_name={store.currentProperty?.name ?? '?'}
                                 isOpen={isReservationModalOpen}
                                 onClose={onReservationModalClose}
                                 unit={unit}
                                 date_range={[selectedDates[0], selectedDates[1]]}
+                                onValueSubmitted={fetchReservations}
                             />
                         </>
                     )}

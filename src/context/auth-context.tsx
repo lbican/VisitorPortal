@@ -1,4 +1,11 @@
-import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+    createContext,
+    ReactNode,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import supabase from '../../database';
 import { UserService } from '../services/user-service';
@@ -27,21 +34,25 @@ const AuthContext = createContext<AuthType>({
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const userService = new UserService();
-    const [user, setUser] = useState<UserProfile | null>(StorageService.getUserFromStorage());
+    const [user, setUser] = useState<UserProfile | null>(
+        StorageService.getUserFromStorage()
+    );
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`Supabase auth event: ${event}`);
-            userService.setSession(session);
+        const { data: authListener } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                console.log(`Supabase auth event: ${event}`);
+                userService.setSession(session);
 
-            try {
-                const userProfile = await userService.getAuthorizedUser();
-                setUser(userProfile);
-            } catch (error) {
-                setUser(null);
-                console.error(error);
+                try {
+                    const userProfile = await userService.getAuthorizedUser();
+                    setUser(userProfile);
+                } catch (error) {
+                    setUser(null);
+                    console.error(error);
+                }
             }
-        });
+        );
 
         return () => {
             authListener?.subscription.unsubscribe();
@@ -61,7 +72,9 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
 
     const authContextValue = useMemo(() => ({ user: user, signOut }), [user]);
 
-    return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {

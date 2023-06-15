@@ -4,7 +4,7 @@ import { osm } from 'pigeon-maps/providers';
 import { MdLocationOn } from 'react-icons/md';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import { Skeleton, Spinner } from '@chakra-ui/react';
+import { Spinner } from '@chakra-ui/react';
 
 type FormMapProps = {
     onLocationChange: (location: string) => void;
@@ -29,7 +29,11 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
                 const address = data.results[0]?.components;
 
                 const location =
-                    address?.city || address?.town || address?.village || address?.hamlet || '';
+                    address?.city ||
+                    address?.town ||
+                    address?.village ||
+                    address?.hamlet ||
+                    '';
 
                 onLocationChange(location);
             } catch (error) {

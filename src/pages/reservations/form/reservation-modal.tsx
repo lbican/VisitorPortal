@@ -8,6 +8,7 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
+    Heading,
     HStack,
     Input,
     Modal,
@@ -22,7 +23,6 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    Skeleton,
     Text,
     Textarea,
 } from '@chakra-ui/react';
@@ -32,19 +32,22 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ReservationService } from '../../../services/reservation-service';
 import i18n from 'i18next';
+import { differenceInDays } from 'date-fns';
 
 interface ReservationModalProps {
     isOpen: boolean;
     onClose: () => void;
     unit: IUnit;
+    property_name: string;
     date_range: [Date, Date];
-    onValueSubmitted?: () => void;
+    onValueSubmitted: () => void;
 }
 
 export const ReservationModal: React.FC<ReservationModalProps> = ({
     isOpen,
     onClose,
     unit,
+    property_name,
     date_range,
     onValueSubmitted,
 }) => {
@@ -57,6 +60,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
         register,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
         defaultValues: {
@@ -75,6 +79,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
         ReservationService.getTotalPrice(unit.id, date_range)
             .then((price) => {
                 setReservationPrice(price);
+                setValue('total_price', price ?? 0);
             })
             .catch(() => {
                 setReservationPrice(0);
@@ -82,34 +87,34 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
     }, [date_range, unit]);
 
     const addNewReservation = (data: IFormReservation & IGuest) => {
-        console.log(data);
+        setSubmitting(true);
+        ReservationService.insertNewReservation(data)
+            .then(() => {
+                notification.success(t('Created new reservation'));
+                onValueSubmitted();
+                onClose();
+            })
+            .catch((error) => {
+                notification.error(t('Could not add new reservation!'));
+                console.error(error);
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} size="2xl">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>{t('Add new reservation')}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    <Box mb={2}>
-                        <Text>
-                            {t('arrivalDate', {
-                                arrivalDate: date_range[0].toLocaleDateString(
-                                    i18n.language ?? 'en'
-                                ),
-                            })}
-                        </Text>
-                        <Text>
-                            {t('departureDate', {
-                                departureDate: date_range[1].toLocaleDateString(
-                                    i18n.language ?? 'en'
-                                ),
-                            })}
-                        </Text>
-                        <Text>{t('totalPrice', { totalPrice: reservationPrice })}</Text>
-                    </Box>
-                    <FormLabel>{t('Reservation holder')}</FormLabel>
+                    <Heading as="h3" size="md">
+                        {property_name} | {unit.name}
+                    </Heading>
+                    <Text as="b">{t('maxCapacity', { maxCapacity: unit.capacity })}</Text>
+                    <FormLabel mt={6}>{t('Reservation holder')}</FormLabel>
                     <Divider my={2} />
                     <HStack w="full">
                         <FormControl isInvalid={!!errors.first_name}>
@@ -120,7 +125,9 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                                     required: t('First Name is required') ?? true,
                                 })}
                             />
-                            <FormErrorMessage>{errors?.first_name?.message}</FormErrorMessage>
+                            <FormErrorMessage>
+                                {errors?.first_name?.message}
+                            </FormErrorMessage>
                         </FormControl>
 
                         <FormControl isInvalid={!!errors.last_name}>
@@ -131,56 +138,92 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                                     required: t('Last Name is required') ?? true,
                                 })}
                             />
-                            <FormErrorMessage>{errors?.last_name?.message}</FormErrorMessage>
+                            <FormErrorMessage>
+                                {errors?.last_name?.message}
+                            </FormErrorMessage>
+                        </FormControl>
+                    </HStack>
+                    <HStack mt={2} alignItems="flex-start">
+                        <FormControl
+                            isInvalid={!!errors.guests_num}
+                            w="25%"
+                            justifySelf="flex-end"
+                        >
+                            <FormLabel htmlFor="guests_num">
+                                {t('Guests Number')}
+                            </FormLabel>
+                            <NumberInput
+                                min={1}
+                                max={unit.capacity}
+                                keepWithinRange={true}
+                                id="guests_num_input"
+                            >
+                                <NumberInputField
+                                    {...register('guests_num', {
+                                        required: t('Guest Number is required') ?? true,
+                                    })}
+                                />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                            <FormErrorMessage>
+                                {errors?.guests_num?.message}
+                            </FormErrorMessage>
                         </FormControl>
                     </HStack>
                     <FormLabel mt={4}>{t('Reservation details')}</FormLabel>
                     <Divider my={2} />
 
-                    <FormControl isInvalid={!!errors.guests_num}>
-                        <FormLabel htmlFor="guests_num">{t('Guests Number')}</FormLabel>
-                        <NumberInput
-                            min={1}
-                            max={unit.capacity}
-                            keepWithinRange={true}
-                            id="guests_num_input"
-                        >
-                            <NumberInputField
-                                {...register('guests_num', {
-                                    required: t('Guest Number is required') ?? true,
+                    <HStack mt={4} alignItems="center">
+                        <FormControl>
+                            <FormLabel htmlFor="note">{t('Note')}</FormLabel>
+                            <Textarea id="note" resize="none" {...register('note')} />
+                        </FormControl>
+                        <Box mb={2} w="full" alignSelf="flex-end" textAlign="right">
+                            <Text>
+                                {t('arrivalDate', {
+                                    arrivalDate: date_range[0].toLocaleDateString(
+                                        i18n.language ?? 'en'
+                                    ),
                                 })}
-                            />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
-                            </NumberInputStepper>
-                        </NumberInput>
-                        <FormErrorMessage>{errors?.guests_num?.message}</FormErrorMessage>
-                    </FormControl>
-
-                    <FormControl mt={4}>
-                        <FormLabel htmlFor="note">{t('Note')}</FormLabel>
-                        <Textarea id="note" resize="none" {...register('note')} />
-                    </FormControl>
+                            </Text>
+                            <Text>
+                                {t('departureDate', {
+                                    departureDate: date_range[1].toLocaleDateString(
+                                        i18n.language ?? 'en'
+                                    ),
+                                })}
+                            </Text>
+                            <Text>
+                                {t('numberOfNights', {
+                                    numNights: differenceInDays(
+                                        date_range[1],
+                                        date_range[0]
+                                    ),
+                                })}
+                            </Text>
+                            <Text as="b">
+                                {t('totalPrice', { totalPrice: reservationPrice })}
+                            </Text>
+                        </Box>
+                    </HStack>
                 </ModalBody>
 
                 <ModalFooter>
-                    <HStack spacing={2}>
-                        <Button onClick={onClose} colorScheme="red" variant="outline">
-                            {t('Cancel')}
-                        </Button>
-                        <Button
-                            colorScheme="green"
-                            ml={3}
-                            leftIcon={<MdOutlineSave />}
-                            onClick={() => {
-                                handleSubmit(addNewReservation);
-                            }}
-                            isLoading={submitting}
-                        >
-                            {t('Save')}
-                        </Button>
-                    </HStack>
+                    <Button onClick={onClose} colorScheme="red" variant="outline">
+                        {t('Cancel')}
+                    </Button>
+                    <Button
+                        colorScheme="green"
+                        ml={3}
+                        leftIcon={<MdOutlineSave />}
+                        onClick={handleSubmit(addNewReservation)}
+                        isLoading={submitting}
+                    >
+                        {t('Save')}
+                    </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

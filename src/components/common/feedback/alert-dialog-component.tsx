@@ -52,7 +52,12 @@ const AlertDialogComponent: FC<AlertDialogProps> = ({
                         <Button ref={cancelRef} onClick={onClose}>
                             {dialogDeclineText}
                         </Button>
-                        <Button colorScheme="red" ml={3} onClick={onConfirm} isLoading={isLoading}>
+                        <Button
+                            colorScheme="red"
+                            ml={3}
+                            onClick={onConfirm}
+                            isLoading={isLoading}
+                        >
                             {dialogConfirmText}
                         </Button>
                     </AlertDialogFooter>

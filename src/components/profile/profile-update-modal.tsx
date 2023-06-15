@@ -27,7 +27,11 @@ interface ContentModalProps {
     onClose: () => void;
 }
 
-const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, onClose }) => {
+const ProfileUpdateModal: React.FC<ContentModalProps> = ({
+    userProfile,
+    isOpen,
+    onClose,
+}) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -72,7 +76,9 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
     const handleFormSubmit = useCallback(
         (data: Partial<UserProfile>) => {
             if (isFormUnchanged(data)) {
-                notification.warning(t('Please make some changes before updating profile.'));
+                notification.warning(
+                    t('Please make some changes before updating profile.')
+                );
                 return;
             }
 
@@ -92,7 +98,11 @@ const ProfileUpdateModal: React.FC<ContentModalProps> = ({ userProfile, isOpen, 
                 <ModalHeader>{t('Update your profile')}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <ProfileEditor userProfile={userProfile} errors={errors} register={register} />
+                    <ProfileEditor
+                        userProfile={userProfile}
+                        errors={errors}
+                        register={register}
+                    />
                 </ModalBody>
 
                 <ModalFooter>

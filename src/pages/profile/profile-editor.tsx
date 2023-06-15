@@ -1,5 +1,11 @@
 import React, { ReactElement } from 'react';
-import { FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
+import {
+    FormControl,
+    FormErrorMessage,
+    FormLabel,
+    Input,
+    VStack,
+} from '@chakra-ui/react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { UserProfile } from '../../context/auth-context';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +34,9 @@ const ProfileEditor: React.FC<UserFormProps> = ({
                     type="text"
                     id="username"
                     defaultValue={userProfile.username ?? ''}
-                    {...register('username', { required: t('Username is required') ?? true })}
+                    {...register('username', {
+                        required: t('Username is required') ?? true,
+                    })}
                 />
                 <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
             </FormControl>
@@ -39,7 +47,9 @@ const ProfileEditor: React.FC<UserFormProps> = ({
                     type="text"
                     id="full_name"
                     defaultValue={userProfile.full_name}
-                    {...register('full_name', { required: t('Full Name is required') ?? '' })}
+                    {...register('full_name', {
+                        required: t('Full Name is required') ?? '',
+                    })}
                 />
                 <FormErrorMessage>{errors.full_name?.message}</FormErrorMessage>
             </FormControl>

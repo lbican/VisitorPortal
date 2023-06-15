@@ -10,7 +10,13 @@ interface TagIconProps {
 
 const TagIcon: React.FC<TagIconProps> = ({ src, iconName, label, onClick }) => {
     return (
-        <Tag size="lg" as={Button} colorScheme="red" borderRadius="full" onClick={onClick}>
+        <Tag
+            size="lg"
+            as={Button}
+            colorScheme="red"
+            borderRadius="full"
+            onClick={onClick}
+        >
             <Avatar src={src} size="xs" name={iconName} ml={-1} mr={2} />
             <TagLabel>{label}</TagLabel>
         </Tag>

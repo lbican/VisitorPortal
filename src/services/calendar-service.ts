@@ -12,7 +12,10 @@ export type TFormDatePrice = Omit<IDatePrice, 'id'>;
 
 export class CalendarService {
     static async fetchDatePrices(unitId: string): Promise<IDatePrice[]> {
-        const { data, error } = await supabase.from('Date_Price').select('*').eq('unit_id', unitId);
+        const { data, error } = await supabase
+            .from('Date_Price')
+            .select('*')
+            .eq('unit_id', unitId);
 
         if (error) {
             throw error;
@@ -47,7 +50,10 @@ export class CalendarService {
             .insert([
                 {
                     unit_id: datePrice.unit_id,
-                    date_range: [format(startDate, 'yyyy-MM-dd'), format(endDate, 'yyyy-MM-dd')],
+                    date_range: [
+                        format(startDate, 'yyyy-MM-dd'),
+                        format(endDate, 'yyyy-MM-dd'),
+                    ],
                     price: datePrice.price,
                 },
             ])

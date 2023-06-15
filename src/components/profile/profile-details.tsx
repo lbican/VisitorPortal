@@ -36,7 +36,13 @@ const ProfileDetails: React.FC<UserProfile> = (props) => {
                     />
                 )}
             </HStack>
-            {user && <ProfileUpdateModal isOpen={isOpen} onClose={onClose} userProfile={user} />}
+            {user && (
+                <ProfileUpdateModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    userProfile={user}
+                />
+            )}
         </>
     );
 };

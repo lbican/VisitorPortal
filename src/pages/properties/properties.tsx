@@ -14,8 +14,16 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const Properties = (): ReactElement => {
-    const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
-    const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
+    const {
+        isOpen: isModalOpen,
+        onOpen: onModalOpen,
+        onClose: onModalClose,
+    } = useDisclosure();
+    const {
+        isOpen: isOpenAlert,
+        onOpen: onOpenAlert,
+        onClose: onCloseAlert,
+    } = useDisclosure();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -38,7 +46,10 @@ const Properties = (): ReactElement => {
     const confirmDeleteProperty = () => {
         if (store.currentProperty) {
             store
-                .deleteProperty(store.currentProperty.id, store.currentProperty.image_path)
+                .deleteProperty(
+                    store.currentProperty.id,
+                    store.currentProperty.image_path
+                )
                 .then(() => {
                     onCloseAlert();
                     notification.success(t('Successfully deleted property'));
@@ -56,7 +67,11 @@ const Properties = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Your properties')}
                 </Heading>
-                <Button leftIcon={<AiOutlinePlus />} colorScheme="green" onClick={onModalOpen}>
+                <Button
+                    leftIcon={<AiOutlinePlus />}
+                    colorScheme="green"
+                    onClick={onModalOpen}
+                >
                     {t('Add new property')}
                 </Button>
             </HStack>
@@ -72,7 +87,9 @@ const Properties = (): ReactElement => {
                 isOpen={isOpenAlert}
                 onClose={onCloseAlert}
                 onConfirm={confirmDeleteProperty}
-                dialogBody={t('confirmDelete', { propertyName: store.currentProperty?.name })}
+                dialogBody={t('confirmDelete', {
+                    propertyName: store.currentProperty?.name,
+                })}
                 dialogHeader={t('Confirm deletion')}
                 dialogConfirmText={t('Delete')}
                 dialogDeclineText={t('Cancel')}

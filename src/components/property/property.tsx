@@ -27,7 +27,10 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             position="relative"
         >
             <Image
-                src={PropertyService.getPropertyImage(property.image_path)?.url || UNRESOLVED_IMAGE}
+                src={
+                    PropertyService.getPropertyImage(property.image_path)?.url ||
+                    UNRESOLVED_IMAGE
+                }
                 objectFit="cover"
                 alt={`Picture of ${property.name}`}
                 roundedTop="lg"
@@ -49,11 +52,17 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
                     </Box>
                     <Text fontSize="sm" as="b">
                         {'Units: '}
-                        <Tag borderRadius="full">{property.units ? property.units.length : 0}</Tag>
+                        <Tag borderRadius="full">
+                            {property.units ? property.units.length : 0}
+                        </Tag>
                     </Text>
                 </Flex>
 
-                {property.rating ? <Rating rating={property.rating} /> : <Text>No rating</Text>}
+                {property.rating ? (
+                    <Rating rating={property.rating} />
+                ) : (
+                    <Text>No rating</Text>
+                )}
             </Box>
         </Box>
     );

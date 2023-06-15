@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { IUnit } from '../../../utils/interfaces/typings';
 import { useForm } from 'react-hook-form';
-import { CalendarService, IDatePrice } from '../../../services/calendar-service';
+import { CalendarService } from '../../../services/calendar-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { MdOutlineSave } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +62,10 @@ const PriceModal: React.FC<PriceModalProps> = ({
         })
             .then(() => {
                 notification.success(
-                    t('assignedPricesDates', { dateStart: formattedStart, dateEnd: formattedEnd })
+                    t('assignedPricesDates', {
+                        dateStart: formattedStart,
+                        dateEnd: formattedEnd,
+                    })
                 );
                 onValueSubmitted();
                 onClose();

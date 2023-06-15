@@ -33,7 +33,9 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
                         <Text ml={2}>{t('Edit')}</Text>
                     </MenuItem>
                     <MenuDivider />
-                    <MenuItem onClick={onJumpToCalendar}>{t('Jump to calendar')}</MenuItem>
+                    <MenuItem onClick={onJumpToCalendar}>
+                        {t('Jump to calendar')}
+                    </MenuItem>
                 </MenuList>
             )}
         >

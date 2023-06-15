@@ -86,7 +86,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                     setImage(undefined);
                 })
                 .catch(() => {
-                    notification.error(t('Could not delete image, please try again later'));
+                    notification.error(
+                        t('Could not delete image, please try again later')
+                    );
                 })
                 .finally(() => setLoading(false));
         }
@@ -109,7 +111,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                 isInvalid={!!errors.name}
                                 type="text"
                                 id="name"
-                                {...register('name', { required: t('Name is required') ?? true })}
+                                {...register('name', {
+                                    required: t('Name is required') ?? true,
+                                })}
                             />
                             <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
                         </FormControl>
@@ -123,7 +127,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                     required: t('Location is required') ?? true,
                                 })}
                             />
-                            <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
+                            <FormErrorMessage>
+                                {errors.location?.message}
+                            </FormErrorMessage>
                         </FormControl>
                     </HStack>
                     <FormMap
@@ -209,7 +215,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                     <FileDropzone
                                         fileService={fileService}
                                         setSelectedImage={(image_path) => {
-                                            setImage(PropertyService.getPropertyImage(image_path));
+                                            setImage(
+                                                PropertyService.getPropertyImage(
+                                                    image_path
+                                                )
+                                            );
                                             field.onChange(image_path);
                                         }}
                                     />
@@ -224,7 +234,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                 <VStack spacing={4} mt={4}>
                     {fields.map((field, index) => (
                         <HStack key={field.id} w="full">
-                            <FormControl isInvalid={!!errors.units && !!errors.units[index]?.name}>
+                            <FormControl
+                                isInvalid={!!errors.units && !!errors.units[index]?.name}
+                            >
                                 <FormLabel htmlFor={`unit_name_${index}`}>
                                     {t('Unit name')}
                                 </FormLabel>
@@ -249,7 +261,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                     max={16}
                                     keepWithinRange={true}
                                 >
-                                    <NumberInputField {...register(`units.${index}.capacity`)} />
+                                    <NumberInputField
+                                        {...register(`units.${index}.capacity`)}
+                                    />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />

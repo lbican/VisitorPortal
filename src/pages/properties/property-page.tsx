@@ -25,8 +25,8 @@ const PropertyPage = () => {
     if (!store.currentProperty) {
         return (
             <p>
-                Could not access current property, please click on current property from properties
-                page
+                Could not access current property, please click on current property from
+                properties page
             </p>
         );
     }
@@ -37,7 +37,9 @@ const PropertyPage = () => {
                 <BannerWrapper>
                     <Banner
                         banner_url={
-                            PropertyService.getPropertyImage(store.currentProperty.image_path)?.url
+                            PropertyService.getPropertyImage(
+                                store.currentProperty.image_path
+                            )?.url
                         }
                     >
                         <VStack alignItems="flex-start">
@@ -63,7 +65,9 @@ const PropertyPage = () => {
                         <Skeleton isLoaded={!store.isFetching}>
                             <ReactiveButton
                                 onClick={() => {
-                                    store.setEditingProperty(store.currentProperty || undefined);
+                                    store.setEditingProperty(
+                                        store.currentProperty || undefined
+                                    );
                                     onOpen();
                                 }}
                                 text={t('Edit')}

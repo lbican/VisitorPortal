@@ -136,5 +136,7 @@
   "unitCapacity": "Kapacitet: {{unitCapacity}}",
   "Price List": "Cjenik",
   "nights": "noćenja",
-  "night": "noć"
+  "night": "noć",
+  "numberOfNights": "Broj noćenja: {{numNights}}",
+  "maxCapacity": "Kapacitet: {{maxCapacity}}"
 }

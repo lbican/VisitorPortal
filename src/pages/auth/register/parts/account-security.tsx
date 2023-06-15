@@ -43,7 +43,10 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     });
 
     const { ref: emailRef, ...emailControl } = register('email', emailValidator);
-    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
+    const { ref: passwordRef, ...passwordControl } = register(
+        'password',
+        passwordValidator
+    );
     const { ref: repeatPasswordRef, ...repeatPasswordControl } = register(
         'repeat_password',
         repeatPasswordValidator(watch)
@@ -85,7 +88,9 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
                         ref={emailRef}
                         {...emailControl}
                     />
-                    <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
+                    <FormErrorMessage>
+                        {errors.email?.message?.toString()}
+                    </FormErrorMessage>
                 </FormControl>
 
                 <FormControl mt="2%" isInvalid={!!errors.password}>
@@ -106,7 +111,9 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
                             </Button>
                         </InputRightElement>
                     </InputGroup>
-                    <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
+                    <FormErrorMessage>
+                        {errors.password?.message?.toString()}
+                    </FormErrorMessage>
                 </FormControl>
                 <FormControl mt="2%" isInvalid={!!errors.repeat_password}>
                     <FormLabel htmlFor="repeat_password" fontWeight="normal">
