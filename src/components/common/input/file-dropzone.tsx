@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineUpload } from 'react-icons/ai';
 import FileService from '../../../services/file-service';
+import { useTranslation } from 'react-i18next';
 
 interface FileDropzoneProps {
     fileService: FileService;
@@ -20,6 +21,7 @@ interface FileDropzoneProps {
 const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileService }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(false);
+    const { t } = useTranslation();
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         setIsLoading(true);
@@ -61,7 +63,7 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
                     <HStack spacing="2" justifyContent="center">
                         <AiOutlineUpload />
                         <Text>
-                            Drag 'n' drop some files here, or click to select files
+                            {t("Drag 'n' drop some files here, or click to select files")}
                         </Text>
                     </HStack>
                     {isLoading && (
@@ -73,7 +75,9 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
                 {error && (
                     <Alert status="error">
                         <AlertIcon />
-                        There was an error processing your request, please try again later
+                        {t(
+                            'There was an error processing your request, please try again later'
+                        )}
                     </Alert>
                 )}
             </Flex>

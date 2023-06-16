@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
     locales: ['en', 'hr'],
     output: 'src/locales/$LOCALE/$NAMESPACE.json',
     input: ['src/**/*.{ts,tsx,js,jsx}'],
@@ -7,3 +7,5 @@ module.exports = {
     keySeparator: false,
     useKeysAsDefaultValue: ['en'],
 };
+
+export default config;

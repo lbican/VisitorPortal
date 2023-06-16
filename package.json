@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "i18n:extract": "i18next 'src/**/*.{ts,tsx,js,jsx}' -c i18next-parser.config.cjs && node fixTranslations.mjs",
+    "i18n:extract": "i18next 'src/**/*.{ts,tsx,js,jsx}' -c i18next-parser.config.js && node src/i18n/fix-translations.js",
     "preview": "vite preview"
   },
   "dependencies": {

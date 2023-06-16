@@ -5,10 +5,12 @@ import useUserProfile from '../../hooks/useUserProfile';
 import EmptyState from '../../components/common/feedback/empty-state';
 import { UserProfileProvider } from '../../context/user-profile-context';
 import { Skeleton } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const ProfilePage: React.FC = () => {
     const { username = '' } = useParams<{ username: string }>();
     const { userProfile, refetch, isLoading } = useUserProfile(username);
+    const { t } = useTranslation();
 
     const contextValue = {
         userProfile,
@@ -26,8 +28,8 @@ const ProfilePage: React.FC = () => {
     ) : (
         <EmptyState
             code={404}
-            shortMessage="Error has occured"
-            message="Requested user was not found"
+            shortMessage={t('An error has occurred')}
+            message={t('Requested user was not found')}
             hideButton={true}
         />
     );

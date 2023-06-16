@@ -231,7 +231,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                             <Text>
                                 {t('numberOfNights', {
                                     numNights: differenceInDays(
-                                        date_range[1],
+                                        addDays(1, date_range[1]),
                                         date_range[0]
                                     ),
                                 })}

@@ -4,7 +4,16 @@ import { observer } from 'mobx-react-lite';
 import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
 import BannerWrapper from '../../components/common/banner/banner-wrapper';
-import { Box, Heading, HStack, Skeleton, useDisclosure, VStack } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Heading,
+    HStack,
+    Skeleton,
+    Spinner,
+    useDisclosure,
+    VStack,
+} from '@chakra-ui/react';
 import PropertyTags from '../../components/property/form/property-tags';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
@@ -12,23 +21,37 @@ import ReactiveButton from '../../components/common/input/reactive-button';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import { useAuth } from '../../context/auth-context';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '../../components/common/feedback/empty-state';
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
     const { onOpen, isOpen, onClose } = useDisclosure();
     const { user } = useAuth();
     const { t } = useTranslation();
 
+    const resolveCurrentProperty = async () => {
+        await store.fetchCurrentProperty(pid, user?.id);
+    };
+
     useEffect(() => {
-        store.fetchCurrentProperty(pid, user?.id);
+        void resolveCurrentProperty();
     }, []);
 
     if (!store.currentProperty) {
-        return (
-            <p>
-                Could not access current property, please click on current property from
-                properties page
-            </p>
-        );
+        if (!store.isFetching) {
+            return (
+                <EmptyState
+                    code={404}
+                    message={t('Could not find property you are looking for')}
+                    shortMessage={t('Property not found')}
+                />
+            );
+        } else {
+            return (
+                <Flex justifyContent="center" alignItems="center" height="100%">
+                    <Spinner size="lg" />
+                </Flex>
+            );
+        }
     }
 
     return (
@@ -37,14 +60,18 @@ const PropertyPage = () => {
                 <BannerWrapper>
                     <Banner
                         banner_url={
-                            PropertyService.getPropertyImage(
-                                store.currentProperty.image_path
-                            )?.url
+                            store.isFetching
+                                ? undefined
+                                : PropertyService.getPropertyImage(
+                                      store.currentProperty.image_path
+                                  )?.url
                         }
                     >
                         <VStack alignItems="flex-start">
                             <Skeleton isLoaded={!store.isFetching}>
-                                <Heading>{store.currentProperty.name}</Heading>
+                                <Heading color="white">
+                                    {store.currentProperty.name}
+                                </Heading>
                             </Skeleton>
                             <Skeleton isLoaded={!store.isFetching}>
                                 <PropertyTags
@@ -82,7 +109,7 @@ const PropertyPage = () => {
             </Box>
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
             <Heading as="h4" size="lg">
-                Upcoming bookings
+                {t('Upcoming reservations')}
             </Heading>
         </>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
+import { Tag, TagLabel, TagLeftIcon, Text } from '@chakra-ui/react';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
@@ -36,8 +36,8 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
             roundedRight={isLastDay ? 6 : 0}
         >
             <TagLeftIcon as={isBookingReservation ? TbBrandBooking : BiBookOpen} />
-            <TagLabel as="b">
-                {first_name} {last_name} | {guests_num}
+            <TagLabel as="p">
+                {first_name} {last_name} | <Text as="b">{guests_num}</Text>
             </TagLabel>
         </Tag>
     );

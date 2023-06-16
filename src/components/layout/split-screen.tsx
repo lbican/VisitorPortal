@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Box, Flex, Heading, Stack, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Heading, Stack, useColorModeValue } from '@chakra-ui/react';
 import ProgressiveImage from '../common/image/progressive-image';
 
 interface Props {
