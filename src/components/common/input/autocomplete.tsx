@@ -67,7 +67,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
             styles={{
                 control: (base) => ({
                     ...base,
-                    width: width,
+                    width: isLoading ? 'max-content' : width,
                     borderColor: '#E2E8F0',
                     borderRadius: '5px',
                     boxShadow: '0 0 0 1px #CBD5E0',

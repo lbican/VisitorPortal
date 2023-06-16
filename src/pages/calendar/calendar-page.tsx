@@ -1,12 +1,5 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import {
-    Divider,
-    Heading,
-    HStack,
-    useDisclosure,
-    IconButton,
-    Tooltip,
-} from '@chakra-ui/react';
+import { Divider, Heading, HStack, useDisclosure } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval, subDays } from 'date-fns';
@@ -33,6 +26,7 @@ import { isSameDay } from 'date-fns/fp';
 import { ReservationService } from '../../services/reservation-service';
 import PriceTag from '../../components/calendar/tags/price-tag';
 import ReservationTag from '../../components/calendar/tags/reservation-tag';
+import TooltipIconButton from '../../components/common/tooltip-icon-button';
 
 interface ITileProps {
     view: View;
@@ -138,60 +132,54 @@ const CalendarPage = (): ReactElement => {
             end: date_range[1],
         }) && isBefore(date, date_range[1]);
 
-    const getTilePrices = useCallback(
+    const getTileContent = useCallback(
         ({ date, view }: ITileProps) => {
+            if (view !== 'month') return;
             let priceTagElement: ReactElement | null = null;
             let reservationElement: ReactElement | null = null;
             let soldDate = false;
 
-            if (view === 'month') {
-                if (loadingCalendar) {
-                    return (
-                        <PriceTag
-                            loading={loadingCalendar}
-                            status={PriceStatus.LOADING}
+            if (loadingCalendar) {
+                return (
+                    <PriceTag loading={loadingCalendar} status={PriceStatus.LOADING} />
+                );
+            }
+
+            for (const reservation of reservations) {
+                const [startDate, endDate] = reservation.date_range;
+                const lastDay = subDays(endDate, 1);
+
+                if (isWithinDateRange(date, [startDate, endDate])) {
+                    const { first_name, last_name, guests_num } = reservation.guest;
+
+                    reservationElement = (
+                        <ReservationTag
+                            colorScheme={
+                                reservation.is_booking_reservation ? 'blue' : 'teal'
+                            }
+                            first_name={first_name}
+                            last_name={last_name}
+                            guests_num={guests_num}
+                            isFirstDay={isSameDay(date, startDate)}
+                            isLastDay={isSameDay(date, lastDay)}
+                            isBookingReservation={reservation.is_booking_reservation}
                         />
                     );
+
+                    soldDate = true;
+                    break;
                 }
+            }
 
-                for (const reservation of reservations) {
-                    const [startDate, endDate] = reservation.date_range;
-                    const lastDay = subDays(endDate, 1);
-
-                    if (isWithinDateRange(date, [startDate, endDate])) {
-                        const { first_name, last_name, guests_num } = reservation.guest;
-
-                        reservationElement = (
-                            <ReservationTag
-                                colorScheme={
-                                    reservation.is_booking_reservation ? 'blue' : 'teal'
-                                }
-                                first_name={first_name}
-                                last_name={last_name}
-                                guests_num={guests_num}
-                                isFirstDay={isSameDay(date, startDate)}
-                                isLastDay={isSameDay(date, lastDay)}
-                                isBookingReservation={reservation.is_booking_reservation}
-                            />
-                        );
-
-                        soldDate = true;
-                        break;
-                    }
-                }
-
-                for (const datePrice of datePrices) {
-                    if (isWithinDateRange(date, datePrice.date_range)) {
-                        priceTagElement = (
-                            <PriceTag
-                                price={datePrice.price}
-                                status={
-                                    soldDate ? PriceStatus.SOLD : PriceStatus.AVAILABLE
-                                }
-                            />
-                        );
-                        break;
-                    }
+            for (const datePrice of datePrices) {
+                if (isWithinDateRange(date, datePrice.date_range)) {
+                    priceTagElement = (
+                        <PriceTag
+                            price={datePrice.price}
+                            status={soldDate ? PriceStatus.SOLD : PriceStatus.AVAILABLE}
+                        />
+                    );
+                    break;
                 }
             }
 
@@ -234,40 +222,35 @@ const CalendarPage = (): ReactElement => {
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />
-                    <Tooltip
-                        hasArrow
+                    <TooltipIconButton
+                        hasArrow={true}
                         label={
                             datesSelected()
                                 ? t('Assign price')
                                 : t('Select date range to assign prices')
                         }
-                    >
-                        <IconButton
-                            aria-label="Assign price"
-                            colorScheme="green"
-                            onClick={onPriceModalOpen}
-                            icon={<IoPricetag />}
-                            isDisabled={!datesSelected()}
-                        />
-                    </Tooltip>
-                    <Tooltip
-                        hasArrow
+                        ariaLabel="Assign price"
+                        colorScheme="green"
+                        onClick={onPriceModalOpen}
+                        icon={<IoPricetag />}
+                        isDisabled={!datesSelected()}
+                        placement="bottom-start"
+                    />
+                    <TooltipIconButton
+                        hasArrow={true}
                         placement="bottom-start"
                         label={
                             datesSelected()
                                 ? t('Add new reservation')
                                 : t('Select date range to add reservation')
                         }
-                    >
-                        <IconButton
-                            aria-label="Add reservation"
-                            colorScheme="orange"
-                            onClick={onReservationModalOpen}
-                            icon={<IoBook />}
-                            isDisabled={!datesSelected()}
-                        />
-                    </Tooltip>
-                    R
+                        ariaLabel="Add reservation"
+                        colorScheme="orange"
+                        onClick={onReservationModalOpen}
+                        icon={<IoBook />}
+                        isDisabled={!datesSelected()}
+                    />
+
                     <PDFButton
                         property={store.currentProperty}
                         unit={unit}
@@ -298,7 +281,7 @@ const CalendarPage = (): ReactElement => {
                         </>
                     )}
                     <Calendar
-                        tileContent={getTilePrices}
+                        tileContent={getTileContent}
                         locale={i18n.language ?? 'en'}
                         selectRange={true}
                         onChange={(value) => {
