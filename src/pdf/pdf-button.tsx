@@ -27,7 +27,6 @@ const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => 
                     isDisabled={true}
                     colorScheme="blue"
                     aria-label={t('Download prices')}
-                    as="a"
                     icon={<FaFilePdf />}
                 />
             </Tooltip>

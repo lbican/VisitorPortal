@@ -36,7 +36,7 @@ export class CalendarService {
         return parsedData as IDatePrice[];
     }
 
-    private static normalizeDate(date: Date) {
+    static normalizeDate(date: Date) {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0);
     }
 

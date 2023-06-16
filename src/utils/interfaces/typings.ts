@@ -41,6 +41,7 @@ export interface IReservation {
     id: string;
     guest: IGuest;
     unit: IUnit;
+    is_booking_reservation: boolean;
     date_range: [Date, Date];
     total_price: number;
     fulfilled: boolean;
@@ -53,6 +54,7 @@ export interface IReservation {
 export interface IFormReservation {
     guest_id: string;
     unit_id: string;
+    is_booking_reservation: boolean;
     date_range: [Date, Date];
     total_price: number;
     note: string;

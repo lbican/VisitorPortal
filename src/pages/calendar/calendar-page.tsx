@@ -1,20 +1,15 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import {
     Divider,
     Heading,
     HStack,
-    Tag,
-    TagLeftIcon,
     useDisclosure,
-    TagLabel,
-    Flex,
-    Skeleton,
     IconButton,
     Tooltip,
 } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
-import { isBefore, isWithinInterval } from 'date-fns';
+import { isBefore, isWithinInterval, subDays } from 'date-fns';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IReservation, IUnit } from '../../utils/interfaces/typings';
@@ -26,55 +21,30 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
-import { IoPricetag, IoPricetagOutline, IoBook } from 'react-icons/io5';
+import { IoPricetag, IoBook } from 'react-icons/io5';
 import { CalendarService, IDatePrice } from '../../services/calendar-service';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
-import { isUndefined } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { ReservationModal } from '../reservations/form/reservation-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
 import { isSameDay } from 'date-fns/fp';
 import { ReservationService } from '../../services/reservation-service';
+import PriceTag from '../../components/calendar/tags/price-tag';
+import ReservationTag from '../../components/calendar/tags/reservation-tag';
 
 interface ITileProps {
     view: View;
     date: Date;
 }
 
-enum PriceStatus {
+export enum PriceStatus {
+    SOLD = 'yellow',
     LOADING = 'teal',
     AVAILABLE = 'green',
     UNSET = 'gray',
 }
-
-interface PriceTagProps {
-    status: PriceStatus;
-    price?: number;
-    loading?: boolean;
-}
-
-const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading }) => {
-    return (
-        <Flex justifyContent="flex-end" mb={-6} px={2}>
-            <Skeleton isLoaded={!loading}>
-                <Tag size="md" variant="solid" colorScheme={status} alignSelf="flex-end">
-                    {status !== PriceStatus.UNSET && !isUndefined(price) ? (
-                        <>
-                            <TagLeftIcon as={IoPricetag} />
-                            <TagLabel>{price} €</TagLabel>
-                        </>
-                    ) : (
-                        <>
-                            <TagLeftIcon as={IoPricetagOutline} />
-                        </>
-                    )}
-                </Tag>
-            </Skeleton>
-        </Flex>
-    );
-};
 
 const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -100,17 +70,19 @@ const CalendarPage = (): ReactElement => {
     }, [store, user]);
 
     const fetchReservations = () => {
-        setLoadingCalendar(true);
-        ReservationService.fetchReservations(unit?.id)
-            .then((res) => {
-                setReservations(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoadingCalendar(false);
-            });
+        if (unit) {
+            setLoadingCalendar(true);
+            ReservationService.fetchReservations(unit?.id)
+                .then((res) => {
+                    setReservations(res);
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    setLoadingCalendar(false);
+                });
+        }
     };
 
     const fetchDatePrices = () => {
@@ -131,6 +103,7 @@ const CalendarPage = (): ReactElement => {
 
     useEffect(() => {
         fetchDatePrices();
+        fetchReservations();
     }, [unit]);
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
@@ -155,14 +128,7 @@ const CalendarPage = (): ReactElement => {
         }
     };
 
-    const datesSelected = (notSameDay?: boolean): boolean => {
-        if (notSameDay) {
-            return (
-                !isSameDay(selectedDates[0], selectedDates[1]) &&
-                !!(selectedDates[0] && selectedDates[1])
-            );
-        }
-
+    const datesSelected = (): boolean => {
         return !!(selectedDates[0] && selectedDates[1]);
     };
 
@@ -172,26 +138,76 @@ const CalendarPage = (): ReactElement => {
             end: date_range[1],
         }) && isBefore(date, date_range[1]);
 
-    const getTilePrices = ({ date, view }: ITileProps) => {
-        if (view === 'month' && loadingCalendar) {
-            return <PriceTag loading={loadingCalendar} status={PriceStatus.LOADING} />;
-        }
+    const getTilePrices = useCallback(
+        ({ date, view }: ITileProps) => {
+            let priceTagElement: ReactElement | null = null;
+            let reservationElement: ReactElement | null = null;
+            let soldDate = false;
 
-        if (view === 'month') {
-            for (const datePrice of datePrices) {
-                if (isWithinDateRange(date, datePrice.date_range)) {
+            if (view === 'month') {
+                if (loadingCalendar) {
                     return (
                         <PriceTag
-                            price={datePrice.price}
-                            status={PriceStatus.AVAILABLE}
+                            loading={loadingCalendar}
+                            status={PriceStatus.LOADING}
                         />
                     );
                 }
-            }
-        }
 
-        return <PriceTag status={PriceStatus.UNSET} />;
-    };
+                for (const reservation of reservations) {
+                    const [startDate, endDate] = reservation.date_range;
+                    const lastDay = subDays(endDate, 1);
+
+                    if (isWithinDateRange(date, [startDate, endDate])) {
+                        const { first_name, last_name, guests_num } = reservation.guest;
+
+                        reservationElement = (
+                            <ReservationTag
+                                colorScheme={
+                                    reservation.is_booking_reservation ? 'blue' : 'teal'
+                                }
+                                first_name={first_name}
+                                last_name={last_name}
+                                guests_num={guests_num}
+                                isFirstDay={isSameDay(date, startDate)}
+                                isLastDay={isSameDay(date, lastDay)}
+                                isBookingReservation={reservation.is_booking_reservation}
+                            />
+                        );
+
+                        soldDate = true;
+                        break;
+                    }
+                }
+
+                for (const datePrice of datePrices) {
+                    if (isWithinDateRange(date, datePrice.date_range)) {
+                        priceTagElement = (
+                            <PriceTag
+                                price={datePrice.price}
+                                status={
+                                    soldDate ? PriceStatus.SOLD : PriceStatus.AVAILABLE
+                                }
+                            />
+                        );
+                        break;
+                    }
+                }
+            }
+
+            if (!priceTagElement && !reservationElement) {
+                priceTagElement = <PriceTag status={PriceStatus.UNSET} />;
+            }
+
+            return (
+                <>
+                    {reservationElement}
+                    {priceTagElement}
+                </>
+            );
+        },
+        [reservations, datePrices, loadingCalendar]
+    );
 
     return (
         <>
@@ -238,7 +254,7 @@ const CalendarPage = (): ReactElement => {
                         hasArrow
                         placement="bottom-start"
                         label={
-                            datesSelected(true)
+                            datesSelected()
                                 ? t('Add new reservation')
                                 : t('Select date range to add reservation')
                         }
@@ -248,7 +264,7 @@ const CalendarPage = (): ReactElement => {
                             colorScheme="orange"
                             onClick={onReservationModalOpen}
                             icon={<IoBook />}
-                            isDisabled={!datesSelected(true)}
+                            isDisabled={!datesSelected()}
                         />
                     </Tooltip>
                     R

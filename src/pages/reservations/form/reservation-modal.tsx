@@ -4,6 +4,7 @@ import { IFormReservation, IGuest, IUnit } from '../../../utils/interfaces/typin
 import {
     Box,
     Button,
+    Checkbox,
     Divider,
     FormControl,
     FormErrorMessage,
@@ -33,6 +34,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ReservationService } from '../../../services/reservation-service';
 import i18n from 'i18next';
 import { differenceInDays } from 'date-fns';
+import { addDays } from 'date-fns/fp';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -61,11 +63,12 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
         handleSubmit,
         formState: { errors },
         setValue,
+        reset,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
         defaultValues: {
-            guest_id: uuidv4(),
             unit_id: unit.id,
+            is_booking_reservation: false,
             date_range: [date_range[0], date_range[1]],
             total_price: 0,
             note: '',
@@ -74,6 +77,20 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
             guests_num: 1,
         },
     });
+
+    useEffect(() => {
+        reset({
+            guest_id: uuidv4(),
+            unit_id: unit.id,
+            is_booking_reservation: false,
+            date_range: [date_range[0], date_range[1]],
+            total_price: 0,
+            note: '',
+            first_name: '',
+            last_name: '',
+            guests_num: 1,
+        });
+    }, [date_range, unit, reset]);
 
     useEffect(() => {
         ReservationService.getTotalPrice(unit.id, date_range)
@@ -87,6 +104,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
     }, [date_range, unit]);
 
     const addNewReservation = (data: IFormReservation & IGuest) => {
+        console.log(data);
         setSubmitting(true);
         ReservationService.insertNewReservation(data)
             .then(() => {
@@ -143,7 +161,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                             </FormErrorMessage>
                         </FormControl>
                     </HStack>
-                    <HStack mt={2} alignItems="flex-start">
+                    <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
                         <FormControl
                             isInvalid={!!errors.guests_num}
                             w="25%"
@@ -172,6 +190,19 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                                 {errors?.guests_num?.message}
                             </FormErrorMessage>
                         </FormControl>
+                        <FormControl w="max-content">
+                            <FormLabel htmlFor="is_booking_input">
+                                {t('Booking reservation?')}
+                            </FormLabel>
+                            <Checkbox
+                                id="is_booking_input"
+                                size="lg"
+                                colorScheme="blue"
+                                {...register('is_booking_reservation')}
+                            >
+                                {t('Yes')}
+                            </Checkbox>
+                        </FormControl>
                     </HStack>
                     <FormLabel mt={4}>{t('Reservation details')}</FormLabel>
                     <Divider my={2} />
@@ -191,9 +222,10 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                             </Text>
                             <Text>
                                 {t('departureDate', {
-                                    departureDate: date_range[1].toLocaleDateString(
-                                        i18n.language ?? 'en'
-                                    ),
+                                    departureDate: addDays(
+                                        1,
+                                        date_range[1]
+                                    ).toLocaleDateString(i18n.language ?? 'en'),
                                 })}
                             </Text>
                             <Text>

@@ -1,6 +1,7 @@
 import supabase from '../../database';
 import { format } from 'date-fns';
 import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
+import { CalendarService } from './calendar-service';
 
 export class ReservationService {
     static async getTotalPrice(
@@ -37,6 +38,7 @@ export class ReservationService {
             ],
             _total_price: newReservation.total_price,
             _note: newReservation.note,
+            _is_booking_reservation: newReservation.is_booking_reservation,
         });
 
         if (error) {
@@ -61,6 +63,7 @@ export class ReservationService {
               created_at,
               updated_at,
               note,
+              is_booking_reservation,
               guest:Guest (
                 id,
                 first_name,
@@ -80,10 +83,21 @@ export class ReservationService {
             throw error;
         }
 
-        return reservations.map((reservation: any) => {
-            const dates = reservation.date_range.slice(1, -1).split(',');
-            reservation.date_range = [new Date(dates[0]), new Date(dates[1])];
-            return reservation as IReservation;
+        console.log(reservations);
+
+        const parsedData = reservations.map((reservation) => {
+            const dateRange = reservation.date_range.slice(1, -1).split(',');
+            return {
+                ...reservation,
+                date_range: [
+                    CalendarService.normalizeDate(new Date(dateRange[0])),
+                    CalendarService.normalizeDate(new Date(dateRange[1])),
+                ],
+            };
         });
+
+        console.log(parsedData);
+
+        return parsedData as unknown as IReservation[];
     }
 }
