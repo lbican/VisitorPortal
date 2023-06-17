@@ -18,6 +18,11 @@ export enum PropertyType {
     APARTMENT = 'Apartments',
 }
 
+export enum ManagerType {
+    OWNER = 'OWNER',
+    MANAGER = 'MANAGER',
+}
+
 export interface IUnit {
     id: string;
     name: string;

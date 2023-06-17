@@ -46,6 +46,17 @@ export class ReservationService {
         }
     }
 
+    static async deleteReservation(reservationId: string) {
+        const { error } = await supabase
+            .from('Reservation')
+            .delete()
+            .eq('id', reservationId);
+
+        if (error) {
+            throw error;
+        }
+    }
+
     static async fetchReservations(unitId?: string): Promise<IReservation[]> {
         if (!unitId) {
             throw new Error('Unit id was not provided!');

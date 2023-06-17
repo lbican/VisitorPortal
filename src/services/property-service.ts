@@ -1,5 +1,5 @@
 import supabase from '../../database';
-import { IProperty, TFormProperty } from '../utils/interfaces/typings';
+import { IProperty, ManagerType, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
 
 class PropertyService {
@@ -118,6 +118,24 @@ class PropertyService {
 
         if (error) {
             throw new Error(error.message);
+        }
+    }
+
+    static async addPropertyManager(propertyId: string, userId: string): Promise<void> {
+        if (!propertyId || !userId) {
+            throw new Error('Property id or user id are not defined!');
+        }
+
+        const { error } = await supabase.from('User_has_Property').insert([
+            {
+                user_id: userId,
+                property_id: propertyId,
+                manager_type: ManagerType.MANAGER,
+            },
+        ]);
+
+        if (error) {
+            throw error;
         }
     }
 }

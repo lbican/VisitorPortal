@@ -13,6 +13,7 @@ import {
     Spinner,
     useDisclosure,
     VStack,
+    Text,
 } from '@chakra-ui/react';
 import PropertyTags from '../../components/property/form/property-tags';
 import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
@@ -22,57 +23,29 @@ import { propertyStore as store } from '../../mobx/propertyStore';
 import { useAuth } from '../../context/auth-context';
 import { useTranslation } from 'react-i18next';
 import EmptyState from '../../components/common/feedback/empty-state';
-import { ReservationService } from '../../services/reservation-service';
 import Autocomplete, {
     ILabel,
     mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
-import { IReservation, IUnit } from '../../utils/interfaces/typings';
+import { IUnit } from '../../utils/interfaces/typings';
 import { SingleValue } from 'react-select';
 import Timeline from '../../components/common/timeline';
+import { reservationStore } from '../../mobx/reservationStore';
 
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
     const { onOpen, isOpen, onClose } = useDisclosure();
     const { user } = useAuth();
     const { t } = useTranslation();
-    const [reservations, setReservations] = useState<IReservation[]>([]);
     const [selectedUnit, setSelectedUnit] = useState<IUnit | null>(null);
-    const [loadingTimeline, setLoadingTimeline] = useState(false);
 
     const resolveCurrentProperty = async () => {
         await store.fetchCurrentProperty(pid, user?.id);
     };
 
-    const fetchPropertyReservations = () => {
-        ReservationService.fetchReservations('')
-            .then((reservations) => {
-                console.log(reservations);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
-    const fetchReservations = () => {
-        if (selectedUnit?.id) {
-            setLoadingTimeline(true);
-            ReservationService.fetchReservations(selectedUnit?.id)
-                .then((res) => {
-                    setReservations(res);
-                })
-                .catch((error) => {
-                    console.error(error);
-                })
-                .finally(() => {
-                    setLoadingTimeline(false);
-                });
-        }
-    };
-
     useEffect(() => {
-        fetchReservations();
+        reservationStore.fetchUnitReservations(selectedUnit?.id);
     }, [selectedUnit]);
 
     const handleUnitSelect = (newValue: SingleValue<ILabel>) => {
@@ -91,7 +64,7 @@ const PropertyPage = () => {
 
     useEffect(() => {
         void resolveCurrentProperty();
-        fetchPropertyReservations();
+        reservationStore.setReservations([]);
     }, []);
 
     if (!store.currentProperty) {
@@ -177,11 +150,17 @@ const PropertyPage = () => {
                 </BannerWrapper>
             </Box>
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
-            <Timeline
-                heading={t('Upcoming reservations')}
-                reservations={reservations}
-                loadingTimeline={loadingTimeline}
-            />
+            <Heading as="h3" fontSize="4xl" fontWeight="bold" mb={18} textAlign="left">
+                {t('Upcoming reservations')}
+            </Heading>
+            {selectedUnit ? (
+                <Timeline
+                    reservations={reservationStore.reservations}
+                    loadingTimeline={reservationStore.isFetching}
+                />
+            ) : (
+                <Text>{t('Please select unit to view upcoming reservations')}</Text>
+            )}
         </>
     );
 };

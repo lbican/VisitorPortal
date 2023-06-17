@@ -58,6 +58,22 @@ export class UserService {
         return Promise.resolve(data as UserProfile);
     };
 
+    static searchNonManagers = async (
+        propertyId: string,
+        searchTerm: string
+    ): Promise<UserProfile[]> => {
+        const { data, error } = await supabase.rpc('get_non_managers', {
+            property_id: propertyId,
+            search_term: searchTerm,
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        return data as UserProfile[];
+    };
+
     static updateUserProfile = async (
         id: string | undefined,
         userProfileUpdate: Partial<UserProfile>

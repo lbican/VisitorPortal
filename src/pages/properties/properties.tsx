@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Button, Divider, Flex, Heading, HStack, useDisclosure } from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';
@@ -12,6 +12,7 @@ import { propertyStore as store } from '../../mobx/propertyStore';
 import useToastNotification from '../../hooks/useToastNotification';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ManagerModal from '../../components/property/manager/manager-modal';
 
 const Properties = (): ReactElement => {
     const {
@@ -24,10 +25,21 @@ const Properties = (): ReactElement => {
         onOpen: onOpenAlert,
         onClose: onCloseAlert,
     } = useDisclosure();
+    const {
+        isOpen: isManagerModalOpen,
+        onOpen: onManagerModalOpen,
+        onClose: onManagerModalClose,
+    } = useDisclosure();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useAuth();
     const notification = useToastNotification();
+    const [propertyId, setPropertyId] = useState<string>('');
+
+    const openManagerModal = (propertyId: string) => {
+        setPropertyId(propertyId);
+        onManagerModalOpen();
+    };
 
     useEffect(() => {
         void store.fetchProperties(user?.id);
@@ -94,6 +106,11 @@ const Properties = (): ReactElement => {
                 dialogConfirmText={t('Delete')}
                 dialogDeclineText={t('Cancel')}
             />
+            <ManagerModal
+                isOpen={isManagerModalOpen}
+                onClose={onManagerModalClose}
+                propertyId={propertyId}
+            />
             <Divider mb={4} />
             <Flex alignItems="flex-start" flexWrap="wrap">
                 {store.properties.map((property) => (
@@ -105,6 +122,7 @@ const Properties = (): ReactElement => {
                         }}
                         onMenuEdit={() => openEditModal(property)}
                         onMenuDelete={() => openDeleteAlert(property)}
+                        onAddManagerClick={() => openManagerModal(property.id)}
                     >
                         <NavLink to={`/properties/property/${property.id}`}>
                             <Property property={property} />
