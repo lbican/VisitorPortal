@@ -1,3 +1,5 @@
+import { UserProfile } from '../../context/auth-context';
+
 export interface IUserRegistration {
     username: string;
     first_name: string;
@@ -38,6 +40,11 @@ export interface IProperty {
     rating?: number;
     description?: string;
     units: IUnit[];
+    manager_type: ManagerType;
+}
+
+export interface PropertyManager extends UserProfile {
+    manager_type: ManagerType;
 }
 
 export type TFormProperty = Omit<IProperty, 'id'>;

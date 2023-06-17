@@ -39,6 +39,7 @@ import { IUnit } from '../../utils/interfaces/typings';
 import { SingleValue } from 'react-select';
 import Timeline from '../../components/common/timeline';
 import { reservationStore } from '../../mobx/reservationStore';
+import { GoStar } from 'react-icons/go';
 
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
@@ -46,6 +47,8 @@ const PropertyPage = () => {
     const { user } = useAuth();
     const { t } = useTranslation();
     const [selectedUnit, setSelectedUnit] = useState<IUnit | null>(null);
+    const managersBackground = useColorModeValue('white', 'gray.800');
+    const managerBackground = useColorModeValue('whitesmoke', 'gray.700');
 
     const resolveCurrentProperty = async () => {
         await store.fetchCurrentProperty(pid, user?.id);
@@ -180,34 +183,43 @@ const PropertyPage = () => {
                     )}
                 </GridItem>
                 <GridItem order={[1, null, 2]} w="100%">
-                    <Wrap bg={useColorModeValue('white', 'gray.800')} p={4} rounded={4}>
+                    <Wrap bg={managersBackground} p={4} rounded={4}>
                         <Heading as="h4" size="md">
                             {t('Property managers')}
                         </Heading>
                         {store.isFetching ? (
                             <Spinner />
                         ) : (
-                            store.propertyManagers?.map((user) => (
-                                <HStack
+                            store.propertyManagers?.map((manager) => (
+                                <Box
                                     as={NavLink}
-                                    to={`/user/${user.username}`}
+                                    to={`/manager/${manager.username}`}
                                     borderRadius={4}
-                                    key={user.id}
-                                    bg={useColorModeValue('whitesmoke', 'gray.700')}
+                                    key={manager.id}
+                                    bg={managerBackground}
                                     my={1}
                                     p={2}
                                     justifyContent="space-between"
                                     w="full"
+                                    _hover={{
+                                        outline: '1px solid white',
+                                    }}
                                 >
-                                    <HStack>
-                                        <Avatar
-                                            size="sm"
-                                            src={user.avatar_url ?? undefined}
-                                            name={user.full_name}
-                                        />
-                                        <Text as="b">{user.username}</Text>
+                                    <HStack justifyContent="space-between" w="full">
+                                        <HStack>
+                                            <Avatar
+                                                size="sm"
+                                                src={manager.avatar_url ?? undefined}
+                                                name={manager.full_name}
+                                            />
+                                            <Text as="b">{manager.username}</Text>
+                                        </HStack>
+                                        <HStack>
+                                            <Text>{manager.manager_type}</Text>
+                                            {manager.id === user?.id && <GoStar />}
+                                        </HStack>
                                     </HStack>
-                                </HStack>
+                                </Box>
                             ))
                         )}
                     </Wrap>

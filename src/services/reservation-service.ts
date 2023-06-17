@@ -94,8 +94,6 @@ export class ReservationService {
             throw error;
         }
 
-        console.log(reservations);
-
         const parsedData = reservations.map((reservation) => {
             const dateRange = reservation.date_range.slice(1, -1).split(',');
             return {
@@ -106,8 +104,6 @@ export class ReservationService {
                 ],
             };
         });
-
-        console.log(parsedData);
 
         return parsedData as unknown as IReservation[];
     }

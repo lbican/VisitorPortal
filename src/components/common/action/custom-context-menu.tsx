@@ -13,6 +13,7 @@ import { AiOutlineEdit, AiOutlineUserAdd } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
 
 type CustomContextMenuProps = {
+    isOwner: boolean;
     onMenuDelete: () => void;
     onMenuEdit: () => void;
     onAddManagerClick: () => void;
@@ -21,6 +22,7 @@ type CustomContextMenuProps = {
 };
 
 const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
+    isOwner,
     onMenuDelete,
     children,
     onMenuEdit,
@@ -41,10 +43,12 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
                         <AiOutlineEdit />
                         <Text ml={2}>{t('Edit')}</Text>
                     </MenuItem>
-                    <MenuItem onClick={onAddManagerClick}>
-                        <AiOutlineUserAdd />
-                        <Text ml={2}>{t('Add manager')}</Text>
-                    </MenuItem>
+                    {isOwner && (
+                        <MenuItem onClick={onAddManagerClick}>
+                            <AiOutlineUserAdd />
+                            <Text ml={2}>{t('Add manager')}</Text>
+                        </MenuItem>
+                    )}
                     <MenuDivider />
                     <MenuItem onClick={onJumpToCalendar}>
                         {t('Jump to calendar')}

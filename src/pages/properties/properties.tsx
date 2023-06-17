@@ -5,7 +5,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
 import { useAuth } from '../../context/auth-context';
 import AlertDialogComponent from '../../components/common/feedback/alert-dialog-component';
-import { IProperty } from '../../utils/interfaces/typings';
+import { IProperty, ManagerType } from '../../utils/interfaces/typings';
 import CustomContextMenu from '../../components/common/action/custom-context-menu';
 import { observer } from 'mobx-react-lite';
 import { propertyStore as store } from '../../mobx/propertyStore';
@@ -115,6 +115,7 @@ const Properties = (): ReactElement => {
             <Flex alignItems="flex-start" flexWrap="wrap">
                 {store.properties.map((property) => (
                     <CustomContextMenu
+                        isOwner={property.manager_type === ManagerType.OWNER}
                         key={property.id}
                         onJumpToCalendar={() => {
                             store.setCurrentProperty(property);

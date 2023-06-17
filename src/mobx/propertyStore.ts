@@ -1,13 +1,12 @@
 import { action, observable, makeAutoObservable } from 'mobx';
 import PropertyService from '../services/property-service';
-import { IProperty, TFormProperty } from '../utils/interfaces/typings';
-import { UserProfile } from '../context/auth-context';
+import { IProperty, PropertyManager, TFormProperty } from '../utils/interfaces/typings';
 
 class PropertyStore {
     @observable properties: IProperty[] = [];
     @observable currentProperty: IProperty | null = null;
     @observable editingProperty: IProperty | undefined = undefined;
-    @observable propertyManagers: UserProfile[] | undefined = undefined;
+    @observable propertyManagers: PropertyManager[] | undefined = undefined;
     @observable isDeleting = false;
     @observable isFetching = false;
 
@@ -41,7 +40,7 @@ class PropertyStore {
     }
 
     @action
-    setPropertyManagers(propertyManagers: UserProfile[]) {
+    setPropertyManagers(propertyManagers: PropertyManager[]) {
         this.propertyManagers = propertyManagers;
     }
 
