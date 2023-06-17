@@ -40,14 +40,11 @@ const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => 
             }
             fileName={`${unit?.name}_date_prices.pdf`}
         >
-            {({ url, loading, error }) => (
+            {({ loading, error }) => (
                 <Tooltip hasArrow label={t('Download your prices in PDF document')}>
                     <IconButton
                         aria-label="Download prices"
-                        as="a"
                         icon={<FaFilePdf />}
-                        href={url ?? ''}
-                        download={!loading}
                         isLoading={loading}
                         colorScheme={error ? 'red' : 'blue'}
                     />

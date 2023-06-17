@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Button,
     Modal,
@@ -9,17 +9,16 @@ import {
     ModalHeader,
     ModalOverlay,
     Input,
-    Box,
     VStack,
     HStack,
     Avatar,
     Text,
     useColorModeValue,
     IconButton,
+    Spinner,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
-import { useState } from 'react';
 import { UserProfile } from '../../../context/auth-context';
 import { UserService } from '../../../services/user-service';
 import { AiOutlinePlus } from 'react-icons/ai';
@@ -43,19 +42,27 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({
     const [loading, setLoading] = useState(false);
     const notification = useToastNotification();
 
-    const handleSearch = debounce(async (searchTerm: string) => {
-        if (searchTerm.length > 0) {
-            UserService.searchNonManagers(propertyId, searchTerm)
-                .then((profiles) => {
-                    setSearchResults(profiles);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        } else {
-            setSearchResults([]);
-        }
-    }, 1000);
+    const handleSearch = React.useCallback(
+        debounce((searchTerm) => {
+            console.log('SEARCHING');
+            if (searchTerm.length > 0) {
+                setLoading(true);
+                UserService.searchNonManagers(propertyId, searchTerm)
+                    .then((profiles) => {
+                        setSearchResults(profiles);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            } else {
+                setSearchResults([]);
+            }
+        }, 500),
+        [propertyId]
+    );
 
     const addPropertyManager = (userId: string) => {
         PropertyService.addPropertyManager(propertyId, userId)
@@ -69,7 +76,7 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({
             });
     };
 
-    const handleInputChange = (event: any) => {
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchTerm = event.target.value;
         setSearchTerm(searchTerm);
         handleSearch(searchTerm);
@@ -89,32 +96,36 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({
                         onChange={handleInputChange}
                     />
                     <VStack py={2}>
-                        {searchResults.map((user) => (
-                            <HStack
-                                borderRadius={4}
-                                bg={useColorModeValue('white', 'gray.800')}
-                                key={user.id}
-                                my={1}
-                                p={2}
-                                justifyContent="space-between"
-                                w="full"
-                            >
-                                <HStack>
-                                    <Avatar
-                                        size="sm"
-                                        src={user.avatar_url ?? undefined}
-                                        name={user.full_name}
+                        {loading ? (
+                            <Spinner />
+                        ) : (
+                            searchResults.map((user) => (
+                                <HStack
+                                    borderRadius={4}
+                                    bg={useColorModeValue('white', 'gray.800')}
+                                    key={user.id}
+                                    my={1}
+                                    p={2}
+                                    justifyContent="space-between"
+                                    w="full"
+                                >
+                                    <HStack>
+                                        <Avatar
+                                            size="sm"
+                                            src={user.avatar_url ?? undefined}
+                                            name={user.full_name}
+                                        />
+                                        <Text as="b">{user.username}</Text>
+                                    </HStack>
+                                    <IconButton
+                                        onClick={() => addPropertyManager(user.id)}
+                                        colorScheme="green"
+                                        aria-label="Add manager"
+                                        icon={<AiOutlinePlus />}
                                     />
-                                    <Text as="b">{user.username}</Text>
                                 </HStack>
-                                <IconButton
-                                    onClick={() => addPropertyManager(user.id)}
-                                    colorScheme="green"
-                                    aria-label="Add manager"
-                                    icon={<AiOutlinePlus />}
-                                />
-                            </HStack>
-                        ))}
+                            ))
+                        )}
                     </VStack>
                 </ModalBody>
 
