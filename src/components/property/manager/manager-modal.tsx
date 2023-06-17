@@ -55,7 +55,7 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({
         } else {
             setSearchResults([]);
         }
-    }, 500);
+    }, 1000);
 
     const addPropertyManager = (userId: string) => {
         PropertyService.addPropertyManager(propertyId, userId)

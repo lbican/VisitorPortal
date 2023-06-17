@@ -11,6 +11,7 @@ import {
     useDisclosure,
     VStack,
     Tag,
+    Flex,
 } from '@chakra-ui/react';
 import { TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
@@ -50,8 +51,14 @@ const ReservationCard = (props: IReservation) => {
 
     return (
         <CardWrapper icon={props.is_booking_reservation ? TbBrandBooking : BiBookOpen}>
-            <Box w="full">
-                <VStack spacing={1} mb={3} textAlign="left" alignItems="flex-start">
+            <Flex w="full" flexDirection={{ lg: 'row', base: 'column' }}>
+                <VStack
+                    spacing={1}
+                    mb={3}
+                    textAlign="left"
+                    alignItems="flex-start"
+                    w="full"
+                >
                     <Heading
                         as="h2"
                         size="md"
@@ -82,27 +89,29 @@ const ReservationCard = (props: IReservation) => {
                         {note || t('No note')}
                     </Text>
                 </VStack>
-                <VStack w="full" alignItems="flex-end" p={4}>
-                    <Text>
-                        {t('departureDate', {
-                            departureDate: date_range[1].toLocaleDateString(
-                                i18n.language ?? 'en'
-                            ),
-                        })}
-                    </Text>
-                    <Text as="b">
-                        {t('totalPrice', { totalPrice: props.total_price })}
-                    </Text>
-                </VStack>
-                <HStack w="full" justifyContent="flex-end">
-                    <IconButton
-                        aria-label="Delete reservation"
-                        icon={<GoTrashcan />}
-                        colorScheme="red"
-                        onClick={onOpenDeleteAlert}
-                    />
-                </HStack>
-            </Box>
+                <Box>
+                    <VStack alignItems="flex-end" p={4}>
+                        <Text>
+                            {t('departureDate', {
+                                departureDate: date_range[1].toLocaleDateString(
+                                    i18n.language ?? 'en'
+                                ),
+                            })}
+                        </Text>
+                        <Text as="b">
+                            {t('totalPrice', { totalPrice: props.total_price })}
+                        </Text>
+                    </VStack>
+                    <HStack w="full" justifyContent="flex-end">
+                        <IconButton
+                            aria-label="Delete reservation"
+                            icon={<GoTrashcan />}
+                            colorScheme="red"
+                            onClick={onOpenDeleteAlert}
+                        />
+                    </HStack>
+                </Box>
+            </Flex>
 
             <AlertDialogComponent
                 isLoading={reservationStore.isDeleting}

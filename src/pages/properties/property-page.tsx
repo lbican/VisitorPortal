@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
@@ -14,9 +14,16 @@ import {
     useDisclosure,
     VStack,
     Text,
+    GridItem,
+    Grid,
+    Avatar,
+    WrapItem,
+    Wrap,
+    useColorModeValue,
+    IconButton,
 } from '@chakra-ui/react';
 import PropertyTags from '../../components/property/form/property-tags';
-import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
+import { AiFillEdit, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
 import ReactiveButton from '../../components/common/input/reactive-button';
 import { propertyStore as store } from '../../mobx/propertyStore';
@@ -150,17 +157,62 @@ const PropertyPage = () => {
                 </BannerWrapper>
             </Box>
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
-            <Heading as="h3" fontSize="4xl" fontWeight="bold" mb={18} textAlign="left">
-                {t('Upcoming reservations')}
-            </Heading>
-            {selectedUnit ? (
-                <Timeline
-                    reservations={reservationStore.reservations}
-                    loadingTimeline={reservationStore.isFetching}
-                />
-            ) : (
-                <Text>{t('Please select unit to view upcoming reservations')}</Text>
-            )}
+            <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6} w="full">
+                <GridItem order={[2, null, 1]} w="100%">
+                    <Heading
+                        as="h3"
+                        fontSize="4xl"
+                        fontWeight="bold"
+                        mb={18}
+                        textAlign="left"
+                    >
+                        {t('Upcoming reservations')}
+                    </Heading>
+                    {selectedUnit ? (
+                        <Timeline
+                            reservations={reservationStore.reservations}
+                            loadingTimeline={reservationStore.isFetching}
+                        />
+                    ) : (
+                        <Text>
+                            {t('Please select unit to view upcoming reservations')}
+                        </Text>
+                    )}
+                </GridItem>
+                <GridItem order={[1, null, 2]} w="100%">
+                    <Wrap bg={useColorModeValue('white', 'gray.800')} p={4} rounded={4}>
+                        <Heading as="h4" size="md">
+                            {t('Property managers')}
+                        </Heading>
+                        {store.isFetching ? (
+                            <Spinner />
+                        ) : (
+                            store.propertyManagers?.map((user) => (
+                                <HStack
+                                    as={NavLink}
+                                    to={`/user/${user.username}`}
+                                    borderRadius={4}
+                                    key={user.id}
+                                    bg={useColorModeValue('whitesmoke', 'gray.700')}
+                                    my={1}
+                                    p={2}
+                                    justifyContent="space-between"
+                                    w="full"
+                                >
+                                    <HStack>
+                                        <Avatar
+                                            size="sm"
+                                            src={user.avatar_url ?? undefined}
+                                            name={user.full_name}
+                                        />
+                                        <Text as="b">{user.username}</Text>
+                                    </HStack>
+                                </HStack>
+                            ))
+                        )}
+                    </Wrap>
+                </GridItem>
+            </Grid>
         </>
     );
 };

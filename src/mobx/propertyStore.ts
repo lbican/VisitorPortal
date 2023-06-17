@@ -1,11 +1,13 @@
 import { action, observable, makeAutoObservable } from 'mobx';
 import PropertyService from '../services/property-service';
 import { IProperty, TFormProperty } from '../utils/interfaces/typings';
+import { UserProfile } from '../context/auth-context';
 
 class PropertyStore {
     @observable properties: IProperty[] = [];
     @observable currentProperty: IProperty | null = null;
     @observable editingProperty: IProperty | undefined = undefined;
+    @observable propertyManagers: UserProfile[] | undefined = undefined;
     @observable isDeleting = false;
     @observable isFetching = false;
 
@@ -36,6 +38,11 @@ class PropertyStore {
     @action
     setIsFetching(value: boolean) {
         this.isFetching = value;
+    }
+
+    @action
+    setPropertyManagers(propertyManagers: UserProfile[]) {
+        this.propertyManagers = propertyManagers;
     }
 
     @action
@@ -84,22 +91,24 @@ class PropertyStore {
     }
 
     @action
-    fetchCurrentProperty(propertyId: string, userId?: string) {
+    async fetchCurrentProperty(propertyId: string, userId?: string) {
         if (!userId) {
             console.error('Unknown user provided!');
             return;
         }
         this.setIsFetching(true);
-        return PropertyService.getUserProperty(propertyId, userId)
-            .then((property) => {
-                this.setCurrentProperty(property);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                this.setIsFetching(false);
-            });
+        try {
+            const data = await PropertyService.getUserProperty(propertyId, userId);
+            const managerData = await PropertyService.getPropertyManagers(propertyId);
+            if (data && managerData) {
+                this.setCurrentProperty(data);
+                this.setPropertyManagers(managerData);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            this.setIsFetching(false);
+        }
     }
 
     @action
@@ -124,6 +133,7 @@ class PropertyStore {
         this.currentProperty = null;
         this.editingProperty = undefined;
         this.isDeleting = false;
+        this.propertyManagers = [];
         this.isFetching = false;
     }
 }

@@ -1,6 +1,7 @@
 import supabase from '../../database';
 import { IProperty, ManagerType, TFormProperty } from '../utils/interfaces/typings';
 import FileService, { IUploadedImage } from './file-service';
+import { UserProfile } from '../context/auth-context';
 
 class PropertyService {
     static async createProperty(
@@ -137,6 +138,18 @@ class PropertyService {
         if (error) {
             throw error;
         }
+    }
+
+    static async getPropertyManagers(propertyId: string): Promise<UserProfile[]> {
+        const { data, error } = await supabase.rpc('get_property_managers', {
+            p_property_id: propertyId,
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        return data as UserProfile[];
     }
 }
 
