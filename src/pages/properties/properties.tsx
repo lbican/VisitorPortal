@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Button, Divider, Flex, Heading, HStack, useDisclosure } from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';

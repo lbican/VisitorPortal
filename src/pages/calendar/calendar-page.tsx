@@ -63,7 +63,7 @@ const CalendarPage = (): ReactElement => {
         void store.fetchProperties(user?.id);
     }, [store, user]);
 
-    const fetchReservations = () => {
+    const fetchReservations = useCallback(() => {
         if (unit) {
             setLoadingCalendar(true);
             ReservationService.fetchReservations(unit?.id)
@@ -77,9 +77,9 @@ const CalendarPage = (): ReactElement => {
                     setLoadingCalendar(false);
                 });
         }
-    };
+    }, [unit]);
 
-    const fetchDatePrices = () => {
+    const fetchDatePrices = useCallback(() => {
         if (unit) {
             setLoadingCalendar(true);
             CalendarService.fetchDatePrices(unit.id)
@@ -93,7 +93,7 @@ const CalendarPage = (): ReactElement => {
                     setLoadingCalendar(false);
                 });
         }
-    };
+    }, [unit]);
 
     useEffect(() => {
         fetchDatePrices();

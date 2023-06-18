@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import Banner from '../../components/common/banner/banner';
@@ -52,9 +52,9 @@ const PropertyPage = () => {
     const managerBackground = useColorModeValue('whitesmoke', 'gray.700');
     const notification = useToastNotification();
 
-    const resolveCurrentProperty = async () => {
+    const resolveCurrentProperty = useCallback(async () => {
         await store.fetchCurrentProperty(pid, user?.id);
-    };
+    }, [pid, user]);
 
     useEffect(() => {
         reservationStore.fetchUnitReservations(selectedUnit?.id);

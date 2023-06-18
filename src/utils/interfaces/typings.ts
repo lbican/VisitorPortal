@@ -63,11 +63,6 @@ export interface IReservation {
     note: string;
 }
 
-interface UnitReservation {
-    unit: IUnit;
-    reservations: IReservation[];
-}
-
 export interface IFormReservation {
     guest_id: string;
     unit_id: string;

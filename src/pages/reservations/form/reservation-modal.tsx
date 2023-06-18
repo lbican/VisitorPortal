@@ -90,7 +90,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
             last_name: '',
             guests_num: 1,
         });
-    }, [date_range, unit, reset]);
+    }, [date_range]);
 
     useEffect(() => {
         ReservationService.getTotalPrice(unit.id, date_range)
@@ -162,11 +162,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                         </FormControl>
                     </HStack>
                     <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
-                        <FormControl
-                            isInvalid={!!errors.guests_num}
-                            w="25%"
-                            justifySelf="flex-end"
-                        >
+                        <FormControl w="full">
                             <FormLabel htmlFor="guests_num">
                                 {t('Guests Number')}
                             </FormLabel>
@@ -190,7 +186,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                                 {errors?.guests_num?.message}
                             </FormErrorMessage>
                         </FormControl>
-                        <FormControl w="max-content">
+                        <FormControl w="full">
                             <FormLabel htmlFor="is_booking_input">
                                 {t('Booking reservation?')}
                             </FormLabel>
