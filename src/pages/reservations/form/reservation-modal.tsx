@@ -30,7 +30,6 @@ import {
 import { MdOutlineSave } from 'react-icons/md';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { useForm } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
 import { ReservationService } from '../../../services/reservation-service';
 import i18n from 'i18next';
 import { differenceInDays } from 'date-fns';
@@ -38,6 +37,7 @@ import { addDays } from 'date-fns/fp';
 import { observer } from 'mobx-react-lite';
 import { propertyStore } from '../../../mobx/propertyStore';
 import { reservationStore } from '../../../mobx/reservationStore';
+import getReservationFormValues from './modal-values';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -65,30 +65,21 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         reset,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
-        defaultValues: {
-            unit_id: unit.id,
-            is_booking_reservation: false,
-            date_range: [date_range[0], date_range[1]],
-            total_price: 0,
-            note: '',
-            first_name: '',
-            last_name: '',
-            guests_num: 1,
-        },
+        defaultValues: getReservationFormValues(
+            unit.id,
+            date_range,
+            reservationStore.editingReservation
+        ),
     });
 
     useEffect(() => {
-        reset({
-            guest_id: uuidv4(),
-            unit_id: unit.id,
-            is_booking_reservation: false,
-            date_range: [date_range[0], date_range[1]],
-            total_price: 0,
-            note: '',
-            first_name: '',
-            last_name: '',
-            guests_num: 1,
-        });
+        reset(
+            getReservationFormValues(
+                unit.id,
+                [date_range[0], date_range[1]],
+                reservationStore.editingReservation
+            )
+        );
     }, [date_range]);
 
     useEffect(() => {
@@ -190,6 +181,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                 {t('Booking reservation?')}
                             </FormLabel>
                             <Checkbox
+                                defaultChecked={
+                                    reservationStore.editingReservation
+                                        ?.is_booking_reservation ?? false
+                                }
                                 id="is_booking_input"
                                 size="lg"
                                 colorScheme="blue"

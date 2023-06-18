@@ -3,6 +3,7 @@ import { IReservation } from '../utils/interfaces/typings';
 import { ReservationService } from '../services/reservation-service';
 import { CalendarService, IDatePrice } from '../services/calendar-service';
 
+type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 class ReservationStore {
     reservations: IReservation[] = [];
     unitPrices: IDatePrice[] = [];
@@ -10,6 +11,7 @@ class ReservationStore {
     isDeleting = false;
     isFetchingReservations = false;
     isFetchingPrices = false;
+    status: Status = 'idle';
 
     constructor() {
         makeAutoObservable(this);
@@ -27,6 +29,10 @@ class ReservationStore {
         this.unitPrices = unitPrices;
     }
 
+    setEditingReservation(reservation?: IReservation) {
+        this.editingReservation = reservation;
+    }
+
     setIsDeleting(value: boolean) {
         this.isDeleting = value;
     }
@@ -37,6 +43,10 @@ class ReservationStore {
 
     setIsFetchingPrices(value: boolean) {
         this.isFetchingPrices = value;
+    }
+
+    setStatus(status: Status) {
+        this.status = status;
     }
 
     async deleteReservation(reservationId: string) {
@@ -54,11 +64,14 @@ class ReservationStore {
     fetchUnitReservations = (selectedUnitId?: string) => {
         if (selectedUnitId) {
             this.setIsFetchingReservations(true);
+            this.setStatus('loading');
             ReservationService.fetchReservations(selectedUnitId)
                 .then((res) => {
+                    this.setStatus('succeeded');
                     this.setReservations(res);
                 })
                 .catch((error) => {
+                    this.setStatus('failed');
                     console.error(error);
                 })
                 .finally(() => {

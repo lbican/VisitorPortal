@@ -1,26 +1,22 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Alert, AlertIcon, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { DataTable } from './table/data-table';
+import DataTable from './table/data-table';
 import Autocomplete, {
     ILabel,
     mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
 import { propertyStore as store } from '../../mobx/propertyStore';
-import { IUnit, IReservation } from '../../utils/interfaces/typings';
+import { IUnit } from '../../utils/interfaces/typings';
 import { SingleValue } from 'react-select';
 import { observer } from 'mobx-react-lite';
 import { useAuth } from '../../context/auth-context';
-import { ReservationService } from '../../services/reservation-service';
+import { reservationStore } from '../../mobx/reservationStore';
 
 const Reservations = (): ReactElement => {
     const { t } = useTranslation();
     const [unit, setUnit] = useState<IUnit | null>(null);
-    const [reservations, setReservations] = useState<IReservation[]>([]);
-    const [status, setStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>(
-        'idle'
-    );
     const { user } = useAuth();
 
     useEffect(() => {
@@ -28,8 +24,14 @@ const Reservations = (): ReactElement => {
     }, [store, user]);
 
     useEffect(() => {
-        fetchReservations();
+        reservationStore.fetchUnitReservations(unit?.id);
     }, [unit]);
+
+    useEffect(() => {
+        return () => {
+            reservationStore.setReservations([]);
+        };
+    }, []);
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
         newValue && store.getCurrentProperty(newValue.value);
@@ -50,27 +52,12 @@ const Reservations = (): ReactElement => {
         }
     };
 
-    const fetchReservations = useCallback(() => {
-        if (unit) {
-            setStatus('loading');
-            ReservationService.fetchReservations(unit?.id)
-                .then((res) => {
-                    setReservations(res);
-                    setStatus('succeeded');
-                })
-                .catch((error) => {
-                    console.error(error);
-                    setStatus('failed');
-                });
-        }
-    }, [unit]);
-
     const renderReservations = () => {
-        if (status === 'loading') {
+        if (reservationStore.status === 'loading') {
             return <Spinner />;
         }
 
-        if (status === 'failed') {
+        if (reservationStore.status === 'failed') {
             return (
                 <Alert status="error">
                     <AlertIcon />
@@ -79,7 +66,7 @@ const Reservations = (): ReactElement => {
             );
         }
 
-        if (reservations.length === 0) {
+        if (reservationStore.reservations.length === 0) {
             if (!unit) {
                 return (
                     <Alert status="info" mb={2} rounded={4}>
@@ -99,7 +86,7 @@ const Reservations = (): ReactElement => {
             );
         }
 
-        return <DataTable data={reservations} />;
+        return <DataTable data={reservationStore.reservations} unit={unit} />;
     };
 
     return (
