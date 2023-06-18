@@ -34,10 +34,9 @@ const Properties = (): ReactElement => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const notification = useToastNotification();
-    const [propertyId, setPropertyId] = useState<string>('');
 
-    const openManagerModal = (propertyId: string) => {
-        setPropertyId(propertyId);
+    const openManagerModal = (property: IProperty) => {
+        store.setCurrentProperty(property);
         onManagerModalOpen();
     };
 
@@ -106,11 +105,7 @@ const Properties = (): ReactElement => {
                 dialogConfirmText={t('Delete')}
                 dialogDeclineText={t('Cancel')}
             />
-            <ManagerModal
-                isOpen={isManagerModalOpen}
-                onClose={onManagerModalClose}
-                propertyId={propertyId}
-            />
+            <ManagerModal isOpen={isManagerModalOpen} onClose={onManagerModalClose} />
             <Divider mb={4} />
             <Flex alignItems="flex-start" flexWrap="wrap">
                 {store.properties.map((property) => (
@@ -123,7 +118,7 @@ const Properties = (): ReactElement => {
                         }}
                         onMenuEdit={() => openEditModal(property)}
                         onMenuDelete={() => openDeleteAlert(property)}
-                        onAddManagerClick={() => openManagerModal(property.id)}
+                        onAddManagerClick={() => openManagerModal(property)}
                     >
                         <NavLink to={`/properties/property/${property.id}`}>
                             <Property property={property} />

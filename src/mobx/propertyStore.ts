@@ -115,7 +115,6 @@ class PropertyStore {
         this.setIsFetching(true);
         return PropertyService.getPropertiesByUserId(userId)
             .then((properties) => {
-                console.log(properties);
                 this.setProperties(properties);
             })
             .catch((error) => {

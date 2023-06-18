@@ -59,9 +59,13 @@ export class UserService {
     };
 
     static searchNonManagers = async (
-        propertyId: string,
-        searchTerm: string
+        searchTerm: string,
+        propertyId?: string
     ): Promise<UserProfile[]> => {
+        if (!propertyId) {
+            throw new Error('Property id is undefined!');
+        }
+
         const { data, error } = await supabase.rpc('get_non_managers', {
             property_id: propertyId,
             search_term: searchTerm,

@@ -5,25 +5,24 @@ import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
 import BannerWrapper from '../../components/common/banner/banner-wrapper';
 import {
+    Avatar,
     Box,
     Flex,
+    Grid,
+    GridItem,
     Heading,
     HStack,
+    IconButton,
     Skeleton,
     Spinner,
+    Text,
+    useColorModeValue,
     useDisclosure,
     VStack,
-    Text,
-    GridItem,
-    Grid,
-    Avatar,
-    WrapItem,
     Wrap,
-    useColorModeValue,
-    IconButton,
 } from '@chakra-ui/react';
 import PropertyTags from '../../components/property/form/property-tags';
-import { AiFillEdit, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
+import { AiFillEdit, AiOutlineEdit, AiOutlineUserDelete } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
 import ReactiveButton from '../../components/common/input/reactive-button';
 import { propertyStore as store } from '../../mobx/propertyStore';
@@ -35,11 +34,12 @@ import Autocomplete, {
     mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
-import { IUnit } from '../../utils/interfaces/typings';
+import { IUnit, ManagerType } from '../../utils/interfaces/typings';
 import { SingleValue } from 'react-select';
 import Timeline from '../../components/common/timeline';
 import { reservationStore } from '../../mobx/reservationStore';
 import { GoStar } from 'react-icons/go';
+import useToastNotification from '../../hooks/useToastNotification';
 
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
@@ -47,8 +47,10 @@ const PropertyPage = () => {
     const { user } = useAuth();
     const { t } = useTranslation();
     const [selectedUnit, setSelectedUnit] = useState<IUnit | null>(null);
+    const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
     const managersBackground = useColorModeValue('white', 'gray.800');
     const managerBackground = useColorModeValue('whitesmoke', 'gray.700');
+    const notification = useToastNotification();
 
     const resolveCurrentProperty = async () => {
         await store.fetchCurrentProperty(pid, user?.id);
@@ -72,10 +74,35 @@ const PropertyPage = () => {
         }
     };
 
+    const removeSelectedManager = (userId: string) => {
+        setLoadingStates((prev) => ({ ...prev, [userId]: true }));
+        PropertyService.removePropertyManager(userId, store.currentProperty?.id)
+            .then(() => {
+                notification.success(t('Manager successfully removed!'));
+                store.setPropertyManagers(
+                    store.propertyManagers?.filter((user) => user.id !== userId) ?? []
+                );
+            })
+            .catch((error) => {
+                console.error(error);
+                notification.error(t('Could not remove property manager'));
+            })
+            .finally(() => {
+                setLoadingStates((prev) => ({ ...prev, [userId]: false }));
+            });
+    };
+
     useEffect(() => {
         void resolveCurrentProperty();
         reservationStore.setReservations([]);
     }, []);
+
+    const canManageManagers = (managerRole: ManagerType) => {
+        return (
+            store.currentProperty?.manager_type === ManagerType.OWNER &&
+            managerRole === ManagerType.MANAGER
+        );
+    };
 
     if (!store.currentProperty) {
         if (!store.isFetching) {
@@ -192,8 +219,6 @@ const PropertyPage = () => {
                         ) : (
                             store.propertyManagers?.map((manager) => (
                                 <Box
-                                    as={NavLink}
-                                    to={`/manager/${manager.username}`}
                                     borderRadius={4}
                                     key={manager.id}
                                     bg={managerBackground}
@@ -201,12 +226,12 @@ const PropertyPage = () => {
                                     p={2}
                                     justifyContent="space-between"
                                     w="full"
-                                    _hover={{
-                                        outline: '1px solid white',
-                                    }}
                                 >
                                     <HStack justifyContent="space-between" w="full">
-                                        <HStack>
+                                        <HStack
+                                            as={NavLink}
+                                            to={`/user/${manager.username}`}
+                                        >
                                             <Avatar
                                                 size="sm"
                                                 src={manager.avatar_url ?? undefined}
@@ -217,6 +242,19 @@ const PropertyPage = () => {
                                         <HStack>
                                             <Text>{manager.manager_type}</Text>
                                             {manager.id === user?.id && <GoStar />}
+                                            {canManageManagers(manager.manager_type) && (
+                                                <IconButton
+                                                    aria-label="Remove manager"
+                                                    icon={<AiOutlineUserDelete />}
+                                                    colorScheme="red"
+                                                    isLoading={
+                                                        loadingStates[manager.id] || false
+                                                    }
+                                                    onClick={() => {
+                                                        removeSelectedManager(manager.id);
+                                                    }}
+                                                />
+                                            )}
                                         </HStack>
                                     </HStack>
                                 </Box>

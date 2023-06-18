@@ -72,8 +72,6 @@ class PropertyService {
             return null;
         }
 
-        console.log(data);
-
         return data as IProperty;
     }
 
@@ -126,7 +124,7 @@ class PropertyService {
         }
     }
 
-    static async addPropertyManager(propertyId: string, userId: string): Promise<void> {
+    static async addPropertyManager(userId: string, propertyId?: string): Promise<void> {
         if (!propertyId || !userId) {
             throw new Error('Property id or user id are not defined!');
         }
@@ -138,6 +136,25 @@ class PropertyService {
                 manager_type: ManagerType.MANAGER,
             },
         ]);
+
+        if (error) {
+            throw error;
+        }
+    }
+
+    static async removePropertyManager(
+        userId?: string,
+        propertyId?: string
+    ): Promise<void> {
+        if (!propertyId || !userId) {
+            throw new Error('Property id or user id are not defined!');
+        }
+
+        const { error } = await supabase
+            .from('User_has_Property')
+            .delete()
+            .eq('user_id', userId)
+            .eq('property_id', propertyId);
 
         if (error) {
             throw error;
