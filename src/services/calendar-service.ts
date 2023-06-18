@@ -11,7 +11,7 @@ export interface IDatePrice {
 export type TFormDatePrice = Omit<IDatePrice, 'id'>;
 
 export class CalendarService {
-    static async fetchDatePrices(unitId: string): Promise<IDatePrice[]> {
+    static async fetchDatePrices(unitId?: string): Promise<IDatePrice[]> {
         const { data, error } = await supabase
             .from('Date_Price')
             .select('*')
@@ -21,7 +21,6 @@ export class CalendarService {
             throw error;
         }
 
-        // Map over the data to create new objects with parsed date ranges
         const parsedData = data.map((datePrice) => {
             const dateRange = datePrice.date_range.slice(1, -1).split(',');
             return {
@@ -43,7 +42,6 @@ export class CalendarService {
     static async insertDatePrice(datePrice: TFormDatePrice): Promise<IDatePrice> {
         const startDate = this.normalizeDate(datePrice.date_range[0]);
         const endDate = this.normalizeDate(datePrice.date_range[1]);
-        console.log(endDate);
 
         const { data, error } = await supabase
             .from('Date_Price')

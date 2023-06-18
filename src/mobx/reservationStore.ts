@@ -1,33 +1,44 @@
-import { action, observable, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { IReservation } from '../utils/interfaces/typings';
 import { ReservationService } from '../services/reservation-service';
+import { CalendarService, IDatePrice } from '../services/calendar-service';
 
 class ReservationStore {
-    @observable reservations: IReservation[] = [];
-    @observable editingReservation: IReservation | undefined = undefined;
-    @observable isDeleting = false;
-    @observable isFetching = false;
+    reservations: IReservation[] = [];
+    unitPrices: IDatePrice[] = [];
+    editingReservation: IReservation | undefined = undefined;
+    isDeleting = false;
+    isFetchingReservations = false;
+    isFetchingPrices = false;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    @action
+    get isFetchingData() {
+        return this.isFetchingReservations || this.isFetchingPrices;
+    }
+
     setReservations(reservations: IReservation[]) {
         this.reservations = reservations;
     }
 
-    @action
+    setUnitPrices(unitPrices: IDatePrice[]) {
+        this.unitPrices = unitPrices;
+    }
+
     setIsDeleting(value: boolean) {
         this.isDeleting = value;
     }
 
-    @action
-    setIsFetching(value: boolean) {
-        this.isFetching = value;
+    setIsFetchingReservations(value: boolean) {
+        this.isFetchingReservations = value;
     }
 
-    @action
+    setIsFetchingPrices(value: boolean) {
+        this.isFetchingPrices = value;
+    }
+
     async deleteReservation(reservationId: string) {
         this.setIsDeleting(true);
         try {
@@ -40,10 +51,9 @@ class ReservationStore {
         }
     }
 
-    @action
-    fetchUnitReservations(selectedUnitId?: string) {
+    fetchUnitReservations = (selectedUnitId?: string) => {
         if (selectedUnitId) {
-            this.setIsFetching(true);
+            this.setIsFetchingReservations(true);
             ReservationService.fetchReservations(selectedUnitId)
                 .then((res) => {
                     this.setReservations(res);
@@ -52,16 +62,33 @@ class ReservationStore {
                     console.error(error);
                 })
                 .finally(() => {
-                    this.setIsFetching(false);
+                    this.setIsFetchingReservations(false);
                 });
         }
-    }
+    };
 
-    @action
+    fetchDatePrices = (selectedUnitId?: string) => {
+        if (selectedUnitId) {
+            this.setIsFetchingPrices(true);
+            CalendarService.fetchDatePrices(selectedUnitId)
+                .then((datePrices) => {
+                    this.setUnitPrices(datePrices);
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    this.setIsFetchingPrices(false);
+                });
+        }
+    };
+
     resetStore() {
         this.reservations = [];
+        this.unitPrices = [];
         this.isDeleting = false;
-        this.isFetching = false;
+        this.isFetchingPrices = false;
+        this.isFetchingReservations = false;
         this.editingReservation = undefined;
     }
 }

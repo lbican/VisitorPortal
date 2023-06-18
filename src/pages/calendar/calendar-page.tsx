@@ -5,7 +5,7 @@ import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval, subDays } from 'date-fns';
 import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
-import { IProperty, IReservation, IUnit } from '../../utils/interfaces/typings';
+import { IProperty, IUnit } from '../../utils/interfaces/typings';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import Autocomplete, {
     ILabel,
@@ -15,18 +15,17 @@ import Autocomplete, {
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'react-select';
 import { IoPricetag, IoBook } from 'react-icons/io5';
-import { CalendarService, IDatePrice } from '../../services/calendar-service';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { ReservationModal } from '../reservations/form/reservation-modal';
+import ReservationModal from '../reservations/form/reservation-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
 import { isSameDay } from 'date-fns/fp';
-import { ReservationService } from '../../services/reservation-service';
 import PriceTag from '../../components/calendar/tags/price-tag';
 import ReservationTag from '../../components/calendar/tags/reservation-tag';
 import TooltipIconButton from '../../components/common/tooltip-icon-button';
+import { reservationStore } from '../../mobx/reservationStore';
 
 interface ITileProps {
     view: View;
@@ -43,9 +42,6 @@ export enum PriceStatus {
 const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
     const [unit, setUnit] = useState<IUnit | null>(null);
-    const [datePrices, setDatePrices] = useState<IDatePrice[]>([]);
-    const [reservations, setReservations] = useState<IReservation[]>([]);
-    const [loadingCalendar, setLoadingCalendar] = useState(false);
     const { user } = useAuth();
     const {
         isOpen: isPriceModalOpen,
@@ -63,41 +59,9 @@ const CalendarPage = (): ReactElement => {
         void store.fetchProperties(user?.id);
     }, [store, user]);
 
-    const fetchReservations = useCallback(() => {
-        if (unit) {
-            setLoadingCalendar(true);
-            ReservationService.fetchReservations(unit?.id)
-                .then((res) => {
-                    setReservations(res);
-                })
-                .catch((error) => {
-                    console.error(error);
-                })
-                .finally(() => {
-                    setLoadingCalendar(false);
-                });
-        }
-    }, [unit]);
-
-    const fetchDatePrices = useCallback(() => {
-        if (unit) {
-            setLoadingCalendar(true);
-            CalendarService.fetchDatePrices(unit.id)
-                .then((datePrices) => {
-                    setDatePrices(datePrices);
-                })
-                .catch((error) => {
-                    console.error(error);
-                })
-                .finally(() => {
-                    setLoadingCalendar(false);
-                });
-        }
-    }, [unit]);
-
     useEffect(() => {
-        fetchDatePrices();
-        fetchReservations();
+        reservationStore.fetchDatePrices(unit?.id);
+        reservationStore.fetchUnitReservations(unit?.id);
     }, [unit]);
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
@@ -107,8 +71,14 @@ const CalendarPage = (): ReactElement => {
     };
 
     const handleUnitSelect = (newValue: SingleValue<ILabel>) => {
+        if (newValue?.value === unit?.id) {
+            return;
+        }
+
         setSelectedDates([]);
-        setDatePrices([]);
+        reservationStore.setUnitPrices([]);
+        reservationStore.setReservations([]);
+        reservationStore.setIsFetchingPrices(true);
         if (!store.currentProperty?.units || !newValue) {
             return null;
         }
@@ -139,13 +109,11 @@ const CalendarPage = (): ReactElement => {
             let reservationElement: ReactElement | null = null;
             let soldDate = false;
 
-            if (loadingCalendar) {
-                return (
-                    <PriceTag loading={loadingCalendar} status={PriceStatus.LOADING} />
-                );
+            if (reservationStore.isFetchingData) {
+                return <PriceTag loading={true} status={PriceStatus.LOADING} />;
             }
 
-            for (const reservation of reservations) {
+            for (const reservation of reservationStore.reservations) {
                 const [startDate, endDate] = reservation.date_range;
                 const lastDay = subDays(endDate, 1);
 
@@ -171,7 +139,7 @@ const CalendarPage = (): ReactElement => {
                 }
             }
 
-            for (const datePrice of datePrices) {
+            for (const datePrice of reservationStore.unitPrices) {
                 if (isWithinDateRange(date, datePrice.date_range)) {
                     priceTagElement = (
                         <PriceTag
@@ -194,7 +162,7 @@ const CalendarPage = (): ReactElement => {
                 </>
             );
         },
-        [reservations, datePrices, loadingCalendar]
+        [reservationStore.reservations, reservationStore.unitPrices]
     );
 
     return (
@@ -254,7 +222,7 @@ const CalendarPage = (): ReactElement => {
                     <PDFButton
                         property={store.currentProperty}
                         unit={unit}
-                        datePrices={datePrices}
+                        datePrices={reservationStore.unitPrices}
                     />
                 </HStack>
             </HStack>
@@ -268,15 +236,12 @@ const CalendarPage = (): ReactElement => {
                                 onClose={onPriceModalClose}
                                 unit={unit}
                                 date_range={[selectedDates[0], selectedDates[1]]}
-                                onValueSubmitted={fetchDatePrices}
                             />
                             <ReservationModal
-                                property_name={store.currentProperty?.name ?? '?'}
                                 isOpen={isReservationModalOpen}
                                 onClose={onReservationModalClose}
                                 unit={unit}
                                 date_range={[selectedDates[0], selectedDates[1]]}
-                                onValueSubmitted={fetchReservations}
                             />
                         </>
                     )}

@@ -3,6 +3,7 @@ import { Tag, TagLabel, TagLeftIcon, Text } from '@chakra-ui/react';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
+import { observer } from 'mobx-react-lite';
 
 interface ReservationTagProps {
     first_name: string;
@@ -43,4 +44,4 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
     );
 };
 
-export default ReservationTag;
+export default observer(ReservationTag);

@@ -23,22 +23,17 @@ import { CalendarService } from '../../../services/calendar-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { MdOutlineSave } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
+import { observer } from 'mobx-react-lite';
+import { reservationStore } from '../../../mobx/reservationStore';
 
 interface PriceModalProps {
     isOpen: boolean;
     onClose: () => void;
     unit: IUnit;
     date_range: [Date, Date];
-    onValueSubmitted: () => void;
 }
 
-const PriceModal: React.FC<PriceModalProps> = ({
-    isOpen,
-    onClose,
-    unit,
-    date_range,
-    onValueSubmitted,
-}) => {
+const PriceModal: React.FC<PriceModalProps> = ({ isOpen, onClose, unit, date_range }) => {
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const { t } = useTranslation();
@@ -67,7 +62,7 @@ const PriceModal: React.FC<PriceModalProps> = ({
                         dateEnd: formattedEnd,
                     })
                 );
-                onValueSubmitted();
+                reservationStore.fetchDatePrices(unit.id);
                 onClose();
             })
             .catch((error) => {
@@ -121,4 +116,4 @@ const PriceModal: React.FC<PriceModalProps> = ({
     );
 };
 
-export default PriceModal;
+export default observer(PriceModal);

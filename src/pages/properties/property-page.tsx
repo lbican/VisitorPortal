@@ -201,7 +201,7 @@ const PropertyPage = () => {
                     {selectedUnit ? (
                         <Timeline
                             reservations={reservationStore.reservations}
-                            loadingTimeline={reservationStore.isFetching}
+                            loadingTimeline={reservationStore.isFetchingData}
                         />
                     ) : (
                         <Text>

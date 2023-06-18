@@ -3,6 +3,7 @@ import { Flex, Skeleton, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
 import { isUndefined } from 'lodash';
 import { IoPricetag, IoPricetagOutline } from 'react-icons/io5';
 import { PriceStatus } from '../../../pages/calendar/calendar-page';
+import { observer } from 'mobx-react-lite';
 
 interface PriceTagProps {
     status: PriceStatus;
@@ -31,4 +32,4 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading }) => {
     );
 };
 
-export default PriceTag;
+export default observer(PriceTag);

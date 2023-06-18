@@ -35,23 +35,22 @@ import { ReservationService } from '../../../services/reservation-service';
 import i18n from 'i18next';
 import { differenceInDays } from 'date-fns';
 import { addDays } from 'date-fns/fp';
+import { observer } from 'mobx-react-lite';
+import { propertyStore } from '../../../mobx/propertyStore';
+import { reservationStore } from '../../../mobx/reservationStore';
 
 interface ReservationModalProps {
     isOpen: boolean;
     onClose: () => void;
     unit: IUnit;
-    property_name: string;
     date_range: [Date, Date];
-    onValueSubmitted: () => void;
 }
 
-export const ReservationModal: React.FC<ReservationModalProps> = ({
+const ReservationModal: React.FC<ReservationModalProps> = ({
     isOpen,
     onClose,
     unit,
-    property_name,
     date_range,
-    onValueSubmitted,
 }) => {
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
@@ -109,7 +108,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
         ReservationService.insertNewReservation(data)
             .then(() => {
                 notification.success(t('Created new reservation'));
-                onValueSubmitted();
+                reservationStore.fetchUnitReservations(unit.id);
                 onClose();
             })
             .catch((error) => {
@@ -129,7 +128,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                 <ModalCloseButton />
                 <ModalBody pb={6}>
                     <Heading as="h3" size="md">
-                        {property_name} | {unit.name}
+                        {propertyStore.currentProperty?.name} | {unit.name}
                     </Heading>
                     <Text as="b">{t('maxCapacity', { maxCapacity: unit.capacity })}</Text>
                     <FormLabel mt={6}>{t('Reservation holder')}</FormLabel>
@@ -257,3 +256,5 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
         </Modal>
     );
 };
+
+export default observer(ReservationModal);
