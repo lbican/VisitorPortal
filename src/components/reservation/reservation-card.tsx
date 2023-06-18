@@ -16,8 +16,6 @@ import {
 import { TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
 import { GoTrashcan } from 'react-icons/go';
-import ReactiveButton from '../common/input/reactive-button';
-import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 import AlertDialogComponent from '../common/feedback/alert-dialog-component';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';

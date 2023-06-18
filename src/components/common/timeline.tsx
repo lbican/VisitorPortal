@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, Flex, useColorModeValue, Heading, Spinner } from '@chakra-ui/react';
+import { Box, Text, Flex, useColorModeValue, Spinner } from '@chakra-ui/react';
 import { IReservation } from '../../utils/interfaces/typings';
 import ReservationCard from '../reservation/reservation-card';
 import { observer } from 'mobx-react-lite';
