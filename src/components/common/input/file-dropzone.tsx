@@ -1,14 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import {
-    Box,
-    Flex,
-    HStack,
-    Text,
-    CircularProgress,
-    Alert,
-    AlertIcon,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, CircularProgress, Alert, AlertIcon } from '@chakra-ui/react';
 import { AiOutlineUpload } from 'react-icons/ai';
 import FileService from '../../../services/file-service';
 import { useTranslation } from 'react-i18next';
@@ -62,9 +54,7 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
                     <input {...getInputProps()} />
                     <HStack spacing="2" justifyContent="center">
                         <AiOutlineUpload />
-                        <Text>
-                            {t("Drag 'n' drop some files here, or click to select files")}
-                        </Text>
+                        <Text>{t("Drag 'n' drop some files here, or click to select files")}</Text>
                     </HStack>
                     {isLoading && (
                         <Box display="flex" justifyContent="center" alignItems="center">
@@ -75,9 +65,7 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({ setSelectedImage, fileServi
                 {error && (
                     <Alert status="error">
                         <AlertIcon />
-                        {t(
-                            'There was an error processing your request, please try again later'
-                        )}
+                        {t('There was an error processing your request, please try again later')}
                     </Alert>
                 )}
             </Flex>

@@ -24,9 +24,7 @@ import { useTranslation } from 'react-i18next';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);
-    const [avatar, setAvatar] = useState<string>(
-        form?.formState.steps.account.value.avatar ?? ''
-    );
+    const [avatar, setAvatar] = useState<string>(form?.formState.steps.account.value.avatar ?? '');
     const { t } = useTranslation();
 
     const handleImageClick = useCallback((image: string) => {
@@ -48,18 +46,9 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
         },
     });
 
-    const { ref: usernameRef, ...usernameControl } = register(
-        'username',
-        usernameValidator
-    );
-    const { ref: firstNameRef, ...firstNameControl } = register(
-        'first_name',
-        firstNameValidator
-    );
-    const { ref: lastNameRef, ...lastNameControl } = register(
-        'last_name',
-        lastNameValidator
-    );
+    const { ref: usernameRef, ...usernameControl } = register('username', usernameValidator);
+    const { ref: firstNameRef, ...firstNameControl } = register('first_name', firstNameValidator);
+    const { ref: lastNameRef, ...lastNameControl } = register('last_name', lastNameValidator);
 
     return (
         <motion.div
@@ -94,9 +83,7 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
                         ref={usernameRef}
                         {...usernameControl}
                     />
-                    <FormErrorMessage>
-                        {errors.username?.message?.toString()}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{errors.username?.message?.toString()}</FormErrorMessage>
                 </FormControl>
 
                 <Flex mt="5%">
@@ -125,9 +112,7 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
                             ref={lastNameRef}
                             {...lastNameControl}
                         />
-                        <FormErrorMessage>
-                            {errors.last_name?.message?.toString()}
-                        </FormErrorMessage>
+                        <FormErrorMessage>{errors.last_name?.message?.toString()}</FormErrorMessage>
                     </FormControl>
                 </Flex>
                 <Flex mt="5%">

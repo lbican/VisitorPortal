@@ -22,20 +22,15 @@ export class StatisticsService {
         return data;
     }
 
-    static async getMonthlyReservations(
-        userId?: string
-    ): Promise<MonthlyReservationData[]> {
+    static async getMonthlyReservations(userId?: string): Promise<MonthlyReservationData[]> {
         if (!userId) {
             throw new Error('User id was not provided!');
         }
 
-        const { data, error } = await supabase.rpc(
-            'get_user_properties_reservations_per_month',
-            {
-                _user_id: userId,
-                _year: new Date().getFullYear(),
-            }
-        );
+        const { data, error } = await supabase.rpc('get_user_properties_reservations_per_month', {
+            _user_id: userId,
+            _year: new Date().getFullYear(),
+        });
 
         if (error) {
             throw error;
@@ -49,13 +44,10 @@ export class StatisticsService {
             throw new Error('User id was not provided!');
         }
 
-        const { data, error } = await supabase.rpc(
-            'get_user_properties_revenue_per_month',
-            {
-                _user_id: userId,
-                _year: new Date().getFullYear(),
-            }
-        );
+        const { data, error } = await supabase.rpc('get_user_properties_revenue_per_month', {
+            _user_id: userId,
+            _year: new Date().getFullYear(),
+        });
 
         if (error) {
             throw error;

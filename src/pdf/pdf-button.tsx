@@ -35,9 +35,7 @@ const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => 
 
     return (
         <PDFDownloadLink
-            document={
-                <PDFDocument property={property} unit={unit} datePrices={datePrices} />
-            }
+            document={<PDFDocument property={property} unit={unit} datePrices={datePrices} />}
             fileName={`${unit?.name}_date_prices.pdf`}
         >
             {({ loading, error }) => (

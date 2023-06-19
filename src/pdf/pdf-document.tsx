@@ -121,9 +121,7 @@ const PDFDocument: React.FC<IPDFProps> = ({ property, unit, datePrices }) => {
                                 <Text style={styles.datePriceElement}>{`${nights} ${
                                     nights > 1 ? t('nights') : t('night')
                                 }`}</Text>
-                                <Text
-                                    style={styles.datePriceElement}
-                                >{`${datePrice.price}€`}</Text>
+                                <Text style={styles.datePriceElement}>{`${datePrice.price}€`}</Text>
                             </View>
                         </View>
                     );

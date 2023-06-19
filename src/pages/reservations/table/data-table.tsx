@@ -1,15 +1,5 @@
 import * as React from 'react';
-import {
-    Box,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    chakra,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, chakra, useDisclosure } from '@chakra-ui/react';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import {
     useReactTable,
@@ -126,19 +116,15 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                         {table.getHeaderGroups().map((headerGroup) => (
                             <Tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
-                                    const meta:
-                                        | ColumnMeta<IReservation, unknown>
-                                        | undefined = header.column.columnDef.meta;
+                                    const meta: ColumnMeta<IReservation, unknown> | undefined =
+                                        header.column.columnDef.meta;
                                     return (
                                         <Th
                                             key={header.id}
                                             onClick={header.column.getToggleSortingHandler()}
                                             isNumeric={meta?.isNumeric}
                                         >
-                                            <chakra.div
-                                                display="flex"
-                                                alignItems="center"
-                                            >
+                                            <chakra.div display="flex" alignItems="center">
                                                 {flexRender(
                                                     header.column.columnDef.header,
                                                     header.getContext()
@@ -161,9 +147,8 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                         {table.getRowModel().rows.map((row) => (
                             <Tr key={row.id}>
                                 {row.getVisibleCells().map((cell) => {
-                                    const meta:
-                                        | ColumnMeta<IReservation, unknown>
-                                        | undefined = cell.column.columnDef.meta;
+                                    const meta: ColumnMeta<IReservation, unknown> | undefined =
+                                        cell.column.columnDef.meta;
                                     return (
                                         <Td key={cell.id} isNumeric={meta?.isNumeric}>
                                             {flexRender(
@@ -182,9 +167,7 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                 isLoading={reservationStore.isDeleting}
                 isOpen={isOpenDeleteAlert}
                 onClose={onCloseDeleteAlert}
-                onConfirm={() =>
-                    confirmDeleteReservation(reservationStore.editingReservation?.id)
-                }
+                onConfirm={() => confirmDeleteReservation(reservationStore.editingReservation?.id)}
                 dialogBody={t('confirmDeleteReservation', {
                     reservationHolder: `${reservationStore.editingReservation?.guest.first_name} ${reservationStore.editingReservation?.guest.last_name}`,
                 })}

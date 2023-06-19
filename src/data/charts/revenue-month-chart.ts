@@ -10,11 +10,7 @@ import {
     Legend,
 } from 'chart.js';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
-import {
-    ChartData,
-    DataSet,
-    MonthlyRevenueData,
-} from '../../utils/interfaces/chart/chart-types';
+import { ChartData, DataSet, MonthlyRevenueData } from '../../utils/interfaces/chart/chart-types';
 
 ChartJS.register(
     CategoryScale,

@@ -11,6 +11,18 @@ const themeConfig = extendTheme({
         Steps,
     },
     ...config,
+    colors: {
+        chart: {
+            light: {
+                labels: '#111111',
+                gridLines: '#dddddd',
+            },
+            dark: {
+                labels: '#eeeeee',
+                gridLines: '#444444',
+            },
+        },
+    },
 });
 
 export default themeConfig;

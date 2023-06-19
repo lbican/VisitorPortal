@@ -54,10 +54,7 @@ class PropertyService {
         return data;
     }
 
-    static async getUserProperty(
-        propertyId: string,
-        userId: string
-    ): Promise<IProperty | null> {
+    static async getUserProperty(propertyId: string, userId: string): Promise<IProperty | null> {
         const { data, error } = await supabase.rpc('get_user_property', {
             uid: userId,
             pid: propertyId,
@@ -142,10 +139,7 @@ class PropertyService {
         }
     }
 
-    static async removePropertyManager(
-        userId?: string,
-        propertyId?: string
-    ): Promise<void> {
+    static async removePropertyManager(userId?: string, propertyId?: string): Promise<void> {
         if (!propertyId || !userId) {
             throw new Error('Property id or user id are not defined!');
         }

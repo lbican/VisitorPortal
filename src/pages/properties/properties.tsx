@@ -15,16 +15,8 @@ import { useTranslation } from 'react-i18next';
 import ManagerModal from '../../components/property/manager/manager-modal';
 
 const Properties = (): ReactElement => {
-    const {
-        isOpen: isModalOpen,
-        onOpen: onModalOpen,
-        onClose: onModalClose,
-    } = useDisclosure();
-    const {
-        isOpen: isOpenAlert,
-        onOpen: onOpenAlert,
-        onClose: onCloseAlert,
-    } = useDisclosure();
+    const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+    const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
     const {
         isOpen: isManagerModalOpen,
         onOpen: onManagerModalOpen,
@@ -57,10 +49,7 @@ const Properties = (): ReactElement => {
     const confirmDeleteProperty = () => {
         if (store.currentProperty) {
             store
-                .deleteProperty(
-                    store.currentProperty.id,
-                    store.currentProperty.image_path
-                )
+                .deleteProperty(store.currentProperty.id, store.currentProperty.image_path)
                 .then(() => {
                     onCloseAlert();
                     notification.success(t('Successfully deleted property'));
@@ -78,11 +67,7 @@ const Properties = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Your properties')}
                 </Heading>
-                <Button
-                    leftIcon={<AiOutlinePlus />}
-                    colorScheme="green"
-                    onClick={onModalOpen}
-                >
+                <Button leftIcon={<AiOutlinePlus />} colorScheme="green" onClick={onModalOpen}>
                     {t('Add new property')}
                 </Button>
             </HStack>

@@ -19,10 +19,7 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({ icon, children }) => {
                 content: '""',
                 w: '0',
                 h: '0',
-                borderColor: `transparent ${useColorModeValue(
-                    '#edf2f6',
-                    '#1a202c'
-                )} transparent`,
+                borderColor: `transparent ${useColorModeValue('#edf2f6', '#1a202c')} transparent`,
                 borderStyle: 'solid',
                 borderWidth: '15px 15px 15px 0',
                 position: 'absolute',

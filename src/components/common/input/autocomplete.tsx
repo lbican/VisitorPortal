@@ -22,7 +22,7 @@ export const mapToAutocompleteLabels = <T extends IEntity>(entities: T[]): ILabe
     });
 };
 
-export const mapValueToLabel = <T extends IEntity>(entity: T | null): ILabel | null => {
+export const mapValueToLabel = <T extends IEntity>(entity: T | null | undefined): ILabel | null => {
     if (!entity) {
         return null;
     }

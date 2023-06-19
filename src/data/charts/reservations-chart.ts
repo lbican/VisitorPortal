@@ -39,12 +39,8 @@ export const transformToReservationData = (data: ReservationData[], filterBy: st
         dataSet = Object.values(groupedData);
     }
 
-    const backgroundColors: string[] = labels.map((item) =>
-        HashColorGenerator.getColor(item)
-    );
-    const borderColors: string[] = labels.map((item) =>
-        HashColorGenerator.getBorderColor(item)
-    );
+    const backgroundColors: string[] = labels.map((item) => HashColorGenerator.getColor(item));
+    const borderColors: string[] = labels.map((item) => HashColorGenerator.getBorderColor(item));
 
     return {
         labels: labels,

@@ -27,13 +27,7 @@ const EmptyState: React.FC<Props> = ({ code, shortMessage, message, hideButton }
             <Text mb={6}>{message}</Text>
 
             {!hideButton && (
-                <Button
-                    color="white"
-                    variant="solid"
-                    colorScheme="blue"
-                    as={NavLink}
-                    to="/"
-                >
+                <Button color="white" variant="solid" colorScheme="blue" as={NavLink} to="/">
                     Go to Home
                 </Button>
             )}

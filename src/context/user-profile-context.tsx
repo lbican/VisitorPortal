@@ -7,9 +7,7 @@ type UserProfileContextType = {
     refetch: () => void;
 };
 
-const UserProfileContext = React.createContext<UserProfileContextType | undefined>(
-    undefined
-);
+const UserProfileContext = React.createContext<UserProfileContextType | undefined>(undefined);
 
 export const UserProfileProvider = UserProfileContext.Provider;
 

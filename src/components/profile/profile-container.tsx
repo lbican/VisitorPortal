@@ -7,11 +7,7 @@ interface ProfileProps {
     full_name: string;
 }
 
-const ProfileContainer: React.FC<ProfileProps> = ({
-    avatar_url,
-    full_name,
-    username,
-}) => {
+const ProfileContainer: React.FC<ProfileProps> = ({ avatar_url, full_name, username }) => {
     return (
         <HStack mb={-20} spacing={4} pb={4}>
             <Avatar

@@ -172,12 +172,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={cleanupStateAndCloseModal}
-            size="3xl"
-            motionPreset="scale"
-        >
+        <Modal isOpen={isOpen} onClose={cleanupStateAndCloseModal} size="3xl" motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
                 <Box as="form">

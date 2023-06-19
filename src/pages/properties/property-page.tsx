@@ -102,16 +102,13 @@ const PropertyPage = () => {
                         banner_url={
                             store.isFetching
                                 ? undefined
-                                : PropertyService.getPropertyImage(
-                                      store.currentProperty.image_path
-                                  )?.url
+                                : PropertyService.getPropertyImage(store.currentProperty.image_path)
+                                      ?.url
                         }
                     >
                         <VStack alignItems="flex-start">
                             <Skeleton isLoaded={!store.isFetching}>
-                                <Heading color="white">
-                                    {store.currentProperty.name}
-                                </Heading>
+                                <Heading color="white">{store.currentProperty.name}</Heading>
                             </Skeleton>
                             <Skeleton isLoaded={!store.isFetching}>
                                 <PropertyTags
@@ -143,9 +140,7 @@ const PropertyPage = () => {
                         <Skeleton isLoaded={!store.isFetching}>
                             <ReactiveButton
                                 onClick={() => {
-                                    store.setEditingProperty(
-                                        store.currentProperty ?? undefined
-                                    );
+                                    store.setEditingProperty(store.currentProperty ?? undefined);
                                     onOpen();
                                 }}
                                 text={t('Edit')}
@@ -161,13 +156,7 @@ const PropertyPage = () => {
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
             <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6} w="full">
                 <GridItem order={[2, null, 1]} w="100%">
-                    <Heading
-                        as="h3"
-                        fontSize="4xl"
-                        fontWeight="bold"
-                        mb={18}
-                        textAlign="left"
-                    >
+                    <Heading as="h3" fontSize="4xl" fontWeight="bold" mb={18} textAlign="left">
                         {t('Upcoming reservations')}
                     </Heading>
                     {selectedUnit ? (
@@ -176,9 +165,7 @@ const PropertyPage = () => {
                             loadingTimeline={reservationStore.isFetchingData}
                         />
                     ) : (
-                        <Text>
-                            {t('Please select unit to view upcoming reservations')}
-                        </Text>
+                        <Text>{t('Please select unit to view upcoming reservations')}</Text>
                     )}
                 </GridItem>
                 <GridItem order={[1, null, 2]} w="100%">

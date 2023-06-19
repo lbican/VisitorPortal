@@ -1,11 +1,4 @@
-import {
-    Box,
-    HStack,
-    useRadio,
-    UseRadioProps,
-    useRadioGroup,
-    Text,
-} from '@chakra-ui/react';
+import { Box, HStack, useRadio, UseRadioProps, useRadioGroup, Text } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 
 interface CustomRadioProps extends UseRadioProps {
@@ -29,7 +22,7 @@ const CustomRadio: React.FC<CustomRadioProps> = (props) => {
                 boxShadow="md"
                 _checked={{ bg: 'blue.500', color: 'white', borderColor: 'blue.300' }}
                 _focus={{ boxShadow: 'outline' }}
-                p={2}
+                py={1}
                 px={4}
             >
                 {props.children}
@@ -44,11 +37,7 @@ interface CustomRadioGroupProps {
     setFilterBy: (selectedValue: string) => void;
 }
 
-const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({
-    defaultValue,
-    options,
-    setFilterBy,
-}) => {
+const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({ defaultValue, options, setFilterBy }) => {
     const { getRootProps, getRadioProps } = useRadioGroup({
         name: 'filter',
         defaultValue,
@@ -63,7 +52,7 @@ const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({
                 const radio = getRadioProps({ value });
                 return (
                     <CustomRadio key={value} {...radio}>
-                        <Text>{value}</Text>
+                        <Text as="b">{value.toLocaleUpperCase()}</Text>
                     </CustomRadio>
                 );
             })}

@@ -45,11 +45,7 @@ const RegisterSteps = (): ReactElement => {
                     <Box py={4}>
                         <Alert status="success" variant="subtle">
                             <AlertIcon />
-                            <Flex
-                                justifyContent="space-between"
-                                alignItems="center"
-                                w="100%"
-                            >
+                            <Flex justifyContent="space-between" alignItems="center" w="100%">
                                 {t('Account successfully created!')}
                                 <Button variant="solid" as={NavLink} to="/">
                                     {t('Get started')}

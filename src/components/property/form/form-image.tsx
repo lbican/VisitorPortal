@@ -5,11 +5,7 @@ import { GoTrashcan } from 'react-icons/go';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-function FormImage(props: {
-    image: IUploadedImage;
-    loading: boolean;
-    onClick: () => void;
-}) {
+function FormImage(props: { image: IUploadedImage; loading: boolean; onClick: () => void }) {
     const { t } = useTranslation();
 
     return (

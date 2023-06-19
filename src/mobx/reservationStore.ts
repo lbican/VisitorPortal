@@ -53,9 +53,7 @@ class ReservationStore {
         this.setIsDeleting(true);
         try {
             await ReservationService.deleteReservation(reservationId);
-            this.setReservations(
-                this.reservations.filter((prop) => prop.id !== reservationId)
-            );
+            this.setReservations(this.reservations.filter((prop) => prop.id !== reservationId));
         } finally {
             this.setIsDeleting(false);
         }

@@ -43,9 +43,7 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
                         </MenuItem>
                     )}
                     <MenuDivider />
-                    <MenuItem onClick={onJumpToCalendar}>
-                        {t('Jump to calendar')}
-                    </MenuItem>
+                    <MenuItem onClick={onJumpToCalendar}>{t('Jump to calendar')}</MenuItem>
                 </MenuList>
             )}
         >

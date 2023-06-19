@@ -122,9 +122,7 @@ const CalendarPage = (): ReactElement => {
 
                     reservationElement = (
                         <ReservationTag
-                            colorScheme={
-                                reservation.is_booking_reservation ? 'blue' : 'teal'
-                            }
+                            colorScheme={reservation.is_booking_reservation ? 'blue' : 'teal'}
                             first_name={first_name}
                             last_name={last_name}
                             guests_num={guests_num}
@@ -184,9 +182,7 @@ const CalendarPage = (): ReactElement => {
                         value={mapValueToLabel(unit)}
                         onSelect={handleUnitSelect}
                         placeholder={t('Select unit') ?? ''}
-                        options={mapToAutocompleteLabels<IUnit>(
-                            store.currentProperty?.units ?? []
-                        )}
+                        options={mapToAutocompleteLabels<IUnit>(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />

@@ -1,14 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {
-    Avatar,
-    Box,
-    Button,
-    Flex,
-    Heading,
-    HStack,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { StepActions } from '../definition/form-state';
 import { FormContext } from '../definition/form-context';
 import { IUserRegistration } from '../../../../utils/interfaces/typings';

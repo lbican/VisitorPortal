@@ -1,11 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Input,
-    VStack,
-} from '@chakra-ui/react';
+import { FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { UserProfile } from '../../context/auth-context';
 import { useTranslation } from 'react-i18next';

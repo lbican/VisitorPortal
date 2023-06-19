@@ -39,6 +39,13 @@ import { propertyStore as store, propertyStore } from '../../../mobx/propertySto
 import { reservationStore } from '../../../mobx/reservationStore';
 import getReservationFormValues from './modal-values';
 import { isObject } from 'lodash';
+import { Country } from '../../../utils/interfaces/utils';
+import Autocomplete, {
+    ILabel,
+    mapToAutocompleteLabels,
+    mapValueToLabel,
+} from '../../../components/common/input/autocomplete';
+import { SingleValue } from 'react-select';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -55,6 +62,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
 }) => {
     const [submitting, setSubmitting] = useState(false);
     const [reservationPrice, setReservationPrice] = useState<number | null>(null);
+    const [countries, setCountries] = useState<Country[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState<Country>();
     const notification = useToastNotification();
     const { t } = useTranslation();
 
@@ -105,16 +114,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     };
 
     useEffect(() => {
-        reset(
-            getReservationFormValues(
-                unit.id,
-                [date_range[0], date_range[1]],
-                reservationStore.editingReservation
-            )
-        );
-    }, [date_range]);
-
-    useEffect(() => {
         ReservationService.getTotalPrice(unit.id, date_range)
             .then((price) => {
                 setReservationPrice(price);
@@ -122,6 +121,14 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             })
             .catch(() => {
                 setReservationPrice(0);
+            });
+
+        ReservationService.fetchCountries()
+            .then((countries) => {
+                setCountries(countries);
+            })
+            .catch((error) => {
+                console.error(error);
             });
     }, [date_range, unit]);
 
@@ -156,6 +163,19 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         });
     };
 
+    const onCountrySelect = (newValue: SingleValue<ILabel>) => {
+        if (newValue?.value === selectedCountry?.id) {
+            return;
+        }
+
+        const index = countries.findIndex((value) => {
+            return value.id === newValue?.value;
+        });
+        if (index >= 0) {
+            setSelectedCountry(countries[index]);
+        }
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="2xl">
             <ModalOverlay />
@@ -182,9 +202,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                     required: t('First Name is required') ?? true,
                                 })}
                             />
-                            <FormErrorMessage>
-                                {errors?.first_name?.message}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors?.first_name?.message}</FormErrorMessage>
                         </FormControl>
 
                         <FormControl isInvalid={!!errors.last_name}>
@@ -195,16 +213,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                     required: t('Last Name is required') ?? true,
                                 })}
                             />
-                            <FormErrorMessage>
-                                {errors?.last_name?.message}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors?.last_name?.message}</FormErrorMessage>
                         </FormControl>
                     </HStack>
                     <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
-                        <FormControl w="full">
-                            <FormLabel htmlFor="guests_num_input">
-                                {t('Guests Number')}
-                            </FormLabel>
+                        <FormControl>
+                            <FormLabel htmlFor="guests_num_input">{t('Guests Number')}</FormLabel>
                             <NumberInput
                                 min={1}
                                 max={unit.capacity}
@@ -221,28 +235,35 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                     <NumberDecrementStepper />
                                 </NumberInputStepper>
                             </NumberInput>
-                            <FormErrorMessage>
-                                {errors?.guests_num?.message}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors?.guests_num?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl w="full">
-                            <FormLabel htmlFor="is_booking_input">
-                                {t('Booking reservation?')}
-                            </FormLabel>
-                            <Checkbox
-                                defaultChecked={
-                                    reservationStore.editingReservation
-                                        ?.is_booking_reservation ?? false
-                                }
-                                id="is_booking_input"
-                                size="lg"
-                                colorScheme="blue"
-                                {...register('is_booking_reservation')}
-                            >
-                                {t('Yes')}
-                            </Checkbox>
+                        <FormControl>
+                            <FormLabel>{t('Guest country')}</FormLabel>
+                            <Autocomplete
+                                placeholder={t('Select country') ?? ''}
+                                onSelect={onCountrySelect}
+                                options={mapToAutocompleteLabels(countries)}
+                                value={mapValueToLabel(selectedCountry)}
+                                isLoading={countries.length === 0}
+                            />
                         </FormControl>
                     </HStack>
+                    <FormControl mt={2}>
+                        <FormLabel htmlFor="is_booking_input">
+                            {t('Booking reservation?')}
+                        </FormLabel>
+                        <Checkbox
+                            defaultChecked={
+                                reservationStore.editingReservation?.is_booking_reservation ?? false
+                            }
+                            id="is_booking_input"
+                            size="lg"
+                            colorScheme="blue"
+                            {...register('is_booking_reservation')}
+                        >
+                            {t('Yes')}
+                        </Checkbox>
+                    </FormControl>
                     <FormLabel mt={4}>{t('Reservation details')}</FormLabel>
                     <Divider my={2} />
 
@@ -261,10 +282,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                             </Text>
                             <Text>
                                 {t('departureDate', {
-                                    departureDate: addDays(
-                                        1,
-                                        date_range[1]
-                                    ).toLocaleDateString(i18n.language ?? 'en'),
+                                    departureDate: addDays(1, date_range[1]).toLocaleDateString(
+                                        i18n.language ?? 'en'
+                                    ),
                                 })}
                             </Text>
                             <Text>
@@ -275,9 +295,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                     ),
                                 })}
                             </Text>
-                            <Text as="b">
-                                {t('totalPrice', { totalPrice: reservationPrice })}
-                            </Text>
+                            <Text as="b">{t('totalPrice', { totalPrice: reservationPrice })}</Text>
                         </Box>
                     </HStack>
                 </ModalBody>
@@ -293,9 +311,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                         onClick={handleSubmit(handleFormSubmit)}
                         isLoading={submitting}
                     >
-                        {reservationStore.editingReservation
-                            ? t('Save changes')
-                            : t('Create')}
+                        {reservationStore.editingReservation ? t('Save changes') : t('Create')}
                     </Button>
                 </ModalFooter>
             </ModalContent>

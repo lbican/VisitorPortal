@@ -36,15 +36,11 @@ export const InfoDisplay = () => {
                     </ListItem>
                     <ListItem>
                         <ListIcon as={IoPricetag} color="blue.200" />
-                        {t(
-                            'By clicking icon buttons and selecting dates you can assign prices'
-                        )}
+                        {t('By clicking icon buttons and selecting dates you can assign prices')}
                     </ListItem>
                     <ListItem>
                         <ListIcon as={FaFilePdf} color="blue.200" />
-                        {t(
-                            'By clicking PDF button you can export your prices to PDF document'
-                        )}
+                        {t('By clicking PDF button you can export your prices to PDF document')}
                     </ListItem>
                     <ListItem>
                         <ListIcon as={MdCheckCircle} color="blue.200" />

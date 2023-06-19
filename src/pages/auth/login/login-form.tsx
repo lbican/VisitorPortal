@@ -63,10 +63,7 @@ const LoginForm = (): ReactElement => {
     });
 
     const { ref: emailRef, ...emailControl } = register('email', emailValidator);
-    const { ref: passwordRef, ...passwordControl } = register(
-        'password',
-        passwordValidator
-    );
+    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
 
     const onLoginSubmit = async (value: { email: string; password: string }) => {
         await loginUserWithEmail(value.email, value.password);
@@ -78,16 +75,12 @@ const LoginForm = (): ReactElement => {
                 <FormControl id="email" isInvalid={!!errors.email}>
                     <FormLabel>{t('Email address')}</FormLabel>
                     <Input type="email" ref={emailRef} {...emailControl} />
-                    <FormErrorMessage>
-                        {errors.email?.message?.toString()}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{errors.email?.message?.toString()}</FormErrorMessage>
                 </FormControl>
                 <FormControl id="password" isInvalid={!!errors.password}>
                     <FormLabel>{t('Password')}</FormLabel>
                     <Input type="password" ref={passwordRef} {...passwordControl} />
-                    <FormErrorMessage>
-                        {errors.password?.message?.toString()}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{errors.password?.message?.toString()}</FormErrorMessage>
                 </FormControl>
                 <Link as={NavLink} to="/register" alignSelf="flex-end">
                     {t("Don't have an account? Register")}

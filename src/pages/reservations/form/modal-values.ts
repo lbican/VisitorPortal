@@ -1,8 +1,4 @@
-import {
-    IFormReservation,
-    IGuest,
-    IReservation,
-} from '../../../utils/interfaces/typings';
+import { IFormReservation, IGuest, IReservation } from '../../../utils/interfaces/typings';
 
 const getReservationFormValues = (
     unitId: string,

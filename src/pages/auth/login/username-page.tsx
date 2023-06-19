@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SplitScreen from '../../../components/layout/split-screen';
-import {
-    Button,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Input,
-    VStack,
-} from '@chakra-ui/react';
+import { Button, FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react';
 import AnimatedAlert from '../../../components/common/feedback/animated-alert';
 import { AuthError } from '@supabase/supabase-js';
 import { useForm } from 'react-hook-form';
@@ -87,9 +80,7 @@ const UsernamePage: React.FC = () => {
                     <FormControl id="username" isInvalid={!!errors.username}>
                         <FormLabel>Pick your username:</FormLabel>
                         <Input type="text" ref={usernameRef} {...usernameControl} />
-                        <FormErrorMessage>
-                            {errors.username?.message?.toString()}
-                        </FormErrorMessage>
+                        <FormErrorMessage>{errors.username?.message?.toString()}</FormErrorMessage>
                     </FormControl>
                     <Button
                         isLoading={loading}

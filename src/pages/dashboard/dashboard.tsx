@@ -22,19 +22,16 @@ import {
 import ChartSwitcher from '../../components/chart/chart-switcher';
 import NoData from '../../components/common/no-data';
 import _ from 'lodash';
+import ChartContainer from '../../components/chart/chart-container';
 
 const Dashboard = (): ReactElement => {
     const { t } = useTranslation();
     const { user } = useAuth();
-    const [totalReservationsData, setTotalReservationsData] = useState<ReservationData[]>(
+    const [totalReservationsData, setTotalReservationsData] = useState<ReservationData[]>([]);
+    const [monthlyReservationData, setMonthlyReservationData] = useState<MonthlyReservationData[]>(
         []
     );
-    const [monthlyReservationData, setMonthlyReservationData] = useState<
-        MonthlyReservationData[]
-    >([]);
-    const [monthlyRevenueData, setMonthlyRevenueData] = useState<MonthlyRevenueData[]>(
-        []
-    );
+    const [monthlyRevenueData, setMonthlyRevenueData] = useState<MonthlyRevenueData[]>([]);
     const [loading, setLoading] = useState(false);
     const [filterBy, setFilterBy] = useState<string>('unit');
 
@@ -75,7 +72,7 @@ const Dashboard = (): ReactElement => {
             _.isEmpty
         );
 
-        return !loading && areAllEmpty;
+        return loading && areAllEmpty;
     };
 
     return (
@@ -100,18 +97,15 @@ const Dashboard = (): ReactElement => {
                     gap={4}
                 >
                     <GridItem colSpan={{ base: 1, md: 1 }}>
-                        <Skeleton isLoaded={!loading}>
+                        <ChartContainer isLoaded={!loading}>
                             <Pie
-                                data={transformToReservationData(
-                                    totalReservationsData,
-                                    filterBy
-                                )}
+                                data={transformToReservationData(totalReservationsData, filterBy)}
                                 options={reservationsOptions}
                             />
-                        </Skeleton>
+                        </ChartContainer>
                     </GridItem>
                     <GridItem colSpan={{ base: 1, md: 2 }}>
-                        <Skeleton isLoaded={!loading}>
+                        <ChartContainer isLoaded={!loading}>
                             <Bar
                                 data={transformToMonthlyReservationData(
                                     monthlyReservationData,
@@ -121,10 +115,10 @@ const Dashboard = (): ReactElement => {
                                 )}
                                 options={monthChartOptions}
                             />
-                        </Skeleton>
+                        </ChartContainer>
                     </GridItem>
                     <GridItem colSpan={2}>
-                        <Skeleton isLoaded={!loading}>
+                        <ChartContainer isLoaded={!loading}>
                             <Line
                                 data={transformToMonthlyRevenueData(
                                     monthlyRevenueData,
@@ -134,7 +128,7 @@ const Dashboard = (): ReactElement => {
                                 )}
                                 options={revenueMonthOptions}
                             />
-                        </Skeleton>
+                        </ChartContainer>
                     </GridItem>
                 </Grid>
             )}

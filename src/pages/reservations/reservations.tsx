@@ -1,13 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import {
-    Alert,
-    AlertIcon,
-    Divider,
-    Flex,
-    Heading,
-    HStack,
-    Spinner,
-} from '@chakra-ui/react';
+import { Alert, AlertIcon, Divider, Flex, Heading, HStack, Spinner } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
 import Autocomplete, {
@@ -121,9 +113,7 @@ const Reservations = (): ReactElement => {
                         value={mapValueToLabel(unit)}
                         onSelect={handleUnitSelect}
                         placeholder={t('Select unit') ?? ''}
-                        options={mapToAutocompleteLabels(
-                            store.currentProperty?.units ?? []
-                        )}
+                        options={mapToAutocompleteLabels(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />

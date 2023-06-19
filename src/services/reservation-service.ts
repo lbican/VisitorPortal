@@ -2,12 +2,10 @@ import supabase from '../../database';
 import { format } from 'date-fns';
 import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
 import { CalendarService } from './calendar-service';
+import { Country } from '../utils/interfaces/utils';
 
 export class ReservationService {
-    static async getTotalPrice(
-        unit_id: string,
-        date_range: [Date, Date]
-    ): Promise<number | null> {
+    static async getTotalPrice(unit_id: string, date_range: [Date, Date]): Promise<number | null> {
         const { data, error } = await supabase.rpc('calculate_total_price', {
             unit_id_arg: unit_id,
             date_range_arg: [
@@ -57,6 +55,16 @@ export class ReservationService {
         };
     }
 
+    static async fetchCountries(): Promise<Country[]> {
+        const { data, error } = await supabase.from('Country').select('*');
+
+        if (error) {
+            throw error;
+        }
+
+        return data as Country[];
+    }
+
     static async updateReservation(
         existingReservation: IFormReservation & IGuest
     ): Promise<IReservation> {
@@ -93,10 +101,7 @@ export class ReservationService {
     }
 
     static async deleteReservation(reservationId: string) {
-        const { error } = await supabase
-            .from('Reservation')
-            .delete()
-            .eq('id', reservationId);
+        const { error } = await supabase.from('Reservation').delete().eq('id', reservationId);
 
         if (error) {
             throw error;

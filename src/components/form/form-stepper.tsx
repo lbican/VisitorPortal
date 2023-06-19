@@ -34,13 +34,7 @@ const FormStepper: React.FC<FormStepperProps> = ({ steps, activeStep, orientatio
     };
 
     return (
-        <Stepper
-            index={activeStep}
-            orientation={orientation}
-            size="lg"
-            height="24rem"
-            gap="0"
-        >
+        <Stepper index={activeStep} orientation={orientation} size="lg" height="24rem" gap="0">
             {steps.map((step, index) => (
                 <Step key={index}>
                     <StepIndicator>

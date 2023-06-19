@@ -50,20 +50,8 @@ const ReservationCard = (props: IReservation) => {
     return (
         <CardWrapper icon={props.is_booking_reservation ? TbBrandBooking : BiBookOpen}>
             <Flex w="full" flexDirection={{ lg: 'row', base: 'column' }}>
-                <VStack
-                    spacing={1}
-                    mb={3}
-                    textAlign="left"
-                    alignItems="flex-start"
-                    w="full"
-                >
-                    <Heading
-                        as="h2"
-                        size="md"
-                        lineHeight={1.2}
-                        fontWeight="bold"
-                        w="100%"
-                    >
+                <VStack spacing={1} mb={3} textAlign="left" alignItems="flex-start" w="full">
+                    <Heading as="h2" size="md" lineHeight={1.2} fontWeight="bold" w="100%">
                         {date_range[0].toLocaleDateString(i18n.language ?? 'en')}
                     </Heading>
                     {props.is_booking_reservation && (
@@ -77,9 +65,7 @@ const ReservationCard = (props: IReservation) => {
                     </Text>
                     <Text size="lg" as="b">
                         Number of guests: <Tag borderRadius="full">{guests_num}</Tag> /{' '}
-                        <Tag borderRadius="full">
-                            {props.unit.capacity} (max capacity)
-                        </Tag>
+                        <Tag borderRadius="full">{props.unit.capacity} (max capacity)</Tag>
                     </Text>
                     <Divider />
                     <Text as="b">{t('Note')}</Text>
@@ -96,9 +82,7 @@ const ReservationCard = (props: IReservation) => {
                                 ),
                             })}
                         </Text>
-                        <Text as="b">
-                            {t('totalPrice', { totalPrice: props.total_price })}
-                        </Text>
+                        <Text as="b">{t('totalPrice', { totalPrice: props.total_price })}</Text>
                     </VStack>
                     <HStack w="full" justifyContent="flex-end">
                         <IconButton

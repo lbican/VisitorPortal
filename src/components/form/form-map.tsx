@@ -29,11 +29,7 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
                 const address = data.results[0]?.components;
 
                 const location =
-                    address?.city ||
-                    address?.town ||
-                    address?.village ||
-                    address?.hamlet ||
-                    '';
+                    address?.city || address?.town || address?.village || address?.hamlet || '';
 
                 onLocationChange(location);
             } catch (error) {
