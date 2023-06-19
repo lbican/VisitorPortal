@@ -78,9 +78,3 @@ export interface IGuest {
     last_name: string;
     guests_num: number;
 }
-
-export interface ITotalReservations {
-    property_name: string;
-    unit_name: string;
-    num_reservations: number;
-}

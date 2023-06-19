@@ -11,12 +11,12 @@ export class HashColorGenerator {
         const r = Math.abs(hash) % 256;
         const g = Math.abs(hash >> 8) % 256;
         const b = Math.abs(hash >> 16) % 256;
-        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+        return `rgba(${r}, ${g}, ${b}, 0.6)`;
     }
 
     // Function to generate border color based on string
     static getBorderColor(s: string): string {
         const color = this.getColor(s);
-        return color.replace('0.2', '1');
+        return color.replace('0.8', '1');
     }
 }

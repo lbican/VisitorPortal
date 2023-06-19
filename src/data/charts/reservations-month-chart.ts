@@ -7,6 +7,12 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import {
+    ChartData,
+    DataSet,
+    MonthlyReservationData,
+} from '../../utils/interfaces/chart/chart-types';
+import { HashColorGenerator } from '../../utils/hash-color-generator';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -14,7 +20,7 @@ export const monthChartOptions = {
     responsive: true,
     plugins: {
         legend: {
-            position: 'top' as const,
+            position: 'bottom' as const,
         },
         title: {
             display: true,
@@ -23,25 +29,52 @@ export const monthChartOptions = {
     },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export const transformToMonthlyReservationData = (
+    reservationsData: MonthlyReservationData[],
+    filterBy: string,
+    startMonth: number,
+    endMonth: number
+): ChartData => {
+    const labels = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ].slice(startMonth, endMonth);
 
-export const monthChartData = {
-    labels,
-    datasets: [
-        {
-            label: 'Two bedroom apartment',
-            data: labels.map(() => Math.random() * 5),
-            backgroundColor: 'rgba(49,130,206,0.61)',
-        },
-        {
-            label: 'One bedroom apartment',
-            data: labels.map(() => Math.random() * 5),
-            backgroundColor: 'rgb(96,180,118)',
-        },
-        {
-            label: 'Third apartment',
-            data: labels.map(() => Math.random() * 5),
-            backgroundColor: 'rgb(211,96,96)',
-        },
-    ],
+    let items: string[];
+    if (filterBy === 'unit') {
+        items = [...new Set(reservationsData.map((item) => item.unit_name))];
+    } else {
+        items = [...new Set(reservationsData.map((item) => item.property_name))];
+    }
+
+    const datasets: DataSet[] = items.reduce((acc: DataSet[], item: string) => {
+        const filteredData = reservationsData.filter((data) =>
+            filterBy === 'unit' ? data.unit_name === item : data.property_name === item
+        );
+
+        const data = labels.map((label) => {
+            const monthData = filteredData.filter((data) => data.month.trim() === label);
+            return monthData.reduce((sum, data) => sum + data.num_reservations, 0);
+        });
+
+        acc.push({
+            label: item,
+            data,
+            backgroundColor: HashColorGenerator.getColor(item),
+        });
+
+        return acc;
+    }, []);
+
+    return { labels, datasets };
 };

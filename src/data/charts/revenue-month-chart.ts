@@ -9,7 +9,12 @@ import {
     Filler,
     Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { HashColorGenerator } from '../../utils/hash-color-generator';
+import {
+    ChartData,
+    DataSet,
+    MonthlyRevenueData,
+} from '../../utils/interfaces/chart/chart-types';
 
 ChartJS.register(
     CategoryScale,
@@ -26,7 +31,7 @@ export const revenueMonthOptions = {
     responsive: true,
     plugins: {
         legend: {
-            position: 'top' as const,
+            position: 'bottom' as const,
         },
         title: {
             display: true,
@@ -35,31 +40,54 @@ export const revenueMonthOptions = {
     },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export const transformToMonthlyRevenueData = (
+    revenueData: MonthlyRevenueData[],
+    filterBy: string,
+    startMonth: number,
+    endMonth: number
+): ChartData => {
+    const labels = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ].slice(startMonth, endMonth);
 
-export const revenueData = {
-    labels,
-    datasets: [
-        {
+    let items: string[];
+    if (filterBy === 'unit') {
+        items = [...new Set(revenueData.map((item) => item.unit_name))];
+    } else {
+        items = [...new Set(revenueData.map((item) => item.property_name))];
+    }
+
+    const datasets: DataSet[] = items.reduce((acc: DataSet[], item: string) => {
+        const filteredData = revenueData.filter((data) =>
+            filterBy === 'unit' ? data.unit_name === item : data.property_name === item
+        );
+
+        const data = labels.map((label) => {
+            const monthData = filteredData.filter((data) => data.month.trim() === label);
+            return monthData.reduce((sum, data) => sum + data.total_price, 0);
+        });
+
+        acc.push({
             fill: true,
-            label: 'Two Bedroom Apartment',
-            data: labels.map(() => Math.random() * 1000),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(49,130,206,0.61)',
-        },
-        {
-            fill: true,
-            label: 'Two Bedroom Apartment',
-            data: labels.map(() => Math.random() * 1000),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgb(96,180,118)',
-        },
-        {
-            fill: true,
-            label: 'Two Bedroom Apartment',
-            data: labels.map(() => Math.random() * 1000),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgb(211,96,96)',
-        },
-    ],
+            label: item,
+            data,
+            backgroundColor: HashColorGenerator.getColor(item),
+            borderColor: HashColorGenerator.getBorderColor(item),
+        });
+
+        return acc;
+    }, []);
+
+    return { labels, datasets };
 };

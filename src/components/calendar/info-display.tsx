@@ -13,7 +13,7 @@ import { AiOutlineSelect } from 'react-icons/ai';
 import { IoPricetag } from 'react-icons/io5';
 import { FaFilePdf } from 'react-icons/fa';
 import { MdCheckCircle } from 'react-icons/md';
-import EmptyCalendarImage from '../../assets/images/empty_cal.svg';
+import EmptyCalendarImage from '../../assets/images/empty-cal.svg';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

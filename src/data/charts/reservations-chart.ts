@@ -1,6 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { ITotalReservations } from '../../utils/interfaces/typings';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
+import { ReservationData } from '../../utils/interfaces/chart/chart-types';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -17,44 +17,28 @@ export const reservationsOptions = {
     },
 };
 
-export const transformToReservationData = (data: ITotalReservations[]) => {
-    const labels: string[] = data.map((item) => item.unit_name);
-    const dataSet: number[] = data.map((item) => item.num_reservations);
-    const backgroundColors: string[] = data.map((item) =>
-        HashColorGenerator.getColor(item.unit_name)
-    );
-    const borderColors: string[] = data.map((item) =>
-        HashColorGenerator.getBorderColor(item.unit_name)
-    );
-
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Number of Reservations',
-                data: dataSet,
-                backgroundColor: backgroundColors,
-                borderColor: borderColors,
-                borderWidth: 1,
-            },
-        ],
-    };
-};
-
-export const transformToReservationPropertyData = (data: ITotalReservations[]) => {
+export const transformToReservationData = (data: ReservationData[], filterBy: string) => {
     const groupedData: { [key: string]: number } = {};
+    let labels: string[];
+    let dataSet: number[];
 
-    // Group and sum reservations by property_name
-    data.forEach((item) => {
-        if (groupedData[item.property_name]) {
-            groupedData[item.property_name] += item.num_reservations;
-        } else {
-            groupedData[item.property_name] = item.num_reservations;
-        }
-    });
+    if (filterBy === 'unit') {
+        labels = data.map((item) => item.unit_name);
+        dataSet = data.map((item) => item.num_reservations);
+    } else {
+        // Group and sum reservations by property_name
+        data.forEach((item) => {
+            if (groupedData[item.property_name]) {
+                groupedData[item.property_name] += item.num_reservations;
+            } else {
+                groupedData[item.property_name] = item.num_reservations;
+            }
+        });
 
-    const labels: string[] = Object.keys(groupedData);
-    const dataSet: number[] = Object.values(groupedData);
+        labels = Object.keys(groupedData);
+        dataSet = Object.values(groupedData);
+    }
+
     const backgroundColors: string[] = labels.map((item) =>
         HashColorGenerator.getColor(item)
     );
