@@ -35,9 +35,10 @@ import i18n from 'i18next';
 import { differenceInDays } from 'date-fns';
 import { addDays } from 'date-fns/fp';
 import { observer } from 'mobx-react-lite';
-import { propertyStore } from '../../../mobx/propertyStore';
+import { propertyStore as store, propertyStore } from '../../../mobx/propertyStore';
 import { reservationStore } from '../../../mobx/reservationStore';
 import getReservationFormValues from './modal-values';
+import { isObject } from 'lodash';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -53,9 +54,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     date_range,
 }) => {
     const [submitting, setSubmitting] = useState(false);
+    const [reservationPrice, setReservationPrice] = useState<number | null>(null);
     const notification = useToastNotification();
     const { t } = useTranslation();
-    const [reservationPrice, setReservationPrice] = useState<number | null>(null);
 
     const {
         register,
@@ -71,6 +72,37 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             reservationStore.editingReservation
         ),
     });
+
+    const disposeModalAndUpdateData = () => {
+        reservationStore.setEditingReservation();
+        onClose();
+        reset(
+            getReservationFormValues(
+                unit.id,
+                [date_range[0], date_range[1]],
+                reservationStore.editingReservation
+            )
+        );
+    };
+
+    const handleFormSubmit = (data: IFormReservation & IGuest) => {
+        setSubmitting(true);
+        const actionPromise = reservationStore.editingReservation
+            ? updateExistingReservation(data)
+            : addNewReservation(data);
+
+        actionPromise
+            .then(disposeModalAndUpdateData)
+            .catch((error) => {
+                const errorMsg = store.editingProperty
+                    ? t('Could not update existing reservation!')
+                    : t('Could not add new reservation!');
+                notification.error(isObject(error) ? errorMsg : error);
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
+    };
 
     useEffect(() => {
         reset(
@@ -94,28 +126,45 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     }, [date_range, unit]);
 
     const addNewReservation = (data: IFormReservation & IGuest) => {
-        console.log(data);
-        setSubmitting(true);
-        ReservationService.insertNewReservation(data)
-            .then(() => {
-                notification.success(t('Created new reservation'));
-                reservationStore.fetchUnitReservations(unit.id);
-                onClose();
-            })
-            .catch((error) => {
-                notification.error(t('Could not add new reservation!'));
-                console.error(error);
-            })
-            .finally(() => {
-                setSubmitting(false);
-            });
+        return new Promise<void>((resolve, reject) => {
+            reservationStore
+                .createNewReservation(data)
+                .then(() => {
+                    notification.success(t('Created new reservation'));
+                    resolve();
+                })
+                .catch((error) => {
+                    notification.error(t(''));
+                    console.error(error);
+                    reject(error);
+                });
+        });
+    };
+
+    const updateExistingReservation = (data: IFormReservation & IGuest) => {
+        return new Promise<void>((resolve, reject) => {
+            reservationStore
+                .updateExistingReservation(data)
+                .then(() => {
+                    notification.success(t('Updated existing reservation!'));
+                    resolve();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    reject(error);
+                });
+        });
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="2xl">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>{t('Add new reservation')}</ModalHeader>
+                <ModalHeader>
+                    {reservationStore.editingReservation
+                        ? t('Update existing reservation')
+                        : t('Add new reservation')}
+                </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
                     <Heading as="h3" size="md">
@@ -153,7 +202,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                     </HStack>
                     <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
                         <FormControl w="full">
-                            <FormLabel htmlFor="guests_num">
+                            <FormLabel htmlFor="guests_num_input">
                                 {t('Guests Number')}
                             </FormLabel>
                             <NumberInput
@@ -241,10 +290,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                         colorScheme="green"
                         ml={3}
                         leftIcon={<MdOutlineSave />}
-                        onClick={handleSubmit(addNewReservation)}
+                        onClick={handleSubmit(handleFormSubmit)}
                         isLoading={submitting}
                     >
-                        {t('Save')}
+                        {reservationStore.editingReservation
+                            ? t('Save changes')
+                            : t('Create')}
                     </Button>
                 </ModalFooter>
             </ModalContent>

@@ -23,6 +23,8 @@ const getReservationFormValues = (
     };
 
     if (editingReservation) {
+        defaultReservation.id = editingReservation.id;
+        defaultReservation.guest_id = editingReservation.guest.id;
         defaultReservation.guest_id = editingReservation.guest.id; // assuming the guest id is accessed this way
         defaultReservation.unit_id = editingReservation.unit.id;
         defaultReservation.date_range = [

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ManagerType, PropertyManager } from '../../../utils/interfaces/typings';
+import { ManagerType } from '../../../utils/interfaces/typings';
 import { propertyStore as store } from '../../../mobx/propertyStore';
 import {
     Avatar,

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { IReservation } from '../utils/interfaces/typings';
+import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
 import { ReservationService } from '../services/reservation-service';
 import { CalendarService, IDatePrice } from '../services/calendar-service';
 
@@ -93,6 +93,21 @@ class ReservationStore {
                 .finally(() => {
                     this.setIsFetchingPrices(false);
                 });
+        }
+    };
+
+    createNewReservation = async (data: IFormReservation & IGuest) => {
+        const newReservation = await ReservationService.insertNewReservation(data);
+        this.setReservations([...this.reservations, newReservation]);
+    };
+
+    updateExistingReservation = async (data: IFormReservation & IGuest) => {
+        const updatedData = await ReservationService.updateReservation(data);
+        if (updatedData) {
+            const updatedReservations = this.reservations.map((reservation) =>
+                reservation.id === updatedData.id ? updatedData : reservation
+            );
+            this.setReservations(updatedReservations);
         }
     };
 

@@ -24,26 +24,72 @@ export class ReservationService {
         return data;
     }
 
-    static async insertNewReservation(newReservation: IFormReservation & IGuest) {
+    static async insertNewReservation(
+        newReservation: IFormReservation & IGuest
+    ): Promise<IReservation> {
         const { date_range } = newReservation;
 
-        const { error } = await supabase.rpc('insert_into_guest_and_reservation', {
-            _first_name: newReservation.first_name,
-            _last_name: newReservation.last_name,
-            _guests_num: newReservation.guests_num,
-            _unit_id: newReservation.unit_id,
-            _date_range: [
+        const { data, error } = await supabase.rpc('insert_into_guest_and_reservation', {
+            p_first_name: newReservation.first_name,
+            p_last_name: newReservation.last_name,
+            p_guests_num: newReservation.guests_num,
+            p_unit_id: newReservation.unit_id,
+            p_date_range: [
                 format(date_range[0], 'yyyy-MM-dd'),
                 format(date_range[1], 'yyyy-MM-dd'),
             ],
-            _total_price: newReservation.total_price,
-            _note: newReservation.note,
-            _is_booking_reservation: newReservation.is_booking_reservation,
+            p_total_price: newReservation.total_price,
+            p_note: newReservation.note,
+            p_is_booking_reservation: newReservation.is_booking_reservation,
         });
 
         if (error) {
             throw error;
         }
+
+        const stringDateRange: [string, string] = data.date_range.slice(1, -1).split(',');
+        return {
+            ...data,
+            date_range: [
+                CalendarService.normalizeDate(new Date(stringDateRange[0])),
+                CalendarService.normalizeDate(new Date(stringDateRange[1])),
+            ],
+        };
+    }
+
+    static async updateReservation(
+        existingReservation: IFormReservation & IGuest
+    ): Promise<IReservation> {
+        const { date_range } = existingReservation;
+
+        const { data, error } = await supabase.rpc('update_guest_and_reservation', {
+            p_reservation_id: existingReservation.id,
+            p_guest_id: existingReservation.guest_id,
+            p_first_name: existingReservation.first_name,
+            p_last_name: existingReservation.last_name,
+            p_guests_num: existingReservation.guests_num,
+            p_unit_id: existingReservation.unit_id,
+            p_date_range: [
+                format(date_range[0], 'yyyy-MM-dd'),
+                format(date_range[1], 'yyyy-MM-dd'),
+            ],
+            p_total_price: existingReservation.total_price,
+            p_note: existingReservation.note,
+            p_is_booking_reservation: existingReservation.is_booking_reservation,
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        const stringDateRange: [string, string] = data.date_range.slice(1, -1).split(',');
+        return {
+            ...data,
+            date_range: [
+                CalendarService.normalizeDate(new Date(stringDateRange[0])),
+                CalendarService.normalizeDate(new Date(stringDateRange[1])),
+            ],
+        };
     }
 
     static async deleteReservation(reservationId: string) {

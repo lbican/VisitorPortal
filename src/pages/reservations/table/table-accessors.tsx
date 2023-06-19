@@ -17,10 +17,10 @@ const mapDateToLocaleString = (dates: [Date, Date]) => {
 
 const getIcon = (isTruthy: boolean) => {
     if (isTruthy) {
-        return <Icon as={AiFillCheckCircle} color="green.500" />;
+        return <Icon as={AiFillCheckCircle} color="green.500" boxSize={8} />;
     }
 
-    return <Icon as={AiFillCloseCircle} color="red.500" />;
+    return <Icon as={AiFillCloseCircle} color="red.500" boxSize={8} />;
 };
 
 type HandleButtonClick = (reservation: IReservation) => void;
@@ -43,7 +43,7 @@ const columnHelpers = (
     }),
     columnHelper.accessor('is_booking_reservation', {
         header: t('Is Booking Reservation'),
-        cell: (info) => (info.getValue() ? t('Yes') : t('No')),
+        cell: (info) => getIcon(info.getValue()),
     }),
     columnHelper.accessor('date_range', {
         header: t('Date Range'),

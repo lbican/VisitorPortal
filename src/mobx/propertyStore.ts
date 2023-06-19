@@ -1,57 +1,49 @@
-import { action, observable, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import PropertyService from '../services/property-service';
 import { IProperty, PropertyManager, TFormProperty } from '../utils/interfaces/typings';
 
 class PropertyStore {
-    @observable properties: IProperty[] = [];
-    @observable currentProperty: IProperty | null = null;
-    @observable editingProperty: IProperty | undefined = undefined;
-    @observable propertyManagers: PropertyManager[] | undefined = undefined;
-    @observable isDeleting = false;
-    @observable isFetching = false;
+    properties: IProperty[] = [];
+    currentProperty: IProperty | null = null;
+    editingProperty: IProperty | undefined = undefined;
+    propertyManagers: PropertyManager[] | undefined = undefined;
+    isDeleting = false;
+    isFetching = false;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    @action
     setProperties(properties: IProperty[]) {
         this.properties = properties;
     }
 
-    @action
     setCurrentProperty(property: IProperty | null) {
         this.currentProperty = property;
     }
 
-    @action
     setEditingProperty(property: IProperty | undefined) {
         this.editingProperty = property;
     }
 
-    @action
     setIsDeleting(value: boolean) {
         this.isDeleting = value;
     }
 
-    @action
     setIsFetching(value: boolean) {
         this.isFetching = value;
     }
 
-    @action
     setPropertyManagers(propertyManagers: PropertyManager[]) {
         this.propertyManagers = propertyManagers;
     }
 
-    @action
     async createProperty(propertyData: TFormProperty, userId?: string) {
         const data = await PropertyService.createProperty(propertyData, userId);
         this.setProperties([...this.properties, data]);
         return data;
     }
 
-    @action
     async updateProperty(propertyData: TFormProperty, propertyId: string): Promise<void> {
         const data = await PropertyService.updateProperty(propertyData, propertyId);
         this.setCurrentProperty(data);
@@ -64,7 +56,6 @@ class PropertyStore {
         }
     }
 
-    @action
     async deleteProperty(propertyId: string, imagePath: string) {
         this.setIsDeleting(true);
         try {
@@ -75,7 +66,6 @@ class PropertyStore {
         }
     }
 
-    @action
     getCurrentProperty(propertyId: string) {
         if (this.currentProperty?.id !== propertyId) {
             const propertyIndex = this.properties.findIndex((property) => {
@@ -89,7 +79,6 @@ class PropertyStore {
         }
     }
 
-    @action
     async fetchCurrentProperty(propertyId: string, userId?: string) {
         if (!userId) {
             console.error('Unknown user provided!');
@@ -110,7 +99,6 @@ class PropertyStore {
         }
     }
 
-    @action
     fetchProperties(userId?: string): Promise<void> {
         this.setIsFetching(true);
         return PropertyService.getPropertiesByUserId(userId)
@@ -125,7 +113,6 @@ class PropertyStore {
             });
     }
 
-    @action
     resetStore() {
         this.properties = [];
         this.currentProperty = null;
