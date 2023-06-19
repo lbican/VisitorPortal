@@ -17,7 +17,15 @@ import {
     SortingState,
     getCoreRowModel,
     getSortedRowModel,
+    RowData,
+    ColumnMeta,
 } from '@tanstack/react-table';
+declare module '@tanstack/table-core' {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface ColumnMeta<TData extends RowData, TValue> {
+        isNumeric: boolean;
+    }
+}
 import { IReservation, IUnit } from '../../../utils/interfaces/typings';
 import columnHelpers from './table-accessors';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +35,7 @@ import AlertDialogComponent from '../../../components/common/feedback/alert-dial
 import { observer } from 'mobx-react-lite';
 import ReservationModal from '../form/reservation-modal';
 import { useEffect } from 'react';
+import { subDays } from 'date-fns';
 
 export type DataTableProps = {
     unit: IUnit | null;
@@ -117,7 +126,9 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                         {table.getHeaderGroups().map((headerGroup) => (
                             <Tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
-                                    const meta: any = header.column.columnDef.meta;
+                                    const meta:
+                                        | ColumnMeta<IReservation, unknown>
+                                        | undefined = header.column.columnDef.meta;
                                     return (
                                         <Th
                                             key={header.id}
@@ -150,7 +161,9 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                         {table.getRowModel().rows.map((row) => (
                             <Tr key={row.id}>
                                 {row.getVisibleCells().map((cell) => {
-                                    const meta: any = cell.column.columnDef.meta;
+                                    const meta:
+                                        | ColumnMeta<IReservation, unknown>
+                                        | undefined = cell.column.columnDef.meta;
                                     return (
                                         <Td key={cell.id} isNumeric={meta?.isNumeric}>
                                             {flexRender(
@@ -179,12 +192,15 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                 dialogConfirmText={t('Delete')}
                 dialogDeclineText={t('Cancel')}
             />
-            {unit && (
+            {unit && !!reservationStore.editingReservation && (
                 <ReservationModal
                     isOpen={isReservationModalOpen}
                     onClose={onReservationModalClose}
                     unit={unit}
-                    date_range={[new Date(), new Date()]}
+                    date_range={[
+                        reservationStore.editingReservation.date_range[0],
+                        subDays(reservationStore.editingReservation.date_range[1], 1),
+                    ]}
                 />
             )}
         </>

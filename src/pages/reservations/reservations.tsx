@@ -1,5 +1,13 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Alert, AlertIcon, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    Divider,
+    Flex,
+    Heading,
+    HStack,
+    Spinner,
+} from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
 import Autocomplete, {
@@ -35,6 +43,7 @@ const Reservations = (): ReactElement => {
 
     const handlePropertySelect = (newValue: SingleValue<ILabel>) => {
         newValue && store.getCurrentProperty(newValue.value);
+        reservationStore.setReservations([]);
         setUnit(null);
     };
 
@@ -54,7 +63,11 @@ const Reservations = (): ReactElement => {
 
     const renderReservations = () => {
         if (reservationStore.status === 'loading') {
-            return <Spinner />;
+            return (
+                <Flex justifyContent="center" alignItems="center" height="80%">
+                    <Spinner size="xl" />
+                </Flex>
+            );
         }
 
         if (reservationStore.status === 'failed') {

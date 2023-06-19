@@ -29,6 +29,7 @@
     "pigeon-maps": "^0.21.3",
     "react": "^18.2.0",
     "react-calendar": "^4.3.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.44.3",
