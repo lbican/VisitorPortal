@@ -1,112 +1,87 @@
 import { observer } from 'mobx-react-lite';
 import { IReservation } from '../../utils/interfaces/typings';
-import { useTranslation } from 'react-i18next';
-import {
-    Box,
-    Divider,
-    Heading,
-    HStack,
-    IconButton,
-    Text,
-    useDisclosure,
-    VStack,
-    Tag,
-    Flex,
-} from '@chakra-ui/react';
-import { TbBrandBooking } from 'react-icons/tb';
-import { BiBookOpen } from 'react-icons/bi';
-import { GoTrashcan } from 'react-icons/go';
-import AlertDialogComponent from '../common/feedback/alert-dialog-component';
+import { HStack, Text, VStack, Flex } from '@chakra-ui/react';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';
-import useToastNotification from '../../hooks/useToastNotification';
-import { reservationStore } from '../../mobx/reservationStore';
 import i18n from 'i18next';
+import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns/fp';
+import { differenceInDays, isWithinInterval } from 'date-fns';
+import { BsHouseDoor, BsMoonStars } from 'react-icons/bs';
+import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5';
+import { useTranslation } from 'react-i18next';
+
+enum ReservationStatus {
+    ARRIVAL,
+    DEPARTURE,
+}
+
+const getReservationStatus = (date_range: [Date, Date]): ReservationStatus => {
+    const today = new Date();
+    const [startDate, endDate] = date_range;
+
+    if (isWithinInterval(today, { start: startDate, end: endDate })) {
+        return ReservationStatus.DEPARTURE;
+    }
+
+    return ReservationStatus.ARRIVAL;
+};
+
 const ReservationCard = (props: IReservation) => {
-    const {
-        isOpen: isOpenDeleteAlert,
-        onOpen: onOpenDeleteAlert,
-        onClose: onCloseDeleteAlert,
-    } = useDisclosure();
-
     const { first_name, last_name, guests_num } = props.guest;
-    const { date_range, note } = props;
-    const notification = useToastNotification();
+    const { date_range, unit } = props;
     const { t } = useTranslation();
+    const nights = differenceInDays(date_range[1], date_range[0]);
+    const daysUntilArrival = differenceInCalendarDays(new Date(), date_range[0]);
+    const daysUntilDeparture = differenceInCalendarDays(new Date(), date_range[1]);
 
-    const confirmDeleteReservation = () => {
-        reservationStore
-            .deleteReservation(props.id)
-            .then(() => {
-                onCloseDeleteAlert();
-                notification.success(t('Successfully deleted reservation'));
-            })
-            .catch((e) => {
-                console.error(e);
-                notification.error(t('Could not delete reservation'));
-            });
-    };
+    console.log(props);
+
+    const isArriving = getReservationStatus(date_range) === ReservationStatus.ARRIVAL;
 
     return (
-        <CardWrapper icon={props.is_booking_reservation ? TbBrandBooking : BiBookOpen}>
+        <CardWrapper isArriving={isArriving}>
             <Flex w="full" flexDirection={{ lg: 'row', base: 'column' }}>
                 <VStack spacing={1} mb={3} textAlign="left" alignItems="flex-start" w="full">
-                    <Heading as="h2" size="md" lineHeight={1.2} fontWeight="bold" w="100%">
-                        {date_range[0].toLocaleDateString(i18n.language ?? 'en')}
-                    </Heading>
-                    {props.is_booking_reservation && (
-                        <Text as="small" size="sm">
-                            {t('This is Booking.com® reservation')}
+                    <Text size="md" w="100%">
+                        {isArriving ? (
+                            <Text>
+                                <Text as="b" color="blue.500">
+                                    {t('Checks in: ')}
+                                </Text>
+                                {t('onDate', {
+                                    onDate: date_range[0].toLocaleDateString(i18n.language ?? 'en'),
+                                })}
+                                <Text as="span">{t('inDays', { inDays: daysUntilArrival })}</Text>
+                            </Text>
+                        ) : (
+                            <Text>
+                                <Text as="b" color="red.500">
+                                    {t('Checks out: ')}
+                                </Text>
+                                {t('onDate', {
+                                    onDate: date_range[1].toLocaleDateString(i18n.language ?? 'en'),
+                                })}
+                                <Text as="span">{t('inDays', { inDays: daysUntilDeparture })}</Text>
+                            </Text>
+                        )}
+                    </Text>
+                    <HStack alignItems="center" spacing={2}>
+                        <BsHouseDoor />
+                        <Text>{unit.name}</Text>
+                        <Text>|</Text>
+                        <Text as="b">{nights}</Text>
+                        <BsMoonStars />
+                        <Text>|</Text>
+                        <Text as="b">{guests_num}</Text>
+                        <IoPeopleOutline />
+                        <Text>|</Text>
+                        <IoPersonOutline />
+                        <Text as="b">
+                            {first_name} {last_name}
                         </Text>
-                    )}
-                    <Divider />
-                    <Text size="lg" as="b">
-                        {first_name} {last_name}
-                    </Text>
-                    <Text size="lg" as="b">
-                        Number of guests: <Tag borderRadius="full">{guests_num}</Tag> /{' '}
-                        <Tag borderRadius="full">{props.unit.capacity} (max capacity)</Tag>
-                    </Text>
-                    <Divider />
-                    <Text as="b">{t('Note')}</Text>
-                    <Text fontSize="sm" noOfLines={2}>
-                        {note || t('No note')}
-                    </Text>
-                </VStack>
-                <Box>
-                    <VStack alignItems="flex-end" p={4}>
-                        <Text>
-                            {t('departureDate', {
-                                departureDate: date_range[1].toLocaleDateString(
-                                    i18n.language ?? 'en'
-                                ),
-                            })}
-                        </Text>
-                        <Text as="b">{t('totalPrice', { totalPrice: props.total_price })}</Text>
-                    </VStack>
-                    <HStack w="full" justifyContent="flex-end">
-                        <IconButton
-                            aria-label="Delete reservation"
-                            icon={<GoTrashcan />}
-                            colorScheme="red"
-                            onClick={onOpenDeleteAlert}
-                        />
                     </HStack>
-                </Box>
+                </VStack>
             </Flex>
-
-            <AlertDialogComponent
-                isLoading={reservationStore.isDeleting}
-                isOpen={isOpenDeleteAlert}
-                onClose={onCloseDeleteAlert}
-                onConfirm={confirmDeleteReservation}
-                dialogBody={t('confirmDeleteReservation', {
-                    reservationHolder: `${first_name} ${last_name}`,
-                })}
-                dialogHeader={t('Confirm deletion')}
-                dialogConfirmText={t('Delete')}
-                dialogDeclineText={t('Cancel')}
-            />
         </CardWrapper>
     );
 };

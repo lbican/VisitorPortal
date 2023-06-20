@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
+import { IFormReservation, IGuest, IProperty, IReservation } from '../utils/interfaces/typings';
 import { ReservationService } from '../services/reservation-service';
 import { CalendarService, IDatePrice } from '../services/calendar-service';
 
@@ -22,7 +22,9 @@ class ReservationStore {
     }
 
     setReservations(reservations: IReservation[]) {
-        this.reservations = reservations;
+        this.reservations = reservations.sort(
+            (a, b) => a.date_range[0].getTime() - b.date_range[0].getTime()
+        );
     }
 
     setUnitPrices(unitPrices: IDatePrice[]) {

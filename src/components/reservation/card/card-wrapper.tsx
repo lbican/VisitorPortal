@@ -1,20 +1,22 @@
 import React, { ReactNode } from 'react';
 import { HStack, Icon, useColorModeValue } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
+import { LuPlaneLanding, LuPlaneTakeoff } from 'react-icons/lu';
 
 interface CardWrapperProps {
-    icon: IconType;
+    isArriving: boolean;
     children: ReactNode;
 }
-export const CardWrapper: React.FC<CardWrapperProps> = ({ icon, children }) => {
+export const CardWrapper: React.FC<CardWrapperProps> = ({ isArriving, children }) => {
     return (
         <HStack
             p={{ base: 3, sm: 6 }}
             bg={useColorModeValue('gray.100', 'gray.800')}
             spacing={5}
-            rounded="lg"
+            rounded="md"
             alignItems="center"
             pos="relative"
+            w="full"
             _before={{
                 content: '""',
                 w: '0',
@@ -27,7 +29,15 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({ icon, children }) => {
                 display: 'block',
             }}
         >
-            <Icon as={icon} w={12} h={12} color="blue.500" />
+            <Icon
+                as={isArriving ? LuPlaneLanding : LuPlaneTakeoff}
+                w={12}
+                h={12}
+                color={isArriving ? 'blue.500' : 'red.500'}
+                borderWidth={4}
+                borderRadius="full"
+                borderColor={isArriving ? 'blue.400' : 'red.400'}
+            />
             {children}
         </HStack>
     );

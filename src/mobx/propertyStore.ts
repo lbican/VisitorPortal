@@ -1,6 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 import PropertyService from '../services/property-service';
-import { IProperty, PropertyManager, TFormProperty } from '../utils/interfaces/typings';
+import {
+    IProperty,
+    IReservation,
+    PropertyManager,
+    TFormProperty,
+} from '../utils/interfaces/typings';
 
 class PropertyStore {
     properties: IProperty[] = [];

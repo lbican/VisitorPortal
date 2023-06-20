@@ -5,6 +5,8 @@ import Banner from '../../components/common/banner/banner';
 import PropertyService from '../../services/property-service';
 import BannerWrapper from '../../components/common/banner/banner-wrapper';
 import {
+    Alert,
+    AlertIcon,
     Box,
     Flex,
     Grid,
@@ -13,7 +15,6 @@ import {
     HStack,
     Skeleton,
     Spinner,
-    Text,
     useDisclosure,
     VStack,
 } from '@chakra-ui/react';
@@ -32,7 +33,7 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { IUnit } from '../../utils/interfaces/typings';
 import { SingleValue } from 'react-select';
-import Timeline from '../../components/common/timeline';
+import Timeline from '../../components/common/timeline/timeline';
 import { reservationStore } from '../../mobx/reservationStore';
 import ManagerBox from '../../components/property/manager/manager-box';
 
@@ -156,16 +157,21 @@ const PropertyPage = () => {
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
             <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6} w="full">
                 <GridItem order={[2, null, 1]} w="100%">
-                    <Heading as="h3" fontSize="4xl" fontWeight="bold" mb={18} textAlign="left">
-                        {t('Upcoming reservations')}
+                    <Heading as="h3" fontSize="3xl" fontWeight="bold" mb={18} textAlign="left">
+                        {t('Upcoming arrivals / departures')}
                     </Heading>
                     {selectedUnit ? (
                         <Timeline
-                            reservations={reservationStore.reservations}
+                            reservations={reservationStore.reservations.filter(
+                                (res) => !res.fulfilled
+                            )}
                             loadingTimeline={reservationStore.isFetchingData}
                         />
                     ) : (
-                        <Text>{t('Please select unit to view upcoming reservations')}</Text>
+                        <Alert status="info" mb={2} rounded={4}>
+                            <AlertIcon />
+                            {t('Please select unit to view upcoming arrivals and departures')}
+                        </Alert>
                     )}
                 </GridItem>
                 <GridItem order={[1, null, 2]} w="100%">

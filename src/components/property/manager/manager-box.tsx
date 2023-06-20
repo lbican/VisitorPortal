@@ -19,6 +19,7 @@ import PropertyService from '../../../services/property-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
+import { BsPersonBadge, BsPersonBadgeFill } from 'react-icons/bs';
 
 interface ManagerBoxProps {
     userId?: string;
@@ -84,7 +85,17 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
                                 <Text as="b">{manager.username}</Text>
                             </HStack>
                             <HStack>
-                                <Text>{manager.manager_type}</Text>
+                                {manager.manager_type === ManagerType.MANAGER ? (
+                                    <>
+                                        <Text>{t('MNG.')}</Text>
+                                        <BsPersonBadge />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Text>{t('OWN.')}</Text>
+                                        <BsPersonBadgeFill />
+                                    </>
+                                )}
                                 {manager.id === userId && <GoStar />}
                                 {canManageManagers(manager.manager_type) && (
                                     <IconButton

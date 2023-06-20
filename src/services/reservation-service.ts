@@ -1,8 +1,9 @@
 import supabase from '../../database';
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
 import { CalendarService } from './calendar-service';
 import { Country } from '../utils/interfaces/utils';
+import { isAfter } from 'date-fns/fp';
 
 export class ReservationService {
     static async getTotalPrice(unit_id: string, date_range: [Date, Date]): Promise<number | null> {
@@ -108,6 +109,33 @@ export class ReservationService {
         }
     }
 
+    private static async fulfillReservations(
+        reservations: IReservation[]
+    ): Promise<IReservation[]> {
+        const today = new Date();
+        const unfulfilledReservations = reservations.filter(
+            (res) => !res.fulfilled && isBefore(res.date_range[1], today)
+        );
+
+        const unfulfilledIds = unfulfilledReservations.map((res) => res.id);
+
+        if (unfulfilledIds.length > 0) {
+            const { error } = await supabase
+                .from('Reservation')
+                .update({ fulfilled: true })
+                .in('id', unfulfilledIds);
+
+            if (error) {
+                throw error;
+            }
+
+            // Update the local objects
+            unfulfilledReservations.forEach((reservation) => (reservation.fulfilled = true));
+        }
+
+        return reservations;
+    }
+
     static async fetchReservations(unitId?: string): Promise<IReservation[]> {
         if (!unitId) {
             throw new Error('Unit id was not provided!');
@@ -156,6 +184,6 @@ export class ReservationService {
             };
         });
 
-        return parsedData as unknown as IReservation[];
+        return await this.fulfillReservations(parsedData as unknown as IReservation[]);
     }
 }
