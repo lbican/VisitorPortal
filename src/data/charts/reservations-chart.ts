@@ -22,7 +22,7 @@ export const transformToReservationData = (data: ReservationData[], filterBy: st
     let labels: string[];
     let dataSet: number[];
 
-    if (filterBy === 'unit') {
+    if (filterBy === 'Unit') {
         labels = data.map((item) => item.unit_name);
         dataSet = data.map((item) => item.num_reservations);
     } else {

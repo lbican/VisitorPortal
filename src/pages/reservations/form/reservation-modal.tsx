@@ -82,9 +82,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         ),
     });
 
-    const disposeModalAndUpdateData = () => {
-        reservationStore.setEditingReservation();
-        onClose();
+    const resetForm = () => {
         reset(
             getReservationFormValues(
                 unit.id,
@@ -92,6 +90,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 reservationStore.editingReservation
             )
         );
+    };
+
+    const disposeModalAndUpdateData = () => {
+        reservationStore.setEditingReservation();
+        onClose();
+        resetForm();
     };
 
     const handleFormSubmit = (data: IFormReservation & IGuest) => {
@@ -130,6 +134,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             .catch((error) => {
                 console.error(error);
             });
+
+        resetForm();
     }, [date_range, unit]);
 
     const addNewReservation = (data: IFormReservation & IGuest) => {

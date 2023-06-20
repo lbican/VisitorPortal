@@ -1,8 +1,11 @@
-import React, { ReactElement, useEffect, useState } from 'react';
-import { Divider, Grid, GridItem, Heading, HStack, Skeleton } from '@chakra-ui/react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { Divider, Grid, GridItem, Heading, HStack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { reservationsOptions } from '../../data/charts/reservations-chart';
+import {
+    reservationsOptions,
+    transformToReservationData,
+} from '../../data/charts/reservations-chart';
 import {
     monthChartOptions,
     transformToMonthlyReservationData,
@@ -13,16 +16,17 @@ import {
 } from '../../data/charts/revenue-month-chart';
 import { StatisticsService } from '../../services/statistics-service';
 import { useAuth } from '../../context/auth-context';
-import { transformToReservationData } from '../../data/charts/reservations-chart';
 import {
     ReservationData,
     MonthlyReservationData,
     MonthlyRevenueData,
+    YearlyReportData,
 } from '../../utils/interfaces/chart/chart-types';
-import ChartSwitcher from '../../components/chart/chart-switcher';
+import ChartSwitcher from '../../components/statistics/chart-switcher';
 import NoData from '../../components/common/no-data';
 import _ from 'lodash';
-import ChartContainer from '../../components/chart/chart-container';
+import ChartContainer from '../../components/statistics/chart-container';
+import StatsWithIcons from '../../components/statistics/stats-with-icons';
 
 const Dashboard = (): ReactElement => {
     const { t } = useTranslation();
@@ -32,10 +36,11 @@ const Dashboard = (): ReactElement => {
         []
     );
     const [monthlyRevenueData, setMonthlyRevenueData] = useState<MonthlyRevenueData[]>([]);
+    const [yearlyReport, setYearlyReport] = useState<YearlyReportData>();
     const [loading, setLoading] = useState(false);
-    const [filterBy, setFilterBy] = useState<string>('unit');
+    const [filterBy, setFilterBy] = useState<string>('Unit');
 
-    useEffect(() => {
+    const fetchStatisticsData = useCallback(() => {
         setLoading(true);
         StatisticsService.getTotalReservations(user?.id)
             .then((res) => {
@@ -47,7 +52,6 @@ const Dashboard = (): ReactElement => {
 
         StatisticsService.getMonthlyReservations(user?.id)
             .then((res) => {
-                console.log(res);
                 setMonthlyReservationData(res);
             })
             .catch((error) => {
@@ -56,14 +60,26 @@ const Dashboard = (): ReactElement => {
 
         StatisticsService.getMonthlyRevenue(user?.id)
             .then((res) => {
-                console.log(res);
                 setMonthlyRevenueData(res);
             })
             .catch((error) => {
                 console.error(error);
             });
 
-        setLoading(false);
+        StatisticsService.getYearlyReport(user?.id)
+            .then((res) => {
+                setYearlyReport(res);
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [user]);
+
+    useEffect(() => {
+        fetchStatisticsData();
     }, []);
 
     const checkForNoData = () => {
@@ -72,7 +88,7 @@ const Dashboard = (): ReactElement => {
             _.isEmpty
         );
 
-        return loading && areAllEmpty;
+        return !loading && areAllEmpty;
     };
 
     return (
@@ -83,7 +99,7 @@ const Dashboard = (): ReactElement => {
                 </Heading>
                 <ChartSwitcher
                     defaultValue={filterBy}
-                    options={['unit', 'property']}
+                    options={['Unit', 'Property']}
                     setFilterBy={setFilterBy}
                 />
             </HStack>
@@ -96,7 +112,10 @@ const Dashboard = (): ReactElement => {
                     templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(5, 1fr)' }}
                     gap={4}
                 >
-                    <GridItem colSpan={{ base: 1, md: 1 }}>
+                    <GridItem colSpan={5}>
+                        {yearlyReport && <StatsWithIcons {...yearlyReport} />}
+                    </GridItem>
+                    <GridItem colSpan={{ base: 2, md: 1 }}>
                         <ChartContainer isLoaded={!loading}>
                             <Pie
                                 data={transformToReservationData(totalReservationsData, filterBy)}

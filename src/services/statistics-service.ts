@@ -3,6 +3,7 @@ import {
     ReservationData,
     MonthlyReservationData,
     MonthlyRevenueData,
+    YearlyReportData,
 } from '../utils/interfaces/chart/chart-types';
 
 export class StatisticsService {
@@ -54,5 +55,22 @@ export class StatisticsService {
         }
 
         return data;
+    }
+
+    static async getYearlyReport(userId?: string): Promise<YearlyReportData> {
+        if (!userId) {
+            throw new Error('User id was not provided!');
+        }
+
+        const { data, error } = await supabase.rpc('get_yearly_user_report', {
+            p_user_id: userId,
+            p_year: new Date().getFullYear(),
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        return data[0];
     }
 }

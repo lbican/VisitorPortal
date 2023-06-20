@@ -20,8 +20,7 @@ const CustomRadio: React.FC<CustomRadioProps> = (props) => {
                 borderWidth={2}
                 borderRadius="md"
                 boxShadow="md"
-                _checked={{ bg: 'blue.500', color: 'white', borderColor: 'blue.300' }}
-                _focus={{ boxShadow: 'outline' }}
+                _checked={{ bg: 'green.500', color: 'white', borderColor: 'green.500' }}
                 py={1}
                 px={4}
             >
@@ -52,7 +51,7 @@ const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({ defaultValue, options,
                 const radio = getRadioProps({ value });
                 return (
                     <CustomRadio key={value} {...radio}>
-                        <Text as="b">{value.toLocaleUpperCase()}</Text>
+                        <Text>{value}</Text>
                     </CustomRadio>
                 );
             })}

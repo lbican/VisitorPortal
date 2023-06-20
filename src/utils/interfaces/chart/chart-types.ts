@@ -8,9 +8,17 @@ export interface MonthlyReservationData extends ReservationData {
     month: string;
 }
 
-export interface MonthlyRevenueData
-    extends Omit<MonthlyReservationData, 'num_reservations'> {
+export interface MonthlyRevenueData extends Omit<MonthlyReservationData, 'num_reservations'> {
     total_price: number;
+}
+
+export interface YearlyReportData {
+    total_reservations: number | null;
+    reservation_percentage_change: number | null;
+    total_price: number | null;
+    total_price_percentage_change: number | null;
+    avg_monthly_revenue: number | null;
+    avg_monthly_revenue_percentage_change: number | null;
 }
 
 export interface ChartData {

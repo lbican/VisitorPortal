@@ -20,7 +20,7 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             w="sm"
             marginRight={4}
             marginBottom={4}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ translateY: -10 }}
             borderWidth="1px"
             rounded="lg"
             shadow="lg"

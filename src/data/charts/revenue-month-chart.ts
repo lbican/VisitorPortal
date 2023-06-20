@@ -58,7 +58,7 @@ export const transformToMonthlyRevenueData = (
     ].slice(startMonth, endMonth);
 
     let items: string[];
-    if (filterBy === 'unit') {
+    if (filterBy === 'Unit') {
         items = [...new Set(revenueData.map((item) => item.unit_name))];
     } else {
         items = [...new Set(revenueData.map((item) => item.property_name))];
@@ -66,7 +66,7 @@ export const transformToMonthlyRevenueData = (
 
     const datasets: DataSet[] = items.reduce((acc: DataSet[], item: string) => {
         const filteredData = revenueData.filter((data) =>
-            filterBy === 'unit' ? data.unit_name === item : data.property_name === item
+            filterBy === 'Unit' ? data.unit_name === item : data.property_name === item
         );
 
         const data = labels.map((label) => {
