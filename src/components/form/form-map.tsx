@@ -4,7 +4,9 @@ import { osm } from 'pigeon-maps/providers';
 import { MdLocationOn } from 'react-icons/md';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import { Spinner } from '@chakra-ui/react';
+import { Alert, AlertIcon, Spinner } from '@chakra-ui/react';
+import { Status } from '../../utils/interfaces/typings';
+import { useTranslation } from 'react-i18next';
 
 type FormMapProps = {
     onLocationChange: (location: string) => void;
@@ -17,29 +19,32 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
     const [latitude, setLatitude] = useState<number | null>(null);
     const [longitude, setLongitude] = useState<number | null>(null);
     const [selectedOnMap, setSelectedOnMap] = useState<boolean>(false);
+    const [status, setStatus] = useState<Status>('idle');
+    const { t } = useTranslation();
 
     const fetchLocationName = async () => {
         if (latitude && longitude) {
+            setStatus('loading');
             try {
                 const response = await axios.get(
                     `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${OPEN_CAGE_API_KEY}`
                 );
                 const data = response.data;
-
                 const address = data.results[0]?.components;
-
                 const location =
                     address?.city || address?.town || address?.village || address?.hamlet || '';
-
                 onLocationChange(location);
+                setStatus('succeeded');
             } catch (error) {
                 console.error('Failed to fetch location name: ', error);
+                setStatus('failed');
             }
         }
     };
 
     const debouncedFetchCoordinates = useCallback(
         debounce((locationName: string) => {
+            setStatus('loading');
             async function fetch() {
                 try {
                     const response = await axios.get(
@@ -58,11 +63,12 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
                         setLatitude(0);
                         setLongitude(0);
                     }
+                    setStatus('succeeded');
                 } catch (error) {
                     console.error('Failed to fetch coordinates: ', error);
+                    setStatus('failed');
                 }
             }
-
             void fetch();
         }, 500),
         [selectedOnMap]
@@ -73,6 +79,7 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
     }, [latitude, longitude]);
 
     useEffect(() => {
+        setSelectedOnMap(false);
         if (locationName) {
             debouncedFetchCoordinates(locationName);
         } else {
@@ -86,23 +93,31 @@ const FormMap: React.FC<FormMapProps> = ({ onLocationChange, locationName }) => 
     }
 
     return (
-        <Map
-            provider={osm}
-            dprs={[1, 2]}
-            height={200}
-            defaultCenter={[latitude, longitude]}
-            center={[latitude, longitude]}
-            defaultZoom={11}
-            onClick={({ latLng }) => {
-                setSelectedOnMap(true);
-                setLatitude(Number(latLng[0]));
-                setLongitude(Number(latLng[1]));
-            }}
-        >
-            <Marker anchor={[latitude, longitude]}>
-                <MdLocationOn color="red" size="2rem" />
-            </Marker>
-        </Map>
+        <>
+            <Map
+                provider={osm}
+                dprs={[1, 2]}
+                height={200}
+                defaultCenter={[latitude, longitude]}
+                center={[latitude, longitude]}
+                defaultZoom={11}
+                onClick={({ latLng }) => {
+                    setSelectedOnMap(true);
+                    setLatitude(Number(latLng[0]));
+                    setLongitude(Number(latLng[1]));
+                }}
+            >
+                <Marker anchor={[latitude, longitude]}>
+                    <MdLocationOn color="red" size="2rem" />
+                </Marker>
+            </Map>
+            {status === 'failed' && (
+                <Alert status="error" mb={2} rounded={4}>
+                    <AlertIcon />
+                    {t('An error has occurred while resolving location')}
+                </Alert>
+            )}
+        </>
     );
 };
 

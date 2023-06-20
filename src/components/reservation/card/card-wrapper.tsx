@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import { HStack, Icon, useColorModeValue } from '@chakra-ui/react';
-import { IconType } from 'react-icons';
 import { LuPlaneLanding, LuPlaneTakeoff } from 'react-icons/lu';
 
 interface CardWrapperProps {

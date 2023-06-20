@@ -48,6 +48,7 @@ export interface PropertyManager extends UserProfile {
 }
 
 export type TFormProperty = Omit<IProperty, 'id'>;
+export type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 export interface IReservation {
     id: string;

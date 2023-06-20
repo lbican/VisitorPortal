@@ -1,9 +1,8 @@
 import { makeAutoObservable } from 'mobx';
-import { IFormReservation, IGuest, IProperty, IReservation } from '../utils/interfaces/typings';
+import { IFormReservation, IGuest, IReservation, Status } from '../utils/interfaces/typings';
 import { ReservationService } from '../services/reservation-service';
 import { CalendarService, IDatePrice } from '../services/calendar-service';
 
-type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 class ReservationStore {
     reservations: IReservation[] = [];
     unitPrices: IDatePrice[] = [];
