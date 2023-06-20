@@ -63,12 +63,7 @@ const Properties = (): ReactElement => {
     };
 
     return (
-        <motion.div
-            key="properties"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
+        <>
             <HStack mb={4} justifyContent="space-between">
                 <Heading as="h2" size="lg">
                     {t('Your properties')}
@@ -117,7 +112,7 @@ const Properties = (): ReactElement => {
                     </CustomContextMenu>
                 ))}
             </Flex>
-        </motion.div>
+        </>
     );
 };
 
