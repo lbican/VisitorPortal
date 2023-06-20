@@ -4,7 +4,7 @@ import { HStack, Text, VStack, Flex } from '@chakra-ui/react';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';
 import i18n from 'i18next';
-import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns/fp';
+import { differenceInCalendarDays } from 'date-fns/fp';
 import { differenceInDays, isWithinInterval } from 'date-fns';
 import { BsHouseDoor, BsMoonStars } from 'react-icons/bs';
 import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5';
@@ -33,8 +33,6 @@ const ReservationCard = (props: IReservation) => {
     const nights = differenceInDays(date_range[1], date_range[0]);
     const daysUntilArrival = differenceInCalendarDays(new Date(), date_range[0]);
     const daysUntilDeparture = differenceInCalendarDays(new Date(), date_range[1]);
-
-    console.log(props);
 
     const isArriving = getReservationStatus(date_range) === ReservationStatus.ARRIVAL;
 

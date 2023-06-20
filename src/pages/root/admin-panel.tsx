@@ -4,6 +4,7 @@ import { Outlet } from 'react-router';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useAuth } from '../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 const AdminPanel = (): ReactElement => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -34,7 +35,9 @@ const AdminPanel = (): ReactElement => {
                 roundedTopLeft="md"
                 shadow="sm"
             >
-                <Outlet />
+                <AnimatePresence>
+                    <Outlet />
+                </AnimatePresence>
             </Box>
         </Sidebar>
     );

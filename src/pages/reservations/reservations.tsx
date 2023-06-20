@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { Alert, AlertIcon, Divider, Flex, Heading, HStack, Spinner } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
+import { motion } from 'framer-motion';
 import Autocomplete, {
     ILabel,
     mapToAutocompleteLabels,
@@ -95,7 +96,12 @@ const Reservations = (): ReactElement => {
     };
 
     return (
-        <>
+        <motion.div
+            key="reservations"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <HStack justifyContent="space-between" mb={4}>
                 <Heading as="h2" size="lg">
                     {t('Reservations')}
@@ -121,7 +127,7 @@ const Reservations = (): ReactElement => {
             </HStack>
             <Divider my={4} />
             {renderReservations()}
-        </>
+        </motion.div>
     );
 };
 

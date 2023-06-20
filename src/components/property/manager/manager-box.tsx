@@ -38,6 +38,7 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
     const managersBackground = useColorModeValue('white', 'gray.800');
     const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
     const notification = useToastNotification();
+    const backgroundColor = useColorModeValue('gray.100', 'gray.800');
 
     const removeSelectedManager = (userId: string) => {
         setLoadingStates((prev) => ({ ...prev, [userId]: true }));
@@ -58,7 +59,7 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
     };
 
     return (
-        <Wrap bg={managersBackground} p={4} rounded={4}>
+        <Wrap bg={managersBackground} p={4} rounded={4} boxShadow="lg">
             <Heading as="h4" size="md">
                 {t('Property managers')}
             </Heading>

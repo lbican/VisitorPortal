@@ -36,6 +36,7 @@ import { SingleValue } from 'react-select';
 import Timeline from '../../components/common/timeline/timeline';
 import { reservationStore } from '../../mobx/reservationStore';
 import ManagerBox from '../../components/property/manager/manager-box';
+import { motion } from 'framer-motion';
 
 const PropertyPage = () => {
     const { pid = '' } = useParams<{ pid: string }>();
@@ -96,7 +97,12 @@ const PropertyPage = () => {
     }
 
     return (
-        <>
+        <motion.div
+            key="property_page"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <Box>
                 <BannerWrapper>
                     <Banner
@@ -178,7 +184,7 @@ const PropertyPage = () => {
                     <ManagerBox userId={user?.id} />
                 </GridItem>
             </Grid>
-        </>
+        </motion.div>
     );
 };
 

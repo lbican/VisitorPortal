@@ -50,9 +50,6 @@ $border-radius-large: 8px;
         button {
             min-width: 44px;
             background: none;
-            &:disabled {
-                background-color: $disabled-color;
-            }
             &:enabled:hover,
             &:enabled:focus {
                 background-color: $highlight-color;

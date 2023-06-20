@@ -27,6 +27,7 @@ import NoData from '../../components/common/no-data';
 import _ from 'lodash';
 import ChartContainer from '../../components/statistics/chart-container';
 import StatsWithIcons from '../../components/statistics/stats-with-icons';
+import { motion } from 'framer-motion';
 
 const Dashboard = (): ReactElement => {
     const { t } = useTranslation();
@@ -92,7 +93,12 @@ const Dashboard = (): ReactElement => {
     };
 
     return (
-        <>
+        <motion.div
+            key="dashboard"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <HStack justifyContent="space-between">
                 <Heading as="h2" size="lg">
                     {t('Dashboard')}
@@ -151,7 +157,7 @@ const Dashboard = (): ReactElement => {
                     </GridItem>
                 </Grid>
             )}
-        </>
+        </motion.div>
     );
 };
 

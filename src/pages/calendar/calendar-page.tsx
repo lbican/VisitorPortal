@@ -26,6 +26,7 @@ import PriceTag from '../../components/calendar/tags/price-tag';
 import ReservationTag from '../../components/calendar/tags/reservation-tag';
 import TooltipIconButton from '../../components/common/tooltip-icon-button';
 import { reservationStore } from '../../mobx/reservationStore';
+import { motion } from 'framer-motion';
 
 interface ITileProps {
     view: View;
@@ -164,7 +165,12 @@ const CalendarPage = (): ReactElement => {
     );
 
     return (
-        <>
+        <motion.div
+            key="calendar"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <HStack justifyContent="space-between" mb={4}>
                 <Heading as="h2" size="lg">
                     {t('Calendar')}
@@ -255,7 +261,7 @@ const CalendarPage = (): ReactElement => {
             ) : (
                 <InfoDisplay />
             )}
-        </>
+        </motion.div>
     );
 };
 

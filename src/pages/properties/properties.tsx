@@ -13,6 +13,7 @@ import useToastNotification from '../../hooks/useToastNotification';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ManagerModal from '../../components/property/manager/manager-modal';
+import { motion } from 'framer-motion';
 
 const Properties = (): ReactElement => {
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
@@ -62,7 +63,12 @@ const Properties = (): ReactElement => {
     };
 
     return (
-        <>
+        <motion.div
+            key="properties"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <HStack mb={4} justifyContent="space-between">
                 <Heading as="h2" size="lg">
                     {t('Your properties')}
@@ -111,7 +117,7 @@ const Properties = (): ReactElement => {
                     </CustomContextMenu>
                 ))}
             </Flex>
-        </>
+        </motion.div>
     );
 };
 
