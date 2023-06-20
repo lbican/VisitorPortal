@@ -1,4 +1,5 @@
 import { UserProfile } from '../../context/auth-context';
+import { Country } from './utils';
 
 export interface IUserRegistration {
     username: string;
@@ -58,7 +59,8 @@ export interface IReservation {
     date_range: [Date, Date];
     total_price: number;
     fulfilled: boolean;
-    adv_payment_paid: boolean;
+    prepayment_percent: number;
+    prepayment_paid: boolean;
     created_at: Date;
     updated_at: Date | null;
     note: string;
@@ -70,6 +72,8 @@ export interface IFormReservation {
     is_booking_reservation: boolean;
     date_range: [Date, Date];
     total_price: number;
+    prepayment_percent: number;
+    prepayment_paid: boolean;
     note: string;
 }
 
@@ -78,4 +82,5 @@ export interface IGuest {
     first_name: string;
     last_name: string;
     guests_num: number;
+    country: Country;
 }

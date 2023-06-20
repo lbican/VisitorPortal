@@ -64,6 +64,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     const [reservationPrice, setReservationPrice] = useState<number | null>(null);
     const [countries, setCountries] = useState<Country[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<Country>();
+    const [prepaymentAmount, setPrepaymentAmount] = useState(0);
     const notification = useToastNotification();
     const { t } = useTranslation();
 
@@ -73,6 +74,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         formState: { errors },
         setValue,
         reset,
+        watch,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
         defaultValues: getReservationFormValues(
@@ -81,6 +83,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             reservationStore.editingReservation
         ),
     });
+
+    const prepayPercentValue = watch('prepayment_percent');
+    const prepaymentPaid = watch('prepayment_paid');
+    const [prepaymentPercent, setPrepaymentPercent] = useState(prepayPercentValue);
 
     const resetForm = () => {
         reset(
@@ -115,6 +121,20 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             .finally(() => {
                 setSubmitting(false);
             });
+    };
+
+    const calculatePrepaymentAmount = (percentage: number, total: number | null) => {
+        return (percentage / 100) * (total || 0);
+    };
+
+    useEffect(() => {
+        const amount = calculatePrepaymentAmount(prepaymentPercent, reservationPrice);
+        setPrepaymentAmount(parseFloat(amount.toFixed(2)));
+    }, [prepaymentPercent, reservationPrice]);
+
+    const handlePrepaymentChange = (value: number | string) => {
+        const percent = typeof value === 'string' ? parseFloat(value) : value;
+        setPrepaymentPercent(percent);
     };
 
     useEffect(() => {
@@ -197,7 +217,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                         {propertyStore.currentProperty?.name} | {unit.name}
                     </Heading>
                     <Text as="b">{t('maxCapacity', { maxCapacity: unit.capacity })}</Text>
-                    <FormLabel mt={6}>{t('Reservation holder')}</FormLabel>
+                    <Text mt={6} fontSize="lg" textAlign="right">
+                        {t('Reservation holder')}
+                    </Text>
                     <Divider my={2} />
                     <HStack w="full">
                         <FormControl isInvalid={!!errors.first_name}>
@@ -270,7 +292,64 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                             {t('Yes')}
                         </Checkbox>
                     </FormControl>
-                    <FormLabel mt={4}>{t('Reservation details')}</FormLabel>
+                    <Text mt={4} fontSize="lg" textAlign="right">
+                        {t('Prepayment amount')}
+                    </Text>
+                    <Divider my={2} />
+                    <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
+                        <FormControl>
+                            <FormLabel htmlFor="prepayment_percent">
+                                {t('Prepayment percentage')}
+                            </FormLabel>
+                            <NumberInput
+                                isDisabled={prepaymentPaid}
+                                min={0}
+                                max={100}
+                                keepWithinRange={true}
+                                value={prepaymentPercent}
+                                onChange={handlePrepaymentChange}
+                            >
+                                <NumberInputField
+                                    id="prepayment_percent"
+                                    {...register('prepayment_percent', {
+                                        required: t('Prepayment percent is required') ?? true,
+                                    })}
+                                />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                            <FormErrorMessage>
+                                {errors?.prepayment_percent?.message}
+                            </FormErrorMessage>
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="prepayment_input">
+                                {t('Prepayment amount (€)')}
+                            </FormLabel>
+                            <Input
+                                type="number"
+                                id="prepayment_input"
+                                value={prepaymentAmount}
+                                readOnly
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="prepayment_paid_input">
+                                {t('Prepayment paid?')}
+                            </FormLabel>
+                            <Checkbox
+                                id="prepayment_paid_input"
+                                size="lg"
+                                colorScheme="blue"
+                                {...register('prepayment_paid')}
+                            >
+                                {t('Yes')}
+                            </Checkbox>
+                        </FormControl>
+                    </HStack>
+
                     <Divider my={2} />
 
                     <HStack mt={4} alignItems="center">

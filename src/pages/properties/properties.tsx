@@ -64,35 +64,42 @@ const Properties = (): ReactElement => {
 
     return (
         <>
-            <HStack mb={4} justifyContent="space-between">
-                <Heading as="h2" size="lg">
-                    {t('Your properties')}
-                </Heading>
-                <Button leftIcon={<AiOutlinePlus />} colorScheme="green" onClick={onModalOpen}>
-                    {t('Add new property')}
-                </Button>
-            </HStack>
-            <PropertyActionModal
-                isOpen={isModalOpen}
-                onClose={() => {
-                    onModalClose();
-                    store.setEditingProperty(undefined);
-                }}
-            />
-            <AlertDialogComponent
-                isLoading={store.isDeleting}
-                isOpen={isOpenAlert}
-                onClose={onCloseAlert}
-                onConfirm={confirmDeleteProperty}
-                dialogBody={t('confirmDelete', {
-                    propertyName: store.currentProperty?.name,
-                })}
-                dialogHeader={t('Confirm deletion')}
-                dialogConfirmText={t('Delete')}
-                dialogDeclineText={t('Cancel')}
-            />
-            <ManagerModal isOpen={isManagerModalOpen} onClose={onManagerModalClose} />
-            <Divider mb={4} />
+            <motion.div
+                key="properties"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+            >
+                <HStack mb={4} justifyContent="space-between">
+                    <Heading as="h2" size="lg">
+                        {t('Your properties')}
+                    </Heading>
+                    <Button leftIcon={<AiOutlinePlus />} colorScheme="green" onClick={onModalOpen}>
+                        {t('Add new property')}
+                    </Button>
+                </HStack>
+                <PropertyActionModal
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        onModalClose();
+                        store.setEditingProperty(undefined);
+                    }}
+                />
+                <AlertDialogComponent
+                    isLoading={store.isDeleting}
+                    isOpen={isOpenAlert}
+                    onClose={onCloseAlert}
+                    onConfirm={confirmDeleteProperty}
+                    dialogBody={t('confirmDelete', {
+                        propertyName: store.currentProperty?.name,
+                    })}
+                    dialogHeader={t('Confirm deletion')}
+                    dialogConfirmText={t('Delete')}
+                    dialogDeclineText={t('Cancel')}
+                />
+                <ManagerModal isOpen={isManagerModalOpen} onClose={onManagerModalClose} />
+                <Divider mb={4} />
+            </motion.div>
             <Flex alignItems="flex-start" flexWrap="wrap">
                 {store.properties.map((property) => (
                     <CustomContextMenu

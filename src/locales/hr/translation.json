@@ -16,6 +16,7 @@
   "English": "Engleski",
   "Drag 'n' drop some files here, or click to select files": "Povuci i ispusti neke datoteke ovdje ili klikni da odabereš datoteke",
   "There was an error processing your request, please try again later": "Došlo je do pogreške prilikom obrade zahtjeva, molimo pokušajte ponovno kasnije",
+  "An error has occurred while resolving location": "Dogodila se pogreška prilikom učitavanja lokacije",
   "Dashboard": "Nadzorna ploča",
   "Reservations": "Rezervacije",
   "Properties": "Nekretnine",
@@ -38,6 +39,8 @@
   "Search by username": "Pretražite po korisničkom imenu",
   "No user found, start typing": "Korisnik nije pronađen, upišite ime za traženje novog korisnika",
   "Checks in: ": "Prijava: ",
+  "onDate": "na {{onDate}} ",
+  "inDays": "(za {{inDays}} dana)",
   "Checks out: ": "Odjava: ",
   "Total reservations": "Ukupno rezervacija",
   "Total revenue": "Ukupan prihod",
@@ -153,7 +156,11 @@
   "Select country": "Odaberite državu",
   "Booking reservation?": "Booking rezervacija?",
   "Yes": "Da",
-  "Reservation details": "Detalji rezervacije",
+  "Prepayment amount": "Predujam",
+  "Prepayment percentage": "Postotak predujma",
+  "Prepayment percent is required": "Postotak predujma je obavezan",
+  "Prepayment amount (€)": "Predujam (€)",
+  "Prepayment paid?": "Predujam plaćen?",
   "Note": "Zabilješka:",
   "arrivalDate": "Dolazak: {{arrivalDate}}",
   "departureDate": "Odlazak: {{departureDate}}",
@@ -185,7 +192,5 @@
   "unitCapacity": "Kapacitet: {{unitCapacity}}",
   "Price List": "Cjenik",
   "nights": "noćenja",
-  "night": "noć",
-  "onDate": "na {{onDate}} ",
-  "inDays": "(za {{inDays}} dana)"
+  "night": "noć"
 }

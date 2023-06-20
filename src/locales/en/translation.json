@@ -16,6 +16,7 @@
   "English": "English",
   "Drag 'n' drop some files here, or click to select files": "Drag 'n' drop some files here, or click to select files",
   "There was an error processing your request, please try again later": "There was an error processing your request, please try again later",
+  "An error has occurred while resolving location": "An error has occurred while resolving location",
   "Dashboard": "Dashboard",
   "Reservations": "Reservations",
   "Properties": "Properties",
@@ -38,6 +39,8 @@
   "Search by username": "Search by username",
   "No user found, start typing": "No user found, start typing",
   "Checks in: ": "Checks in: ",
+  "onDate": "on {{onDate}} ",
+  "inDays": "(in {{inDays}} days)",
   "Checks out: ": "Checks out: ",
   "Total reservations": "Total reservations",
   "Total revenue": "Total revenue",
@@ -153,7 +156,11 @@
   "Select country": "Select country",
   "Booking reservation?": "Booking reservation?",
   "Yes": "Yes",
-  "Reservation details": "Reservation details",
+  "Prepayment amount": "Prepayment amount",
+  "Prepayment percentage": "Prepayment percentage",
+  "Prepayment percent is required": "Prepayment percent is required",
+  "Prepayment amount (€)": "Prepayment amount (€)",
+  "Prepayment paid?": "Prepayment paid?",
   "Note": "Note:",
   "arrivalDate": "Arrival: {{arrivalDate}}",
   "departureDate": "Departure: {{departureDate}}",
@@ -185,7 +192,5 @@
   "unitCapacity": "Capacity: {{unitCapacity}}",
   "Price List": "Price List",
   "nights": "nights",
-  "night": "night",
-  "onDate": "on {{onDate}} ",
-  "inDays": "(in {{inDays}} days)"
+  "night": "night"
 }

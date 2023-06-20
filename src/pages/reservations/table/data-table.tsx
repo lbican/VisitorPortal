@@ -72,7 +72,6 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
 
     const handleEditClick = (reservation: IReservation) => {
         onReservationModalOpen();
-        console.log(isReservationModalOpen);
         reservationStore.setEditingReservation(reservation);
     };
 

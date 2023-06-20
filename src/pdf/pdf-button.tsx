@@ -35,7 +35,15 @@ const PDFButton: React.FC<PDFButtonProps> = ({ property, unit, datePrices }) => 
 
     return (
         <PDFDownloadLink
-            document={<PDFDocument property={property} unit={unit} datePrices={datePrices} />}
+            document={
+                <PDFDocument
+                    property={property}
+                    unit={unit}
+                    datePrices={datePrices.filter((price) => {
+                        return price.date_range[0].getFullYear() === new Date().getFullYear();
+                    })}
+                />
+            }
             fileName={`${unit?.name}_date_prices.pdf`}
         >
             {({ loading, error }) => (

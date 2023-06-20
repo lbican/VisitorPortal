@@ -28,7 +28,7 @@ export class ReservationService {
     ): Promise<IReservation> {
         const { date_range } = newReservation;
 
-        const { data, error } = await supabase.rpc('insert_into_guest_and_reservation', {
+        const { data, error } = await supabase.rpc('insert_reservation_data', {
             p_first_name: newReservation.first_name,
             p_last_name: newReservation.last_name,
             p_guests_num: newReservation.guests_num,
@@ -40,7 +40,12 @@ export class ReservationService {
             p_total_price: newReservation.total_price,
             p_note: newReservation.note,
             p_is_booking_reservation: newReservation.is_booking_reservation,
+            p_prepayment_percent: newReservation.prepayment_percent,
+            p_prepayment_paid: newReservation.prepayment_paid,
+            p_country_id: newReservation.country.id,
         });
+
+        console.log(data);
 
         if (error) {
             throw error;
@@ -71,7 +76,7 @@ export class ReservationService {
     ): Promise<IReservation> {
         const { date_range } = existingReservation;
 
-        const { data, error } = await supabase.rpc('update_guest_and_reservation', {
+        const { data, error } = await supabase.rpc('update_reservation_data', {
             p_reservation_id: existingReservation.id,
             p_guest_id: existingReservation.guest_id,
             p_first_name: existingReservation.first_name,
@@ -85,6 +90,9 @@ export class ReservationService {
             p_total_price: existingReservation.total_price,
             p_note: existingReservation.note,
             p_is_booking_reservation: existingReservation.is_booking_reservation,
+            p_prepayment_percent: existingReservation.prepayment_percent,
+            p_prepayment_paid: existingReservation.prepayment_paid,
+            p_country_id: existingReservation.country.id,
         });
 
         if (error) {
@@ -141,39 +149,17 @@ export class ReservationService {
             throw new Error('Unit id was not provided!');
         }
 
-        const { data: reservations, error } = await supabase
-            .from('Reservation')
-            .select(
-                `
-              id,
-              date_range,
-              total_price,
-              fulfilled,
-              adv_payment_paid,
-              created_at,
-              updated_at,
-              note,
-              is_booking_reservation,
-              guest:Guest (
-                id,
-                first_name,
-                last_name,
-                guests_num
-              ),
-              unit:Unit (
-                id,
-                name,
-                capacity
-              )
-        `
-            )
-            .eq('unit_id', unitId);
+        const { data: reservations, error } = await supabase.rpc('get_reservations_by_unit', {
+            p_unit_id: unitId,
+        });
 
+        console.log(reservations);
         if (error) {
+            console.error(error);
             throw error;
         }
 
-        const parsedData = reservations.map((reservation) => {
+        const parsedData = reservations.map((reservation: any) => {
             const dateRange = reservation.date_range.slice(1, -1).split(',');
             return {
                 ...reservation,
@@ -184,6 +170,7 @@ export class ReservationService {
             };
         });
 
+        console.log(parsedData);
         return await this.fulfillReservations(parsedData as unknown as IReservation[]);
     }
 }

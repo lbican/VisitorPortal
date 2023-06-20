@@ -58,7 +58,7 @@ const columnHelpers = (
         header: t('Fulfilled'),
         cell: (info) => getIcon(info.getValue()),
     }),
-    columnHelper.accessor('adv_payment_paid', {
+    columnHelper.accessor('prepayment_paid', {
         header: t('Advance Payment Paid'),
         cell: (info) => getIcon(info.getValue()),
     }),
