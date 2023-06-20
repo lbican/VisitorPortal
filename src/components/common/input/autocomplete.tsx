@@ -1,7 +1,14 @@
 import React from 'react';
-import Select, { SingleValue } from 'react-select';
+import Select, {
+    ActionMeta,
+    components,
+    OptionProps,
+    SingleValue,
+    SingleValueProps,
+} from 'react-select';
 import { Property } from 'csstype';
 import { observer } from 'mobx-react-lite';
+import { HStack, Text } from '@chakra-ui/react';
 
 export interface ILabel {
     value: string;
@@ -33,14 +40,42 @@ export const mapValueToLabel = <T extends IEntity>(entity: T | null | undefined)
     };
 };
 
+const { Option, SingleValue: SingleValueComponent } = components;
+const CustomOption: React.FC<OptionProps<ILabel, false>> = ({ children, ...props }) => (
+    <Option {...props}>
+        <HStack>
+            <img
+                src={`https://flagcdn.com/${props.data.value.toLowerCase()}.svg`}
+                alt={props.data.label}
+                width="16"
+            />
+            <Text>{children}</Text>
+        </HStack>
+    </Option>
+);
+
+const CustomSingleValue: React.FC<SingleValueProps<ILabel>> = ({ children, ...props }) => (
+    <SingleValueComponent {...props}>
+        <HStack>
+            <img
+                src={`https://flagcdn.com/${props.data.value.toLowerCase()}.svg`}
+                alt={props.data.label}
+                width="16"
+            />
+            <Text>{children}</Text>
+        </HStack>
+    </SingleValueComponent>
+);
+
 interface AutocompleteProps {
     placeholder: string;
     value: ILabel | null;
     options: ILabel[];
     isLoading?: boolean;
-    onSelect: (newValue: SingleValue<ILabel>) => void;
+    onSelect: (newValue: SingleValue<ILabel>, actionMeta?: ActionMeta<ILabel>) => void;
     isDisabled?: boolean;
     width?: Property.Width<string | number>;
+    flags?: boolean;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({
@@ -51,10 +86,14 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     onSelect,
     isDisabled,
     width,
+    flags,
 }) => {
     return (
         <Select
-            onChange={onSelect}
+            components={
+                flags ? { Option: CustomOption, SingleValue: CustomSingleValue } : undefined
+            }
+            onChange={(value, actionMeta) => onSelect(value as SingleValue<ILabel>, actionMeta)}
             value={value}
             theme={(theme) => ({
                 ...theme,

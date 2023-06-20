@@ -63,7 +63,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     const [submitting, setSubmitting] = useState(false);
     const [reservationPrice, setReservationPrice] = useState<number | null>(null);
     const [countries, setCountries] = useState<Country[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<Country>();
     const [prepaymentAmount, setPrepaymentAmount] = useState(0);
     const notification = useToastNotification();
     const { t } = useTranslation();
@@ -86,7 +85,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
 
     const prepayPercentValue = watch('prepayment_percent');
     const prepaymentPaid = watch('prepayment_paid');
+    const country = watch('country');
     const [prepaymentPercent, setPrepaymentPercent] = useState(prepayPercentValue);
+    const [selectedCountry, setSelectedCountry] = useState<Country>(country);
 
     const resetForm = () => {
         reset(
@@ -105,6 +106,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     };
 
     const handleFormSubmit = (data: IFormReservation & IGuest) => {
+        console.log(data);
         setSubmitting(true);
         const actionPromise = reservationStore.editingReservation
             ? updateExistingReservation(data)
@@ -197,8 +199,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         const index = countries.findIndex((value) => {
             return value.id === newValue?.value;
         });
+
         if (index >= 0) {
             setSelectedCountry(countries[index]);
+            setValue('country', countries[index]);
         }
     };
 
@@ -273,6 +277,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                 options={mapToAutocompleteLabels(countries)}
                                 value={mapValueToLabel(selectedCountry)}
                                 isLoading={countries.length === 0}
+                                flags={true}
                             />
                         </FormControl>
                     </HStack>

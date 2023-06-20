@@ -3,7 +3,6 @@ import { format, isBefore } from 'date-fns';
 import { IFormReservation, IGuest, IReservation } from '../utils/interfaces/typings';
 import { CalendarService } from './calendar-service';
 import { Country } from '../utils/interfaces/utils';
-import { isAfter } from 'date-fns/fp';
 
 export class ReservationService {
     static async getTotalPrice(unit_id: string, date_range: [Date, Date]): Promise<number | null> {
@@ -44,8 +43,6 @@ export class ReservationService {
             p_prepayment_paid: newReservation.prepayment_paid,
             p_country_id: newReservation.country.id,
         });
-
-        console.log(data);
 
         if (error) {
             throw error;
@@ -170,7 +167,6 @@ export class ReservationService {
             };
         });
 
-        console.log(parsedData);
         return await this.fulfillReservations(parsedData as unknown as IReservation[]);
     }
 }

@@ -1,10 +1,11 @@
 import React from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IReservation } from '../../../utils/interfaces/typings';
-import { Button, HStack, Icon, IconButton } from '@chakra-ui/react';
+import { Button, HStack, Icon, IconButton, Text } from '@chakra-ui/react';
 import { GoTrashcan } from 'react-icons/go';
 import i18n, { TFunction } from 'i18next';
 import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
+import { Country } from '../../../utils/interfaces/utils';
 
 const columnHelper = createColumnHelper<IReservation>();
 
@@ -23,6 +24,19 @@ const getIcon = (isTruthy: boolean) => {
     return <Icon as={AiFillCloseCircle} color="red.500" boxSize={8} />;
 };
 
+const getCountryFlag = (country: Country) => {
+    return (
+        <HStack>
+            <img
+                src={`https://flagcdn.com/${country.id.toLowerCase()}.svg`}
+                alt={country.id}
+                width="32"
+            />
+            <Text>{country.name}</Text>
+        </HStack>
+    );
+};
+
 type HandleButtonClick = (reservation: IReservation) => void;
 const columnHelpers = (
     t: TFunction,
@@ -36,6 +50,10 @@ const columnHelpers = (
     columnHelper.accessor('guest.last_name', {
         header: t('Last Name'),
         cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('guest.country', {
+        header: t('Guest country'),
+        cell: (info) => getCountryFlag(info.getValue()),
     }),
     columnHelper.accessor('guest.guests_num', {
         header: t('Guests Number'),
