@@ -1,17 +1,11 @@
 import { IFormReservation, IGuest, IReservation } from '../../../utils/interfaces/typings';
-import { Country } from '../../../utils/interfaces/utils';
-const defaultCountry: Country = {
-    id: 'HR',
-    longitude: 15.2,
-    latitude: 45.1,
-    name: 'Croatia',
-};
+
 const getReservationFormValues = (
     unitId: string,
     date_range: [Date, Date],
     editingReservation?: IReservation
-): IFormReservation & IGuest => {
-    const defaultReservation: IFormReservation & IGuest = {
+): IFormReservation & Partial<IGuest> => {
+    const defaultReservation: IFormReservation & Partial<IGuest> = {
         id: '',
         guest_id: '',
         unit_id: unitId,
@@ -24,7 +18,6 @@ const getReservationFormValues = (
         guests_num: 1,
         prepayment_percent: 0,
         prepayment_paid: false,
-        country: defaultCountry,
     };
 
     if (editingReservation) {
@@ -45,6 +38,8 @@ const getReservationFormValues = (
         defaultReservation.prepayment_percent = editingReservation.prepayment_percent;
         defaultReservation.country = editingReservation.guest.country;
     }
+
+    console.log(defaultReservation);
 
     return defaultReservation;
 };

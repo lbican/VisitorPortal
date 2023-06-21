@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react';
 import { MdOutlineSave } from 'react-icons/md';
 import useToastNotification from '../../../hooks/useToastNotification';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { ReservationService } from '../../../services/reservation-service';
 import i18n from 'i18next';
 import { differenceInDays } from 'date-fns';
@@ -41,11 +41,9 @@ import getReservationFormValues from './modal-values';
 import { isObject } from 'lodash';
 import { Country } from '../../../utils/interfaces/utils';
 import Autocomplete, {
-    ILabel,
     mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../../components/common/input/autocomplete';
-import { SingleValue } from 'react-select';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -74,20 +72,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         setValue,
         reset,
         watch,
+        control,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
-        defaultValues: getReservationFormValues(
-            unit.id,
-            date_range,
-            reservationStore.editingReservation
-        ),
+        defaultValues: {
+            prepayment_percent: 0,
+        },
     });
 
     const prepayPercentValue = watch('prepayment_percent');
     const prepaymentPaid = watch('prepayment_paid');
     const country = watch('country');
     const [prepaymentPercent, setPrepaymentPercent] = useState(prepayPercentValue);
-    const [selectedCountry, setSelectedCountry] = useState<Country>(country);
 
     const resetForm = () => {
         reset(
@@ -125,7 +121,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     };
 
     const calculatePrepaymentAmount = (percentage: number, total: number | null) => {
-        return (percentage / 100) * (total || 0);
+        return (percentage / 100) * (total ?? 0);
     };
 
     useEffect(() => {
@@ -187,21 +183,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                     reject(error);
                 });
         });
-    };
-
-    const onCountrySelect = (newValue: SingleValue<ILabel>) => {
-        if (newValue?.value === selectedCountry?.id) {
-            return;
-        }
-
-        const index = countries.findIndex((value) => {
-            return value.id === newValue?.value;
-        });
-
-        if (index >= 0) {
-            setSelectedCountry(countries[index]);
-            setValue('country', countries[index]);
-        }
     };
 
     return (
@@ -267,16 +248,32 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                             </NumberInput>
                             <FormErrorMessage>{errors?.guests_num?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl>
+                        <FormControl isInvalid={!!errors.country}>
                             <FormLabel>{t('Guest country')}</FormLabel>
-                            <Autocomplete
-                                placeholder={t('Select country') ?? ''}
-                                onSelect={onCountrySelect}
-                                options={mapToAutocompleteLabels(countries)}
-                                value={mapValueToLabel(selectedCountry)}
-                                isLoading={countries.length === 0}
-                                flags={true}
+                            <Controller
+                                name="country"
+                                control={control}
+                                rules={{ required: t('Country is required') ?? true }}
+                                render={({ field }) => (
+                                    <Autocomplete
+                                        placeholder={t('Select country') ?? ''}
+                                        onSelect={(selectedOption) => {
+                                            const index = countries.findIndex(
+                                                (val) => val.id === selectedOption?.value
+                                            );
+
+                                            if (index >= 0) {
+                                                field.onChange(countries[index]);
+                                            }
+                                        }}
+                                        options={mapToAutocompleteLabels(countries)}
+                                        value={mapValueToLabel(country)}
+                                        isLoading={countries.length === 0}
+                                        flags={true}
+                                    />
+                                )}
                             />
+                            <FormErrorMessage>{errors?.country?.message}</FormErrorMessage>
                         </FormControl>
                     </HStack>
                     <FormControl mt={2}>
@@ -300,7 +297,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                     </Text>
                     <Divider my={2} />
                     <HStack mt={2} alignItems="flex-start" justifyContent="space-between">
-                        <FormControl>
+                        <FormControl isInvalid={!!errors.prepayment_percent}>
                             <FormLabel htmlFor="prepayment_percent">
                                 {t('Prepayment percentage')}
                             </FormLabel>
@@ -309,7 +306,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                                 min={0}
                                 max={100}
                                 keepWithinRange={true}
-                                value={prepaymentPercent}
                                 onChange={handlePrepaymentChange}
                             >
                                 <NumberInputField
