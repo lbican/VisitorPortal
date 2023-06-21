@@ -8,13 +8,11 @@ import {
     Alert,
     AlertIcon,
     Box,
-    Flex,
     Grid,
     GridItem,
     Heading,
     HStack,
     Skeleton,
-    Spinner,
     useDisclosure,
     VStack,
 } from '@chakra-ui/react';
@@ -54,6 +52,9 @@ const PropertyPage = () => {
     }, [selectedUnit]);
 
     useEffect(() => {
+        void resolveCurrentProperty();
+        reservationStore.setReservations([]);
+
         return () => {
             store.setPropertyManagers([]);
         };
@@ -73,27 +74,14 @@ const PropertyPage = () => {
         }
     };
 
-    useEffect(() => {
-        void resolveCurrentProperty();
-        reservationStore.setReservations([]);
-    }, []);
-
-    if (!store.currentProperty) {
-        if (!store.isFetching) {
-            return (
-                <EmptyState
-                    code={404}
-                    message={t('Could not find property you are looking for')}
-                    shortMessage={t('Property not found')}
-                />
-            );
-        } else {
-            return (
-                <Flex justifyContent="center" alignItems="center" height="100%">
-                    <Spinner size="lg" />
-                </Flex>
-            );
-        }
+    if (!store.currentProperty && !store.isFetching) {
+        return (
+            <EmptyState
+                code={404}
+                message={t('Could not find property you are looking for')}
+                shortMessage={t('Property not found')}
+            />
+        );
     }
 
     return (
@@ -109,18 +97,19 @@ const PropertyPage = () => {
                         banner_url={
                             store.isFetching
                                 ? undefined
-                                : PropertyService.getPropertyImage(store.currentProperty.image_path)
-                                      ?.url
+                                : PropertyService.getPropertyImage(
+                                      store.currentProperty?.image_path
+                                  )?.url
                         }
                     >
                         <VStack alignItems="flex-start">
                             <Skeleton isLoaded={!store.isFetching}>
-                                <Heading color="white">{store.currentProperty.name}</Heading>
+                                <Heading color="white">{store.currentProperty?.name}</Heading>
                             </Skeleton>
                             <Skeleton isLoaded={!store.isFetching}>
                                 <PropertyTags
-                                    type={store.currentProperty.type}
-                                    location={store.currentProperty.location}
+                                    type={store.currentProperty?.type}
+                                    location={store.currentProperty?.location}
                                 />
                             </Skeleton>
                         </VStack>
@@ -161,8 +150,8 @@ const PropertyPage = () => {
                 </BannerWrapper>
             </Box>
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
-            <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6} w="full">
-                <GridItem order={[2, null, 1]} w="100%">
+            <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6}>
+                <GridItem order={[2, null, 1]} maxW="3xl">
                     <Heading as="h3" fontSize="3xl" fontWeight="bold" mb={18} textAlign="left">
                         {t('Upcoming arrivals / departures')}
                     </Heading>

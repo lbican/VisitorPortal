@@ -77,7 +77,7 @@ const StatsWithIcons = (yearlyReport: YearlyReportData) => {
 
     return (
         <Box maxW="7xl">
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={5}>
+            <SimpleGrid columns={{ base: 1, xl: 3 }} spacing={5}>
                 {statData.map((data) => (
                     <Card key={data.id} data={data} />
                 ))}
@@ -107,7 +107,7 @@ const Card = ({ data }: { data: StatData }) => {
                     '0 4px 6px rgba(160, 174, 192, 0.6)',
                     '2px 4px 6px rgba(9, 17, 28, 0.9)'
                 )}
-                w="100%"
+                maxW="100%"
                 textAlign="left"
                 align="start"
                 spacing={0}
@@ -128,7 +128,6 @@ const Card = ({ data }: { data: StatData }) => {
                         p={2}
                         bg="green.400"
                         position="relative"
-                        w={12}
                         h={12}
                         overflow="hidden"
                         lineHeight={0}

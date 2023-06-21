@@ -106,7 +106,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     };
 
     const handleFormSubmit = (data: IFormReservation & IGuest) => {
-        console.log(data);
         setSubmitting(true);
         const actionPromise = reservationStore.editingReservation
             ? updateExistingReservation(data)
@@ -169,7 +168,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                     resolve();
                 })
                 .catch((error) => {
-                    notification.error(t(''));
                     console.error(error);
                     reject(error);
                 });

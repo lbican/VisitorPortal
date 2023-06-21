@@ -26,16 +26,17 @@ export class ReservationService {
         newReservation: IFormReservation & IGuest
     ): Promise<IReservation> {
         const { date_range } = newReservation;
+        const formattedRange = `[${format(date_range[0], 'yyyy-MM-dd')},${format(
+            date_range[1],
+            'yyyy-MM-dd'
+        )}]`;
 
         const { data, error } = await supabase.rpc('insert_reservation_data', {
             p_first_name: newReservation.first_name,
             p_last_name: newReservation.last_name,
             p_guests_num: newReservation.guests_num,
             p_unit_id: newReservation.unit_id,
-            p_date_range: [
-                format(date_range[0], 'yyyy-MM-dd'),
-                format(date_range[1], 'yyyy-MM-dd'),
-            ],
+            p_date_range: formattedRange,
             p_total_price: newReservation.total_price,
             p_note: newReservation.note,
             p_is_booking_reservation: newReservation.is_booking_reservation,
@@ -71,7 +72,13 @@ export class ReservationService {
     static async updateReservation(
         existingReservation: IFormReservation & IGuest
     ): Promise<IReservation> {
+        console.log(existingReservation);
         const { date_range } = existingReservation;
+        const formattedRange = `[${format(date_range[0], 'yyyy-MM-dd')},${format(
+            date_range[1],
+            'yyyy-MM-dd'
+        )})`;
+        console.log(formattedRange);
 
         const { data, error } = await supabase.rpc('update_reservation_data', {
             p_reservation_id: existingReservation.id,
@@ -80,10 +87,7 @@ export class ReservationService {
             p_last_name: existingReservation.last_name,
             p_guests_num: existingReservation.guests_num,
             p_unit_id: existingReservation.unit_id,
-            p_date_range: [
-                format(date_range[0], 'yyyy-MM-dd'),
-                format(date_range[1], 'yyyy-MM-dd'),
-            ],
+            p_date_range: formattedRange,
             p_total_price: existingReservation.total_price,
             p_note: existingReservation.note,
             p_is_booking_reservation: existingReservation.is_booking_reservation,
@@ -150,7 +154,6 @@ export class ReservationService {
             p_unit_id: unitId,
         });
 
-        console.log(reservations);
         if (error) {
             console.error(error);
             throw error;

@@ -4,7 +4,7 @@ import { PropertyType } from '../../../utils/interfaces/typings';
 import { MdLocationPin } from 'react-icons/md';
 
 interface IPropertyTagsProps {
-    type: PropertyType;
+    type?: PropertyType;
     location?: string;
 }
 

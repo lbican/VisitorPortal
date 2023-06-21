@@ -1,5 +1,14 @@
 import React, { ReactElement, useEffect } from 'react';
-import { Button, Divider, Flex, Heading, HStack, useDisclosure } from '@chakra-ui/react';
+import {
+    Button,
+    Divider,
+    Flex,
+    Heading,
+    HStack,
+    useDisclosure,
+    Wrap,
+    WrapItem,
+} from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';
@@ -100,25 +109,26 @@ const Properties = (): ReactElement => {
                 <ManagerModal isOpen={isManagerModalOpen} onClose={onManagerModalClose} />
                 <Divider mb={4} />
             </motion.div>
-            <Flex alignItems="flex-start" flexWrap="wrap">
+            <Wrap justifyContent={{ base: 'center', md: 'flex-start' }} spacing={4}>
                 {store.properties.map((property) => (
-                    <CustomContextMenu
-                        isOwner={property.manager_type === ManagerType.OWNER}
-                        key={property.id}
-                        onJumpToCalendar={() => {
-                            store.setCurrentProperty(property);
-                            navigate('/calendar');
-                        }}
-                        onMenuEdit={() => openEditModal(property)}
-                        onMenuDelete={() => openDeleteAlert(property)}
-                        onAddManagerClick={() => openManagerModal(property)}
-                    >
-                        <NavLink to={`/properties/property/${property.id}`}>
-                            <Property property={property} />
-                        </NavLink>
-                    </CustomContextMenu>
+                    <WrapItem key={property.id}>
+                        <CustomContextMenu
+                            isOwner={property.manager_type === ManagerType.OWNER}
+                            onJumpToCalendar={() => {
+                                store.setCurrentProperty(property);
+                                navigate('/calendar');
+                            }}
+                            onMenuEdit={() => openEditModal(property)}
+                            onMenuDelete={() => openDeleteAlert(property)}
+                            onAddManagerClick={() => openManagerModal(property)}
+                        >
+                            <NavLink to={`/properties/property/${property.id}`}>
+                                <Property property={property} />
+                            </NavLink>
+                        </CustomContextMenu>
+                    </WrapItem>
                 ))}
-            </Flex>
+            </Wrap>
         </>
     );
 };

@@ -18,8 +18,6 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             as={motion.div}
             bg={useColorModeValue('white', 'gray.800')}
             w="sm"
-            marginRight={4}
-            marginBottom={4}
             whileHover={{ translateY: -10 }}
             borderWidth="1px"
             rounded="lg"

@@ -114,14 +114,17 @@ const Dashboard = (): ReactElement => {
                 <NoData />
             ) : (
                 <Grid
-                    templateRows={{ base: 'repeat(3, 1fr)', md: 'repeat(1, 1fr)' }}
-                    templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(5, 1fr)' }}
+                    templateColumns={{
+                        base: 'repeat(1, 1fr)',
+                        md: 'repeat(4, 1fr)',
+                        xl: 'repeat(5, 1fr)',
+                    }}
                     gap={4}
                 >
-                    <GridItem colSpan={5}>
+                    <GridItem colSpan={{ base: 1, md: 2, xl: 5 }}>
                         {yearlyReport && <StatsWithIcons {...yearlyReport} />}
                     </GridItem>
-                    <GridItem colSpan={{ base: 2, md: 1 }}>
+                    <GridItem colSpan={{ base: 1, md: 2, xl: 1 }}>
                         <ChartContainer isLoaded={!loading}>
                             <Pie
                                 data={transformToReservationData(totalReservationsData, filterBy)}
@@ -129,7 +132,7 @@ const Dashboard = (): ReactElement => {
                             />
                         </ChartContainer>
                     </GridItem>
-                    <GridItem colSpan={{ base: 1, md: 2 }}>
+                    <GridItem colSpan={{ base: 1, md: 4, xl: 2 }}>
                         <ChartContainer isLoaded={!loading}>
                             <Bar
                                 data={transformToMonthlyReservationData(
@@ -142,7 +145,7 @@ const Dashboard = (): ReactElement => {
                             />
                         </ChartContainer>
                     </GridItem>
-                    <GridItem colSpan={2}>
+                    <GridItem colSpan={{ base: 1, md: 4, xl: 2 }}>
                         <ChartContainer isLoaded={!loading}>
                             <Line
                                 data={transformToMonthlyRevenueData(

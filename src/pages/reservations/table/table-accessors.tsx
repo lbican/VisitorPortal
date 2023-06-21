@@ -31,6 +31,7 @@ const getCountryFlag = (country: Country) => {
                 src={`https://flagcdn.com/${country.id.toLowerCase()}.svg`}
                 alt={country.id}
                 width="32"
+                height="16"
             />
             <Text>{country.name}</Text>
         </HStack>
