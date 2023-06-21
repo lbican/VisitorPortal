@@ -92,7 +92,13 @@ const Reservations = (): ReactElement => {
             );
         }
 
-        return <DataTable data={reservationStore.reservations} unit={unit} />;
+        return (
+            <DataTable
+                data={reservationStore.reservations}
+                unit={unit}
+                getRowCanExpand={() => true}
+            />
+        );
     };
 
     return (

@@ -1,5 +1,6 @@
 import { Box, HStack, useRadio, UseRadioProps, useRadioGroup, Text } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CustomRadioProps extends UseRadioProps {
     children: ReactNode;
@@ -37,6 +38,7 @@ interface CustomRadioGroupProps {
 }
 
 const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({ defaultValue, options, setFilterBy }) => {
+    const { t } = useTranslation();
     const { getRootProps, getRadioProps } = useRadioGroup({
         name: 'filter',
         defaultValue,
@@ -51,7 +53,7 @@ const ChartSwitcher: React.FC<CustomRadioGroupProps> = ({ defaultValue, options,
                 const radio = getRadioProps({ value });
                 return (
                     <CustomRadio key={value} {...radio}>
-                        <Text>{value}</Text>
+                        <Text>{t(value)}</Text>
                     </CustomRadio>
                 );
             })}

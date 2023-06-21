@@ -1,5 +1,19 @@
 import * as React from 'react';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, chakra, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    chakra,
+    useDisclosure,
+    VStack,
+    Text,
+    useColorModeValue,
+    Tag,
+} from '@chakra-ui/react';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import {
     useReactTable,
@@ -9,6 +23,8 @@ import {
     getSortedRowModel,
     RowData,
     ColumnMeta,
+    getExpandedRowModel,
+    Row,
 } from '@tanstack/react-table';
 declare module '@tanstack/table-core' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,13 +42,63 @@ import { observer } from 'mobx-react-lite';
 import ReservationModal from '../form/reservation-modal';
 import { useEffect } from 'react';
 import { subDays } from 'date-fns';
+import i18n from 'i18next';
+import { addDays } from 'date-fns/fp';
+
+interface SubComponentProps {
+    row: Row<IReservation>;
+}
+
+const SubComponent: React.FC<SubComponentProps> = ({ row }) => {
+    const { ...reservation } = row.original;
+    const noteBg = useColorModeValue('whitesmoke', 'gray.800');
+    const { t } = useTranslation();
+    const prepaymentAmount = (reservation.prepayment_percent / 100) * reservation.total_price;
+
+    return (
+        <VStack alignItems="flex-start">
+            <Text>
+                {t('arrivalDate', {
+                    arrivalDate: reservation.date_range[0].toLocaleDateString(
+                        i18n.language ?? 'en'
+                    ),
+                })}
+            </Text>
+            <Text>
+                {t('departureDate', {
+                    departureDate: addDays(1, reservation.date_range[1]).toLocaleDateString(
+                        i18n.language ?? 'en'
+                    ),
+                })}
+            </Text>
+            {!reservation.prepayment_paid && (
+                <Text>
+                    {t('Advance payment amount:')}
+                    <Text as="b"> {prepaymentAmount}€</Text>
+                    <Tag ml={2} colorScheme="orange">
+                        {t('PENDING')}
+                    </Tag>
+                </Text>
+            )}
+            {reservation.note && (
+                <>
+                    <Text as="b">{t('Note')}</Text>
+                    <Box p={4} bg={noteBg} rounded={6} minW="xl">
+                        {reservation.note}
+                    </Box>
+                </>
+            )}
+        </VStack>
+    );
+};
 
 export type DataTableProps = {
     unit: IUnit | null;
     data: IReservation[];
+    getRowCanExpand: (row: Row<IReservation>) => boolean;
 };
 
-const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
+const DataTable: React.FC<DataTableProps> = ({ unit, data, getRowCanExpand }) => {
     const { t } = useTranslation();
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const notification = useToastNotification();
@@ -83,8 +149,10 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
     const table = useReactTable({
         columns: columnHelpers(t, handleEditClick, handleDeleteClick),
         data,
+        getRowCanExpand,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
         onSortingChange: setSorting,
         state: {
             sorting,
@@ -144,20 +212,29 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data }) => {
                     </Thead>
                     <Tbody>
                         {table.getRowModel().rows.map((row) => (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    const meta: ColumnMeta<IReservation, unknown> | undefined =
-                                        cell.column.columnDef.meta;
-                                    return (
-                                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                            <React.Fragment key={row.id}>
+                                <Tr>
+                                    {row.getVisibleCells().map((cell) => {
+                                        const meta: ColumnMeta<IReservation, unknown> | undefined =
+                                            cell.column.columnDef.meta;
+                                        return (
+                                            <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </Td>
+                                        );
+                                    })}
+                                </Tr>
+                                {row.getIsExpanded() && (
+                                    <Tr>
+                                        <Td colSpan={row.getVisibleCells().length}>
+                                            <SubComponent row={row} />{' '}
                                         </Td>
-                                    );
-                                })}
-                            </Tr>
+                                    </Tr>
+                                )}
+                            </React.Fragment>
                         ))}
                     </Tbody>
                 </Table>
