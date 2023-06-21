@@ -176,13 +176,13 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data, getRowCanExpand }) =>
                                         );
                                     })}
                                 </Tr>
-                                {row.getIsExpanded() && (
-                                    <Tr>
-                                        <Td colSpan={row.getVisibleCells().length}>
+                                <Tr>
+                                    <Td colSpan={row.getVisibleCells().length} p={2}>
+                                        <Collapse in={row.getIsExpanded()} startingHeight={0}>
                                             <ToggledTableData row={row} />
-                                        </Td>
-                                    </Tr>
-                                )}
+                                        </Collapse>
+                                    </Td>
+                                </Tr>
                             </React.Fragment>
                         ))}
                     </Tbody>
