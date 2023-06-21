@@ -1,14 +1,5 @@
 import React, { ReactElement, useEffect } from 'react';
-import {
-    Button,
-    Divider,
-    Flex,
-    Heading,
-    HStack,
-    useDisclosure,
-    Wrap,
-    WrapItem,
-} from '@chakra-ui/react';
+import { Button, Divider, Heading, HStack, useDisclosure, Wrap, WrapItem } from '@chakra-ui/react';
 import Property from '../../components/property/property';
 import { AiOutlinePlus } from 'react-icons/ai';
 import PropertyActionModal from './form/property-action-modal';

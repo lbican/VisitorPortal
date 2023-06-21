@@ -19,7 +19,7 @@ import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import ReservationModal from '../reservations/form/reservation-modal';
+import ReservationModal from '../reservations/form/reservation-action-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
 import { isSameDay } from 'date-fns/fp';
 import PriceTag from '../../components/calendar/tags/price-tag';

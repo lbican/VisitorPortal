@@ -52,7 +52,7 @@ interface ReservationModalProps {
     date_range: [Date, Date];
 }
 
-const ReservationModal: React.FC<ReservationModalProps> = ({
+const ReservationActionModal: React.FC<ReservationModalProps> = ({
     isOpen,
     onClose,
     unit,
@@ -403,4 +403,4 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     );
 };
 
-export default observer(ReservationModal);
+export default observer(ReservationActionModal);

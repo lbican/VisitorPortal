@@ -28,10 +28,12 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
         <ContextMenu<HTMLDivElement>
             renderMenu={() => (
                 <MenuList>
-                    <MenuItem onClick={onMenuDelete}>
-                        <GoTrashcan />
-                        <Text ml={2}>{t('Delete')}</Text>
-                    </MenuItem>
+                    {isOwner && (
+                        <MenuItem onClick={onMenuDelete}>
+                            <GoTrashcan />
+                            <Text ml={2}>{t('Delete')}</Text>
+                        </MenuItem>
+                    )}
                     <MenuItem onClick={onMenuEdit}>
                         <AiOutlineEdit />
                         <Text ml={2}>{t('Edit')}</Text>

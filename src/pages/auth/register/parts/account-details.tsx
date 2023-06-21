@@ -15,17 +15,14 @@ import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import PictureSelector from './picture-selector';
 import { motion } from 'framer-motion';
-import {
-    firstNameValidator,
-    lastNameValidator,
-    usernameValidator,
-} from '../../../../services/validators';
 import { useTranslation } from 'react-i18next';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     const form = useContext(FormContext);
     const [avatar, setAvatar] = useState<string>(form?.formState.steps.account.value.avatar ?? '');
     const { t } = useTranslation();
+    const USERNAME_MIN = 6;
+    const NAME_MIN = 2;
 
     const handleImageClick = useCallback((image: string) => {
         setAvatar(image);
@@ -46,9 +43,27 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
         },
     });
 
-    const { ref: usernameRef, ...usernameControl } = register('username', usernameValidator);
-    const { ref: firstNameRef, ...firstNameControl } = register('first_name', firstNameValidator);
-    const { ref: lastNameRef, ...lastNameControl } = register('last_name', lastNameValidator);
+    const { ref: usernameRef, ...usernameControl } = register('username', {
+        required: t('Username is required'),
+        minLength: {
+            value: USERNAME_MIN,
+            message: t(`Username must be at least ${USERNAME_MIN} characters`),
+        },
+    });
+    const { ref: firstNameRef, ...firstNameControl } = register('first_name', {
+        minLength: {
+            value: NAME_MIN,
+            message: t(`First name must be at least ${NAME_MIN} characters`),
+        },
+        required: t('First name is required'),
+    });
+    const { ref: lastNameRef, ...lastNameControl } = register('last_name', {
+        minLength: {
+            value: NAME_MIN,
+            message: t(`Last name must be at least ${NAME_MIN} characters`),
+        },
+        required: t('Last name is required'),
+    });
 
     return (
         <motion.div

@@ -4,14 +4,20 @@ import { AuthService } from '../services/auth-service';
 
 export const useAuthForm = () => {
     const [error, setError] = useState<AuthError | null>(null);
+    const [loadingToken, setLoadingToken] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const loginUserWithToken = async (provider: Provider) => {
-        try {
-            await AuthService.oauthLogin(provider);
-        } catch (error) {
-            setError(error as AuthError);
-        }
+    const loginUserWithToken = (provider: Provider) => {
+        setError(null);
+        setLoadingToken(true);
+
+        AuthService.oauthLogin(provider)
+            .catch((error) => {
+                setError(error as AuthError);
+            })
+            .finally(() => {
+                setLoadingToken(false);
+            });
     };
 
     const loginUserWithEmail = async (email: string, password: string) => {
@@ -27,5 +33,5 @@ export const useAuthForm = () => {
         }
     };
 
-    return { loginUserWithToken, loginUserWithEmail, error, loading };
+    return { loginUserWithToken, loginUserWithEmail, error, loading, loadingToken };
 };

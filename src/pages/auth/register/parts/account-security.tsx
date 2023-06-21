@@ -16,17 +16,14 @@ import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { motion } from 'framer-motion';
-import {
-    emailValidator,
-    passwordValidator,
-    repeatPasswordValidator,
-} from '../../../../services/validators';
 import { useTranslation } from 'react-i18next';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const [show, setShow] = React.useState(false);
     const form = useContext(FormContext);
     const { t } = useTranslation();
+
+    const PASSWORD_MIN = 6;
 
     const {
         register,
@@ -42,12 +39,24 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
         },
     });
 
-    const { ref: emailRef, ...emailControl } = register('email', emailValidator);
-    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
-    const { ref: repeatPasswordRef, ...repeatPasswordControl } = register(
-        'repeat_password',
-        repeatPasswordValidator(watch)
-    );
+    const { ref: emailRef, ...emailControl } = register('email', {
+        required: t('Email is required') ?? true,
+    });
+    const { ref: passwordRef, ...passwordControl } = register('password', {
+        required: t('Password is required') ?? true,
+        minLength: {
+            value: PASSWORD_MIN,
+            message: t(`Password must be at least ${PASSWORD_MIN} characters`),
+        },
+    });
+    const { ref: repeatPasswordRef, ...repeatPasswordControl } = register('repeat_password', {
+        required: t('You need to repeat the password') ?? true,
+        validate: (val: string) => {
+            if (watch('password') != val) {
+                return t('Your passwords do no match') ?? '';
+            }
+        },
+    });
 
     const handleClick = (): void => setShow(!show);
 

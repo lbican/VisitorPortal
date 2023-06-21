@@ -9,10 +9,7 @@ import {
     Td,
     chakra,
     useDisclosure,
-    VStack,
-    Text,
-    useColorModeValue,
-    Tag,
+    Collapse,
 } from '@chakra-ui/react';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import {
@@ -39,58 +36,10 @@ import { reservationStore } from '../../../mobx/reservationStore';
 import useToastNotification from '../../../hooks/useToastNotification';
 import AlertDialogComponent from '../../../components/common/feedback/alert-dialog-component';
 import { observer } from 'mobx-react-lite';
-import ReservationModal from '../form/reservation-modal';
+import ReservationModal from '../form/reservation-action-modal';
 import { useEffect } from 'react';
 import { subDays } from 'date-fns';
-import i18n from 'i18next';
-import { addDays } from 'date-fns/fp';
-
-interface SubComponentProps {
-    row: Row<IReservation>;
-}
-
-const SubComponent: React.FC<SubComponentProps> = ({ row }) => {
-    const { ...reservation } = row.original;
-    const noteBg = useColorModeValue('whitesmoke', 'gray.800');
-    const { t } = useTranslation();
-    const prepaymentAmount = (reservation.prepayment_percent / 100) * reservation.total_price;
-
-    return (
-        <VStack alignItems="flex-start">
-            <Text>
-                {t('arrivalDate', {
-                    arrivalDate: reservation.date_range[0].toLocaleDateString(
-                        i18n.language ?? 'en'
-                    ),
-                })}
-            </Text>
-            <Text>
-                {t('departureDate', {
-                    departureDate: addDays(1, reservation.date_range[1]).toLocaleDateString(
-                        i18n.language ?? 'en'
-                    ),
-                })}
-            </Text>
-            {!reservation.prepayment_paid && (
-                <Text>
-                    {t('Advance payment amount:')}
-                    <Text as="b"> {prepaymentAmount}€</Text>
-                    <Tag ml={2} colorScheme="orange">
-                        {t('PENDING')}
-                    </Tag>
-                </Text>
-            )}
-            {reservation.note && (
-                <>
-                    <Text as="b">{t('Note')}</Text>
-                    <Box p={4} bg={noteBg} rounded={6} minW="xl">
-                        {reservation.note}
-                    </Box>
-                </>
-            )}
-        </VStack>
-    );
-};
+import ToggledTableData from './toggled-table-data';
 
 export type DataTableProps = {
     unit: IUnit | null;
@@ -230,7 +179,7 @@ const DataTable: React.FC<DataTableProps> = ({ unit, data, getRowCanExpand }) =>
                                 {row.getIsExpanded() && (
                                     <Tr>
                                         <Td colSpan={row.getVisibleCells().length}>
-                                            <SubComponent row={row} />{' '}
+                                            <ToggledTableData row={row} />
                                         </Td>
                                     </Tr>
                                 )}

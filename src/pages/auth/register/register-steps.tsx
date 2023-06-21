@@ -1,12 +1,11 @@
 import React, { ReactElement } from 'react';
 import { Step, Steps, useSteps } from 'chakra-ui-steps';
-import { Alert, AlertIcon, Box, Button, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { FormProvider } from './definition/form-context';
 import AccountDetails from './parts/account-details';
 import AccountSecurity from './parts/account-security';
 import AccountComplete from './parts/account-complete';
 import { AnimatePresence } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const RegisterSteps = (): ReactElement => {
@@ -41,19 +40,6 @@ const RegisterSteps = (): ReactElement => {
                         </Step>
                     ))}
                 </Steps>
-                {activeStep === 3 && (
-                    <Box py={4}>
-                        <Alert status="success" variant="subtle">
-                            <AlertIcon />
-                            <Flex justifyContent="space-between" alignItems="center" w="100%">
-                                {t('Account successfully created!')}
-                                <Button variant="solid" as={NavLink} to="/">
-                                    {t('Get started')}
-                                </Button>
-                            </Flex>
-                        </Alert>
-                    </Box>
-                )}
             </Flex>
         </FormProvider>
     );

@@ -9,6 +9,7 @@ import {
     FormLabel,
     Input,
     Link,
+    Spinner,
     Text,
     VStack,
 } from '@chakra-ui/react';
@@ -18,7 +19,6 @@ import { Provider } from '@supabase/supabase-js';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useForm } from 'react-hook-form';
 import AnimatedAlert from '../../../components/common/feedback/animated-alert';
-import { emailValidator, passwordValidator } from '../../../services/validators';
 import { useAuthForm } from '../../../hooks/useAuthLogin';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ interface OAuthProvider {
 }
 
 const LoginForm = (): ReactElement => {
-    const { loginUserWithToken, loginUserWithEmail, error, loading } = useAuthForm();
+    const { loginUserWithToken, loginUserWithEmail, error, loading, loadingToken } = useAuthForm();
     const { t } = useTranslation();
 
     const oAuthProviders: OAuthProvider[] = [
@@ -62,12 +62,24 @@ const LoginForm = (): ReactElement => {
         },
     });
 
-    const { ref: emailRef, ...emailControl } = register('email', emailValidator);
-    const { ref: passwordRef, ...passwordControl } = register('password', passwordValidator);
+    const { ref: emailRef, ...emailControl } = register('email', {
+        required: t('Email is required') ?? true,
+    });
+    const { ref: passwordRef, ...passwordControl } = register('password', {
+        required: t('Password is required') ?? true,
+    });
 
     const onLoginSubmit = async (value: { email: string; password: string }) => {
         await loginUserWithEmail(value.email, value.password);
     };
+
+    if (loadingToken) {
+        return (
+            <Flex justifyContent="center" alignItems="center" height="50%">
+                <Spinner size="lg" />
+            </Flex>
+        );
+    }
 
     return (
         <>

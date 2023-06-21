@@ -9,7 +9,7 @@ import AnimatedAlert from '../../../../components/common/feedback/animated-alert
 import { AuthService } from '../../../../services/auth-service';
 import { useTranslation } from 'react-i18next';
 
-const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
+const AccountComplete: React.FC<StepActions> = ({ prevStep }) => {
     const form = useContext(FormContext);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<AuthError | null>(null);
@@ -31,7 +31,6 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep, nextStep }) => {
 
         try {
             await AuthService.signUpUser(user);
-            nextStep();
         } catch (error) {
             setError(error as AuthError);
         } finally {
