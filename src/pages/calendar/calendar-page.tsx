@@ -26,7 +26,7 @@ import PriceTag from '../../components/calendar/tags/price-tag';
 import ReservationTag from '../../components/calendar/tags/reservation-tag';
 import TooltipIconButton from '../../components/common/tooltip-icon-button';
 import { reservationStore } from '../../mobx/reservationStore';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface ITileProps {
     view: View;
@@ -97,6 +97,14 @@ const CalendarPage = (): ReactElement => {
         return !!(selectedDates[0] && selectedDates[1]);
     };
 
+    const getCalendarAnimations = (fromTop: boolean) => {
+        return {
+            hidden: { opacity: 0, y: fromTop ? -10 : 10 },
+            show: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 10 },
+        };
+    };
+
     const isWithinDateRange = (date: Date, date_range: [Date, Date]) =>
         isWithinInterval(date, {
             start: date_range[0],
@@ -130,6 +138,7 @@ const CalendarPage = (): ReactElement => {
                             isFirstDay={isSameDay(date, startDate)}
                             isLastDay={isSameDay(date, lastDay)}
                             isBookingReservation={reservation.is_booking_reservation}
+                            variants={getCalendarAnimations(true)}
                         />
                     );
 
@@ -144,6 +153,7 @@ const CalendarPage = (): ReactElement => {
                         <PriceTag
                             price={datePrice.price}
                             status={soldDate ? PriceStatus.SOLD : PriceStatus.AVAILABLE}
+                            variants={getCalendarAnimations(false)}
                         />
                     );
                     break;
@@ -163,7 +173,6 @@ const CalendarPage = (): ReactElement => {
         },
         [reservationStore.reservations, reservationStore.unitPrices]
     );
-
     return (
         <motion.div
             key="calendar"
@@ -247,16 +256,18 @@ const CalendarPage = (): ReactElement => {
                             />
                         </>
                     )}
-                    <Calendar
-                        tileContent={getTileContent}
-                        locale={i18n.language ?? 'en'}
-                        selectRange={true}
-                        onChange={(value) => {
-                            setSelectedDates(value as Date[]);
-                        }}
-                        value={selectedDates as Value}
-                        minDetail="year"
-                    />
+                    <AnimatePresence>
+                        <Calendar
+                            tileContent={getTileContent}
+                            locale={i18n.language ?? 'en'}
+                            selectRange={true}
+                            onChange={(value) => {
+                                setSelectedDates(value as Date[]);
+                            }}
+                            value={selectedDates as Value}
+                            minDetail="year"
+                        />
+                    </AnimatePresence>
                 </>
             ) : (
                 <InfoDisplay />

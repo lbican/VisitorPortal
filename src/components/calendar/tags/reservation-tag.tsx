@@ -4,6 +4,7 @@ import { ThemeTypings } from '@chakra-ui/styled-system';
 import { TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
 import { observer } from 'mobx-react-lite';
+import { motion, Variants } from 'framer-motion';
 
 interface ReservationTagProps {
     first_name: string;
@@ -13,7 +14,10 @@ interface ReservationTagProps {
     isLastDay: boolean;
     colorScheme: ThemeTypings['colorSchemes'];
     isBookingReservation: boolean;
+    variants?: Variants;
 }
+
+const MotionTag = motion(Tag);
 
 const ReservationTag: React.FC<ReservationTagProps> = ({
     first_name,
@@ -23,10 +27,14 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
     isLastDay,
     colorScheme,
     isBookingReservation,
+    variants,
 }) => {
     return (
-        <Tag
+        <MotionTag
             size="md"
+            initial="hidden"
+            animate="show"
+            exit="exit"
             variant="solid"
             colorScheme={colorScheme}
             w="full"
@@ -35,12 +43,13 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
             marginRight={isLastDay ? 4 : 0}
             roundedLeft={isFirstDay ? 6 : 0}
             roundedRight={isLastDay ? 6 : 0}
+            variants={variants}
         >
             <TagLeftIcon as={isBookingReservation ? TbBrandBooking : BiBookOpen} />
             <TagLabel as="p">
                 {first_name} {last_name} | <Text as="b">{guests_num}</Text>
             </TagLabel>
-        </Tag>
+        </MotionTag>
     );
 };
 

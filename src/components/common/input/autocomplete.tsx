@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-    ActionMeta,
-    components,
-    OptionProps,
-    SingleValue,
-    SingleValueProps,
-    Select,
-} from 'chakra-react-select';
+import { ActionMeta, SingleValue, Select } from 'chakra-react-select';
 import { Property } from 'csstype';
 import { observer } from 'mobx-react-lite';
-import { HStack, Text } from '@chakra-ui/react';
 
 export interface ILabel {
     value: string;
@@ -41,33 +33,6 @@ export const mapValueToLabel = <T extends IEntity>(entity: T | null | undefined)
     };
 };
 
-const { Option, SingleValue: SingleValueComponent } = components;
-const CustomOption: React.FC<OptionProps<ILabel, false>> = ({ children, ...props }) => (
-    <Option {...props}>
-        <HStack>
-            <img
-                src={`https://flagcdn.com/${props.data.value.toLowerCase()}.svg`}
-                alt={props.data.label}
-                width="16"
-            />
-            <Text>{children}</Text>
-        </HStack>
-    </Option>
-);
-
-const CustomSingleValue: React.FC<SingleValueProps<ILabel>> = ({ children, ...props }) => (
-    <SingleValueComponent {...props}>
-        <HStack>
-            <img
-                src={`https://flagcdn.com/${props.data.value.toLowerCase()}.svg`}
-                alt={props.data.label}
-                width="16"
-            />
-            <Text>{children}</Text>
-        </HStack>
-    </SingleValueComponent>
-);
-
 interface AutocompleteProps {
     placeholder: string;
     value: ILabel | null;
@@ -87,18 +52,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     onSelect,
     isDisabled,
     width,
-    flags,
 }) => {
     return (
         <Select
             size="md"
             colorScheme="blue"
-            onChange={(value, actionMeta) => onSelect(value as SingleValue<ILabel>, actionMeta)}
+            onChange={(value, actionMeta) => onSelect(value, actionMeta)}
             value={value}
             chakraStyles={{
                 container: (provided) => ({
                     ...provided,
-                    width: width,
+                    width: isLoading ? 'fit-content' : width,
                 }),
             }}
             placeholder={placeholder}

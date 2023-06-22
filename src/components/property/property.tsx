@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Tag, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Tag, Text, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import Rating from '../common/input/rating';
 import PropertyTags from './form/property-tags';

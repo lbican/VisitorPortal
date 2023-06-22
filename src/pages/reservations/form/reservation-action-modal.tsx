@@ -269,7 +269,6 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
                                         options={mapToAutocompleteLabels(countries)}
                                         value={mapValueToLabel(country)}
                                         isLoading={countries.length === 0}
-                                        flags={true}
                                     />
                                 )}
                             />

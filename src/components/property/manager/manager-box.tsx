@@ -4,7 +4,6 @@ import { propertyStore as store } from '../../../mobx/propertyStore';
 import {
     Avatar,
     Box,
-    Collapse,
     Heading,
     HStack,
     IconButton,
