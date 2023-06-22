@@ -13,7 +13,7 @@ import Autocomplete, {
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
-import { SingleValue } from 'react-select';
+import { SingleValue } from 'chakra-react-select';
 import { IoPricetag, IoBook } from 'react-icons/io5';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
@@ -182,7 +182,7 @@ const CalendarPage = (): ReactElement => {
                         placeholder={t('Select property') ?? ''}
                         options={mapToAutocompleteLabels<IProperty>(store.properties)}
                         isLoading={store.isFetching}
-                        width="14rem"
+                        width="16rem"
                     />
                     <Autocomplete
                         value={mapValueToLabel(unit)}

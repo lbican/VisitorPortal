@@ -10,7 +10,7 @@ import Autocomplete, {
 } from '../../components/common/input/autocomplete';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import { IUnit } from '../../utils/interfaces/typings';
-import { SingleValue } from 'react-select';
+import { SingleValue } from 'chakra-react-select';
 import { observer } from 'mobx-react-lite';
 import { useAuth } from '../../context/auth-context';
 import { reservationStore } from '../../mobx/reservationStore';
@@ -119,7 +119,7 @@ const Reservations = (): ReactElement => {
                         placeholder={t('Select property') ?? ''}
                         options={mapToAutocompleteLabels(store.properties)}
                         isLoading={store.isFetching}
-                        width="14rem"
+                        width="16rem"
                     />
                     <Autocomplete
                         value={mapValueToLabel(unit)}

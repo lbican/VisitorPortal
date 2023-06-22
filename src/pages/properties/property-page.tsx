@@ -30,7 +30,7 @@ import Autocomplete, {
     mapValueToLabel,
 } from '../../components/common/input/autocomplete';
 import { IUnit } from '../../utils/interfaces/typings';
-import { SingleValue } from 'react-select';
+import { SingleValue } from 'chakra-react-select';
 import Timeline from '../../components/common/timeline/timeline';
 import { reservationStore } from '../../mobx/reservationStore';
 import ManagerBox from '../../components/property/manager/manager-box';

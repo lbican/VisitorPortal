@@ -1,11 +1,12 @@
 import React from 'react';
-import Select, {
+import {
     ActionMeta,
     components,
     OptionProps,
     SingleValue,
     SingleValueProps,
-} from 'react-select';
+    Select,
+} from 'chakra-react-select';
 import { Property } from 'csstype';
 import { observer } from 'mobx-react-lite';
 import { HStack, Text } from '@chakra-ui/react';
@@ -90,39 +91,14 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 }) => {
     return (
         <Select
-            components={
-                flags ? { Option: CustomOption, SingleValue: CustomSingleValue } : undefined
-            }
+            size="md"
+            colorScheme="blue"
             onChange={(value, actionMeta) => onSelect(value as SingleValue<ILabel>, actionMeta)}
             value={value}
-            theme={(theme) => ({
-                ...theme,
-                colors: {
-                    ...theme.colors,
-                    primary25: '#e3eeff',
-                    primary: '#3182CE',
-                },
-            })}
-            styles={{
-                control: (base) => ({
-                    ...base,
-                    width: isLoading ? 'max-content' : width,
-                    borderColor: '#E2E8F0',
-                    borderRadius: '5px',
-                    boxShadow: '0 0 0 1px #CBD5E0',
-                    '&:hover': {
-                        borderColor: '#CBD5E0',
-                    },
-                }),
-                menu: (provided) => ({
+            chakraStyles={{
+                container: (provided) => ({
                     ...provided,
-                    color: 'black',
-                    backgroundColor: '#F7FAFC',
-                    borderRadius: '5px',
-                }),
-                singleValue: (provided) => ({
-                    ...provided,
-                    color: '#2D3748',
+                    width: width,
                 }),
             }}
             placeholder={placeholder}

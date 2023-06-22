@@ -17,6 +17,7 @@
     "@supabase/supabase-js": "^2.25.0",
     "@tanstack/react-table": "^8.9.2",
     "axios": "^1.4.0",
+    "chakra-react-select": "^4.6.0",
     "chakra-ui-contextmenu": "^1.0.5",
     "chakra-ui-steps": "^2.0.4",
     "date-fns": "^2.30.0",
@@ -37,7 +38,6 @@
     "react-icons": "^4.9.0",
     "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.13.0",
-    "react-select": "^5.7.3",
     "react-stars": "^2.2.5",
     "sass": "^1.63.4",
     "uuid": "^9.0.0"
