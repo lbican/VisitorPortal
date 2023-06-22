@@ -39,8 +39,6 @@ const getReservationFormValues = (
         defaultReservation.country = editingReservation.guest.country;
     }
 
-    console.log(defaultReservation);
-
     return defaultReservation;
 };
 

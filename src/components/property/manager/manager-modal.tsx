@@ -43,7 +43,6 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({ isOpen, onClose }) =
 
     const handleSearch = React.useCallback(
         debounce((searchTerm) => {
-            console.log('SEARCHING');
             if (searchTerm.length > 0) {
                 setLoading(true);
                 UserService.searchNonManagers(searchTerm, store.currentProperty?.id)

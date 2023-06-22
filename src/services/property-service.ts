@@ -12,7 +12,7 @@ class PropertyService {
         newProperty: TFormProperty,
         userId: string | undefined
     ): Promise<IProperty> {
-        const { data, error } = await supabase.rpc('create_property', {
+        const { data, error } = await supabase.rpc('create_new_property', {
             p_description: null,
             p_image_path: newProperty.image_path,
             p_location: newProperty.location,
@@ -28,6 +28,7 @@ class PropertyService {
             throw new Error(error.message);
         }
 
+        console.log(data);
         return data;
     }
 
@@ -35,7 +36,7 @@ class PropertyService {
         property: TFormProperty,
         propertyId: string
     ): Promise<IProperty | null> {
-        const { data, error } = await supabase.rpc('update_property', {
+        const { data, error } = await supabase.rpc('update_existing_property', {
             p_id: propertyId,
             p_name: property.name,
             p_description: property.description,
@@ -46,6 +47,7 @@ class PropertyService {
             p_units: property.units,
         });
 
+        console.log(data);
         if (error) {
             console.error(error);
             throw new Error(error.message);

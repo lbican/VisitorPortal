@@ -31,17 +31,21 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     const [user, setUser] = useState<UserProfile | null>(StorageService.getUserFromStorage());
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
             console.log(`Supabase auth event: ${event}`);
-            userService.setSession(session);
 
-            try {
-                const userProfile = await userService.getAuthorizedUser();
-                setUser(userProfile);
-            } catch (error) {
-                setUser(null);
-                console.error(error);
-            }
+            const fetchAuthorizedUser = async () => {
+                try {
+                    userService.setSession(session);
+                    const userProfile = await userService.getAuthorizedUser();
+                    setUser(userProfile);
+                } catch (error) {
+                    setUser(null);
+                    console.error(error);
+                }
+            };
+
+            void fetchAuthorizedUser();
         });
 
         return () => {

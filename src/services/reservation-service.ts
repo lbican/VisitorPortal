@@ -72,13 +72,11 @@ export class ReservationService {
     static async updateReservation(
         existingReservation: IFormReservation & IGuest
     ): Promise<IReservation> {
-        console.log(existingReservation);
         const { date_range } = existingReservation;
         const formattedRange = `[${format(date_range[0], 'yyyy-MM-dd')},${format(
             date_range[1],
             'yyyy-MM-dd'
         )})`;
-        console.log(formattedRange);
 
         const { data, error } = await supabase.rpc('update_reservation_data', {
             p_reservation_id: existingReservation.id,
