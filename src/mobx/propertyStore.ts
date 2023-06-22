@@ -61,6 +61,7 @@ class PropertyStore {
         try {
             await PropertyService.deleteProperty(propertyId, imagePath);
             this.setProperties(this.properties.filter((prop) => prop.id !== propertyId));
+            this.setCurrentProperty(null);
         } finally {
             this.setIsDeleting(false);
         }

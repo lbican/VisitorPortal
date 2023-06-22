@@ -5,6 +5,7 @@ import PropertyTags from './form/property-tags';
 import { motion } from 'framer-motion';
 import { IProperty } from '../../utils/interfaces/typings';
 import PropertyService from '../../services/property-service';
+import ProgressiveImage from '../common/image/progressive-image';
 
 interface PropertyProps {
     property: IProperty;
@@ -24,11 +25,12 @@ const Property: React.FC<PropertyProps> = ({ property }) => {
             shadow="lg"
             position="relative"
         >
-            <Image
-                src={PropertyService.getPropertyImage(property.image_path)?.url || UNRESOLVED_IMAGE}
-                objectFit="cover"
-                alt={`Picture of ${property.name}`}
-                roundedTop="lg"
+            <ProgressiveImage
+                imageLink={
+                    PropertyService.getPropertyImage(property.image_path)?.url ?? UNRESOLVED_IMAGE
+                }
+                imageAlt={`Picture of ${property.name}`}
+                borderRadius="0.5rem 0.5rem 0 0"
                 height="20rem"
                 width="100%"
             />

@@ -13,7 +13,7 @@ import useToastNotification from '../../hooks/useToastNotification';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ManagerModal from '../../components/property/manager/manager-modal';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const Properties = (): ReactElement => {
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
@@ -62,6 +62,14 @@ const Properties = (): ReactElement => {
         }
     };
 
+    const getPropertyCardAnimations = (index: number) => {
+        return {
+            hidden: { opacity: 0, y: -10 * index },
+            show: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 10 },
+        };
+    };
+
     return (
         <>
             <motion.div
@@ -101,7 +109,7 @@ const Properties = (): ReactElement => {
                 <Divider mb={4} />
             </motion.div>
             <Wrap justifyContent={{ base: 'center', md: 'flex-start' }} spacing={4}>
-                {store.properties.map((property) => (
+                {store.properties.map((property, index) => (
                     <WrapItem key={property.id}>
                         <CustomContextMenu
                             isOwner={property.manager_type === ManagerType.OWNER}
@@ -113,9 +121,18 @@ const Properties = (): ReactElement => {
                             onMenuDelete={() => openDeleteAlert(property)}
                             onAddManagerClick={() => openManagerModal(property)}
                         >
-                            <NavLink to={`/properties/property/${property.id}`}>
-                                <Property property={property} />
-                            </NavLink>
+                            <AnimatePresence>
+                                <NavLink to={`/properties/property/${property.id}`}>
+                                    <motion.div
+                                        initial="hidden"
+                                        animate="show"
+                                        exit="exit"
+                                        variants={getPropertyCardAnimations(index + 1)}
+                                    >
+                                        <Property property={property} />
+                                    </motion.div>
+                                </NavLink>
+                            </AnimatePresence>
                         </CustomContextMenu>
                     </WrapItem>
                 ))}

@@ -4,6 +4,7 @@ import { propertyStore as store } from '../../../mobx/propertyStore';
 import {
     Avatar,
     Box,
+    Collapse,
     Heading,
     HStack,
     IconButton,
@@ -35,7 +36,6 @@ const canManageManagers = (managerRole: ManagerType) => {
 const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
     const { t } = useTranslation();
     const managerBackground = useColorModeValue('whitesmoke', 'gray.700');
-    const managersBackground = useColorModeValue('white', 'gray.800');
     const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
     const notification = useToastNotification();
 
@@ -58,7 +58,15 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
     };
 
     return (
-        <Wrap bg={managersBackground} p={4} rounded={4} boxShadow="lg">
+        <Wrap
+            bg="#edf3f8"
+            _dark={{
+                bg: 'gray.800',
+            }}
+            p={4}
+            rounded={4}
+            boxShadow="lg"
+        >
             <Heading as="h4" size="md">
                 {t('Property managers')}
             </Heading>
@@ -102,6 +110,7 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
                                         aria-label="Remove manager"
                                         icon={<AiOutlineUserDelete />}
                                         colorScheme="red"
+                                        size="sm"
                                         isLoading={loadingStates[manager.id] || false}
                                         onClick={() => {
                                             removeSelectedManager(manager.id);
