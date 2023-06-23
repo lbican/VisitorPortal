@@ -15,7 +15,6 @@ import { FormContext } from '../definition/form-context';
 import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {

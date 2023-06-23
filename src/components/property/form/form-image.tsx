@@ -1,7 +1,7 @@
 import { IUploadedImage } from '../../../services/file-service';
 import { Button, VStack } from '@chakra-ui/react';
 import ProgressiveImage from '../../common/image/progressive-image';
-import { GoTrashcan } from 'react-icons/go';
+import { GoTrash } from 'react-icons/go';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +21,7 @@ function FormImage(props: { image: IUploadedImage; loading: boolean; onClick: ()
                 variant="solid"
                 colorScheme="red"
                 isLoading={props.loading}
-                leftIcon={<GoTrashcan />}
+                leftIcon={<GoTrash />}
                 onClick={props.onClick}
             >
                 {t('Delete image')}

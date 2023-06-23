@@ -14,7 +14,6 @@ import { FormContext } from '../definition/form-context';
 import { useForm } from 'react-hook-form';
 import { produce } from 'immer';
 import PictureSelector from './picture-selector';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {

@@ -151,7 +151,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                                         PropertyType.APARTMENT
                                     }
                                     onSelect={(option) => {
-                                        field.onChange(option);
+                                        field.onChange(option as PropertyType);
                                     }}
                                 />
                             )}

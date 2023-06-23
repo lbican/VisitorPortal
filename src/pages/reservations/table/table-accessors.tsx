@@ -2,7 +2,7 @@ import React from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { IReservation } from '../../../utils/interfaces/typings';
 import { Button, HStack, Icon, IconButton, Text } from '@chakra-ui/react';
-import { GoTrashcan } from 'react-icons/go';
+import { GoTrash } from 'react-icons/go';
 import i18n, { TFunction } from 'i18next';
 import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
 import { Country } from '../../../utils/interfaces/utils';
@@ -128,7 +128,7 @@ const columnHelpers = (
                         aria-label={t('Delete reservation')}
                         colorScheme="red"
                         onClick={() => handleDeleteClick(info.row.original)}
-                        icon={<GoTrashcan />}
+                        icon={<GoTrash />}
                     />
                 </HStack>
             );

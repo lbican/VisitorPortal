@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Box, MenuList, MenuItem, Text, MenuDivider } from '@chakra-ui/react';
 import { ContextMenu } from 'chakra-ui-contextmenu';
-import { GoTrashcan } from 'react-icons/go';
+import { GoTrash } from 'react-icons/go';
 import { AiOutlineEdit, AiOutlineUserAdd } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
 
@@ -30,7 +30,7 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
                 <MenuList>
                     {isOwner && (
                         <MenuItem onClick={onMenuDelete}>
-                            <GoTrashcan />
+                            <GoTrash />
                             <Text ml={2}>{t('Delete')}</Text>
                         </MenuItem>
                     )}
