@@ -4,21 +4,30 @@ import LoginForm from './login-form';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Flex, Spinner } from '@chakra-ui/react';
 
 export default function LoginPage(): ReactElement {
-    const { user } = useAuth();
+    const { user, loadingUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (user?.username) {
+        if (user?.username && !loadingUser) {
             const redirectTo = location.state?.from || '/';
             navigate(redirectTo, {
                 replace: true,
             });
         }
-    }, [user]);
+    }, [user, loadingUser]);
+
+    if (loadingUser) {
+        return (
+            <Flex justifyContent="center" alignItems="center" height="100vh">
+                <Spinner size="xl" />
+            </Flex>
+        );
+    }
 
     return (
         <SplitScreen

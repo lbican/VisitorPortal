@@ -31,7 +31,7 @@ import { motion } from 'framer-motion';
 
 const Dashboard = (): ReactElement => {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, loadingUser } = useAuth();
     const [totalReservationsData, setTotalReservationsData] = useState<ReservationData[]>([]);
     const [monthlyReservationData, setMonthlyReservationData] = useState<MonthlyReservationData[]>(
         []
@@ -43,40 +43,42 @@ const Dashboard = (): ReactElement => {
 
     const fetchStatisticsData = useCallback(() => {
         setLoading(true);
-        StatisticsService.getTotalReservations(user?.id)
-            .then((res) => {
-                setTotalReservationsData(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        if (!loadingUser) {
+            StatisticsService.getTotalReservations(user?.id)
+                .then((res) => {
+                    setTotalReservationsData(res);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
 
-        StatisticsService.getMonthlyReservations(user?.id)
-            .then((res) => {
-                setMonthlyReservationData(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            StatisticsService.getMonthlyReservations(user?.id)
+                .then((res) => {
+                    setMonthlyReservationData(res);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
 
-        StatisticsService.getMonthlyRevenue(user?.id)
-            .then((res) => {
-                setMonthlyRevenueData(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            StatisticsService.getMonthlyRevenue(user?.id)
+                .then((res) => {
+                    setMonthlyRevenueData(res);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
 
-        StatisticsService.getYearlyReport(user?.id)
-            .then((res) => {
-                setYearlyReport(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            StatisticsService.getYearlyReport(user?.id)
+                .then((res) => {
+                    setYearlyReport(res);
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
     }, [user]);
 
     useEffect(() => {

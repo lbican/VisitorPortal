@@ -1,44 +1,44 @@
 import React, { ReactElement, useEffect } from 'react';
 import Sidebar from '../../components/layout/sidebar';
 import { Outlet } from 'react-router';
-import { Box, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Spinner } from '@chakra-ui/react';
 import { useAuth } from '../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import ContentWrapper from '../../components/layout/content-wrapper';
 const AdminPanel = (): ReactElement => {
-    const { user } = useAuth();
+    const { user, loadingUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        if (!user) {
+        if (!user && !loadingUser) {
             navigate('/login', {
                 replace: true,
                 state: { from: location.pathname },
             });
         }
 
-        if (user && !user.username) {
+        if (!loadingUser && user && !user.username) {
             navigate('/finish', {
                 replace: true,
                 state: { from: location.pathname },
             });
         }
-    }, [user]);
+    }, [user, loadingUser]);
+
+    if (loadingUser) {
+        return (
+            <Flex justifyContent="center" alignItems="center" height="100vh">
+                <Spinner size="xl" />
+            </Flex>
+        );
+    }
 
     return (
         <Sidebar>
-            <Box
-                flex="1"
-                bg={useColorModeValue('gray.50', 'gray.700')}
-                padding="4"
-                roundedTopLeft="md"
-                shadow="sm"
-            >
-                <AnimatePresence>
-                    <Outlet />
-                </AnimatePresence>
-            </Box>
+            <ContentWrapper>
+                <Outlet />
+            </ContentWrapper>
         </Sidebar>
     );
 };

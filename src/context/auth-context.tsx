@@ -18,23 +18,27 @@ export interface UserProfile {
 
 interface AuthType {
     user: UserProfile | null;
+    loadingUser: boolean;
     signOut: () => void;
 }
 
 const AuthContext = createContext<AuthType>({
     user: null,
+    loadingUser: false,
     signOut: () => {},
 });
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const userService = new UserService();
     const [user, setUser] = useState<UserProfile | null>(StorageService.getUserFromStorage());
+    const [loadingUser, setLoadingUser] = useState(false);
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
             console.log(`Supabase auth event: ${event}`);
 
             const fetchAuthorizedUser = async () => {
+                setLoadingUser(true);
                 try {
                     userService.setSession(session);
                     const userProfile = await userService.getAuthorizedUser();
@@ -42,6 +46,8 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
                 } catch (error) {
                     setUser(null);
                     console.error(error);
+                } finally {
+                    setLoadingUser(false);
                 }
             };
 
@@ -65,7 +71,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
             .catch((error) => console.error(error));
     };
 
-    const authContextValue = useMemo(() => ({ user: user, signOut }), [user]);
+    const authContextValue = useMemo(
+        () => ({ user: user, signOut, loadingUser }),
+        [user, loadingUser]
+    );
 
     return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
 };
