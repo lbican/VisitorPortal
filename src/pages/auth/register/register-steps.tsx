@@ -1,45 +1,44 @@
 import React, { ReactElement } from 'react';
-import { Step, Steps, useSteps } from 'chakra-ui-steps';
-import { Flex } from '@chakra-ui/react';
+import { Collapse, Flex, useSteps } from '@chakra-ui/react';
 import { FormProvider } from './definition/form-context';
 import AccountDetails from './parts/account-details';
 import AccountSecurity from './parts/account-security';
 import AccountComplete from './parts/account-complete';
-import { AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import FormStepper from '../../../components/form/form-stepper';
 
 const RegisterSteps = (): ReactElement => {
-    const { nextStep, prevStep, activeStep } = useSteps({
-        initialStep: 0,
+    const { activeStep, goToNext, goToPrevious } = useSteps({
+        index: 0,
+        count: 3,
     });
 
     const { t } = useTranslation();
 
     const steps = [
         {
-            label: t('Account'),
-            content: <AccountDetails nextStep={nextStep} />,
+            title: t('Account'),
+            content: <AccountDetails nextStep={goToNext} />,
         },
         {
-            label: t('Security'),
-            content: <AccountSecurity nextStep={nextStep} prevStep={prevStep} />,
+            title: t('Security'),
+            content: <AccountSecurity nextStep={goToNext} prevStep={goToPrevious} />,
         },
         {
-            label: t('Complete'),
-            content: <AccountComplete nextStep={nextStep} prevStep={prevStep} />,
+            title: t('Complete'),
+            content: <AccountComplete nextStep={goToNext} prevStep={goToPrevious} />,
         },
     ];
 
     return (
         <FormProvider>
             <Flex flexDir="column" width="100%">
-                <Steps colorScheme="blue" activeStep={activeStep}>
-                    {steps.map(({ label, content }) => (
-                        <Step label={label} key={label}>
-                            <AnimatePresence>{content}</AnimatePresence>
-                        </Step>
-                    ))}
-                </Steps>
+                <FormStepper steps={steps} activeStep={activeStep} orientation="horizontal" />
+                {steps.map(({ title, content }, index) => (
+                    <Collapse key={title} in={activeStep === index}>
+                        {content}
+                    </Collapse>
+                ))}
             </Flex>
         </FormProvider>
     );

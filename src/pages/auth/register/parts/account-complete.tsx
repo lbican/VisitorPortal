@@ -16,13 +16,13 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep }) => {
     const { t } = useTranslation();
 
     const user: IUserRegistration = {
-        username: form?.formState.steps.account.value.username || '',
-        first_name: form?.formState.steps.account.value.first_name || '',
-        last_name: form?.formState.steps.account.value.last_name || '',
-        avatar: form?.formState.steps.account.value.avatar || '',
-        email: form?.formState.steps.security.value.email || '',
-        password: form?.formState.steps.security.value.password || '',
-        repeat_password: form?.formState.steps.security.value.password || '',
+        username: form?.formState.steps.account.value.username ?? '',
+        first_name: form?.formState.steps.account.value.first_name ?? '',
+        last_name: form?.formState.steps.account.value.last_name ?? '',
+        avatar: form?.formState.steps.account.value.avatar ?? '',
+        email: form?.formState.steps.security.value.email ?? '',
+        password: form?.formState.steps.security.value.password ?? '',
+        repeat_password: form?.formState.steps.security.value.password ?? '',
     };
 
     const signUpUser = async (user: IUserRegistration) => {
@@ -39,12 +39,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep }) => {
     };
 
     return (
-        <motion.div
-            key="details"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
+        <>
             <Box py={6}>
                 <Flex py={6} gap={4}>
                     <Avatar size="2xl" src={user.avatar}></Avatar>
@@ -88,7 +83,7 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep }) => {
                 </HStack>
                 <AnimatedAlert error={error} />
             </Box>
-        </motion.div>
+        </>
     );
 };
 

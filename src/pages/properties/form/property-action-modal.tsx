@@ -186,6 +186,8 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                                 steps={steps}
                                 activeStep={activeStep}
                                 orientation="vertical"
+                                height="24rem"
+                                animate={true}
                             />
                             <PropertyForm
                                 register={register}

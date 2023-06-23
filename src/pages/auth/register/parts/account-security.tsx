@@ -61,12 +61,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const handleClick = (): void => setShow(!show);
 
     return (
-        <motion.div
-            key="security"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
+        <>
             <Box
                 py={6}
                 as="form"
@@ -140,7 +135,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
                     </Button>
                 </HStack>
             </Box>
-        </motion.div>
+        </>
     );
 };
 

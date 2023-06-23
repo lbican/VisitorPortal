@@ -1,5 +1,4 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
-import { StepsTheme as Steps } from 'chakra-ui-steps';
 
 const config: ThemeConfig = {
     initialColorMode: 'dark',
@@ -7,9 +6,6 @@ const config: ThemeConfig = {
 };
 
 const themeConfig = extendTheme({
-    components: {
-        Steps,
-    },
     ...config,
     colors: {
         chart: {

@@ -19,24 +19,32 @@ const MotionStepDescription = motion(StepDescription);
 
 export interface FormStep {
     title: string;
-    description: string;
+    description?: string;
 }
 
 interface FormStepperProps {
     steps: FormStep[];
     activeStep: number;
     orientation: 'vertical' | 'horizontal';
+    height?: string;
+    animate?: boolean;
 }
-const FormStepper: React.FC<FormStepperProps> = ({ steps, activeStep, orientation }) => {
+const FormStepper: React.FC<FormStepperProps> = ({
+    steps,
+    activeStep,
+    orientation,
+    height,
+    animate,
+}) => {
     const variants = {
         idle: { scale: 1 },
         wiggle: { scale: [1, 1.05, 1], rotate: [0, 2, -2, 2, 0] },
     };
 
     return (
-        <Stepper index={activeStep} orientation={orientation} size="lg" height="24rem" gap="0">
+        <Stepper index={activeStep} orientation={orientation} size="lg" height={height} gap="0">
             {steps.map((step, index) => (
-                <Step key={index}>
+                <Step key={step.title}>
                     <StepIndicator>
                         <StepStatus
                             complete={<StepIcon />}
@@ -49,17 +57,19 @@ const FormStepper: React.FC<FormStepperProps> = ({ steps, activeStep, orientatio
                         <MotionStepTitle
                             initial="idle"
                             animate={activeStep === index ? 'wiggle' : 'idle'}
-                            variants={variants}
+                            variants={animate ? variants : undefined}
                         >
                             {step.title}
                         </MotionStepTitle>
-                        <MotionStepDescription
-                            initial="idle"
-                            animate={activeStep === index ? 'wiggle' : 'idle'}
-                            variants={variants}
-                        >
-                            {step.description}
-                        </MotionStepDescription>
+                        {step.description && (
+                            <MotionStepDescription
+                                initial="idle"
+                                animate={activeStep === index ? 'wiggle' : 'idle'}
+                                variants={variants}
+                            >
+                                {step.description}
+                            </MotionStepDescription>
+                        )}
                     </MotionBox>
 
                     <StepSeparator />

@@ -66,12 +66,7 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
     });
 
     return (
-        <motion.div
-            key="details"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
+        <>
             <Box
                 py={6}
                 as="form"
@@ -145,7 +140,7 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
                     </Button>
                 </Flex>
             </Box>
-        </motion.div>
+        </>
     );
 };
 

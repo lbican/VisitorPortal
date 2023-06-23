@@ -19,7 +19,6 @@
     "axios": "^1.4.0",
     "chakra-react-select": "^4.6.0",
     "chakra-ui-contextmenu": "^1.0.5",
-    "chakra-ui-steps": "^2.0.4",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.12.16",
     "i18next": "^23.0.1",
@@ -36,7 +35,6 @@
     "react-hook-form": "^7.44.3",
     "react-i18next": "^13.0.0",
     "react-icons": "^4.9.0",
-    "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.13.0",
     "react-stars": "^2.2.5",
     "sass": "^1.63.4",
@@ -44,7 +42,6 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.12",
-    "@types/react-date-range": "^1.4.4",
     "@types/react-dom": "^18.2.5",
     "@types/react-stars": "^2.2.1",
     "@types/uuid": "^9.0.2",
