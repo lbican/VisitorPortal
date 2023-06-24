@@ -14,7 +14,7 @@ const SplitScreen: React.FC<Props> = ({ title, imageLink, children }) => {
             <Flex p={{ base: 0, sm: 2, md: 8 }} flex={1} align="center" justify="center">
                 <Stack
                     spacing={4}
-                    p={8}
+                    p={{ base: 2, md: 4, lg: 8 }}
                     w="full"
                     maxW="xl"
                     borderRadius={8}

@@ -1,14 +1,5 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import {
-    Divider,
-    Heading,
-    HStack,
-    SimpleGrid,
-    Stack,
-    useDisclosure,
-    Wrap,
-    WrapItem,
-} from '@chakra-ui/react';
+import { Divider, Heading, HStack, Stack, useDisclosure } from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval, subDays } from 'date-fns';
