@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Alert, AlertIcon, Divider, Flex, Heading, HStack, Spinner } from '@chakra-ui/react';
+import { Alert, AlertIcon, Divider, Flex, Heading, HStack, Spinner, Stack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
 import { motion } from 'framer-motion';
@@ -112,7 +112,7 @@ const Reservations = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Reservations')}
                 </Heading>
-                <HStack>
+                <Stack direction={{ base: 'column', lg: 'row' }}>
                     <Autocomplete
                         value={mapValueToLabel(store.currentProperty)}
                         onSelect={handlePropertySelect}
@@ -129,7 +129,7 @@ const Reservations = (): ReactElement => {
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />
-                </HStack>
+                </Stack>
             </HStack>
             <Divider my={4} />
             {renderReservations()}

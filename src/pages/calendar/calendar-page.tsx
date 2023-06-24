@@ -1,5 +1,14 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Divider, Heading, HStack, useDisclosure } from '@chakra-ui/react';
+import {
+    Divider,
+    Heading,
+    HStack,
+    SimpleGrid,
+    Stack,
+    useDisclosure,
+    Wrap,
+    WrapItem,
+} from '@chakra-ui/react';
 import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
 import { isBefore, isWithinInterval, subDays } from 'date-fns';
@@ -184,7 +193,7 @@ const CalendarPage = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Calendar')}
                 </Heading>
-                <HStack>
+                <Stack direction={{ base: 'column', lg: 'row' }}>
                     <Autocomplete
                         value={mapValueToLabel(store.currentProperty)}
                         onSelect={handlePropertySelect}
@@ -201,41 +210,43 @@ const CalendarPage = (): ReactElement => {
                         isDisabled={!store.currentProperty}
                         width="14rem"
                     />
-                    <TooltipIconButton
-                        hasArrow={true}
-                        label={
-                            datesSelected()
-                                ? t('Assign price')
-                                : t('Select date range to assign prices')
-                        }
-                        ariaLabel="Assign price"
-                        colorScheme="green"
-                        onClick={onPriceModalOpen}
-                        icon={<IoPricetag />}
-                        isDisabled={!datesSelected()}
-                        placement="bottom-start"
-                    />
-                    <TooltipIconButton
-                        hasArrow={true}
-                        placement="bottom-start"
-                        label={
-                            datesSelected()
-                                ? t('Add new reservation')
-                                : t('Select date range to add reservation')
-                        }
-                        ariaLabel="Add reservation"
-                        colorScheme="orange"
-                        onClick={onReservationModalOpen}
-                        icon={<IoBook />}
-                        isDisabled={!datesSelected()}
-                    />
+                    <HStack>
+                        <TooltipIconButton
+                            hasArrow={true}
+                            label={
+                                datesSelected()
+                                    ? t('Assign price')
+                                    : t('Select date range to assign prices')
+                            }
+                            ariaLabel="Assign price"
+                            colorScheme="green"
+                            onClick={onPriceModalOpen}
+                            icon={<IoPricetag />}
+                            isDisabled={!datesSelected()}
+                            placement="bottom-start"
+                        />
+                        <TooltipIconButton
+                            hasArrow={true}
+                            placement="bottom-start"
+                            label={
+                                datesSelected()
+                                    ? t('Add new reservation')
+                                    : t('Select date range to add reservation')
+                            }
+                            ariaLabel="Add reservation"
+                            colorScheme="orange"
+                            onClick={onReservationModalOpen}
+                            icon={<IoBook />}
+                            isDisabled={!datesSelected()}
+                        />
 
-                    <PDFButton
-                        property={store.currentProperty}
-                        unit={unit}
-                        datePrices={reservationStore.unitPrices}
-                    />
-                </HStack>
+                        <PDFButton
+                            property={store.currentProperty}
+                            unit={unit}
+                            datePrices={reservationStore.unitPrices}
+                        />
+                    </HStack>
+                </Stack>
             </HStack>
             <Divider mb={4} />
             {unit ? (

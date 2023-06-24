@@ -49,6 +49,7 @@ export const InfoDisplay = () => {
                 </List>
             </VStack>
             <Image
+                display={{ base: 'none', lg: 'block' }}
                 src={EmptyCalendarImage}
                 alt="Empty calendar"
                 objectFit="contain"

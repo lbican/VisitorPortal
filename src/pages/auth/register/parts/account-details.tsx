@@ -50,18 +50,18 @@ const AccountDetails: React.FC<StepActions> = ({ nextStep }) => {
         },
     });
     const { ref: firstNameRef, ...firstNameControl } = register('first_name', {
+        required: t('First name is required'),
         minLength: {
             value: NAME_MIN,
             message: t(`First name must be at least ${NAME_MIN} characters`),
         },
-        required: t('First name is required'),
     });
     const { ref: lastNameRef, ...lastNameControl } = register('last_name', {
+        required: t('Last name is required'),
         minLength: {
             value: NAME_MIN,
             message: t(`Last name must be at least ${NAME_MIN} characters`),
         },
-        required: t('Last name is required'),
     });
 
     return (

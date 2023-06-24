@@ -31,7 +31,7 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading, variants })
                 >
                     {status !== PriceStatus.UNSET && !isUndefined(price) ? (
                         <>
-                            <TagLeftIcon as={IoPricetag} />
+                            <TagLeftIcon as={IoPricetag} display={{ base: 'none', md: 'block' }} />
                             <TagLabel>{price} €</TagLabel>
                         </>
                     ) : (
