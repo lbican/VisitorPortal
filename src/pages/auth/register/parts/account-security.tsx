@@ -22,7 +22,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
     const form = useContext(FormContext);
     const { t } = useTranslation();
 
-    const PASSWORD_MIN = 6;
+    const PASSWORD_MIN = 8;
 
     const {
         register,
@@ -45,7 +45,7 @@ const AccountSecurity: React.FC<StepActions> = ({ nextStep, prevStep }) => {
         required: t('Password is required') ?? true,
         minLength: {
             value: PASSWORD_MIN,
-            message: t(`Password must be at least ${PASSWORD_MIN} characters`),
+            message: t('passwordMin', { numCharacters: PASSWORD_MIN }),
         },
     });
     const { ref: repeatPasswordRef, ...repeatPasswordControl } = register('repeat_password', {

@@ -16,6 +16,8 @@ import {
     NumberInputStepper,
     FormLabel,
     HStack,
+    InputGroup,
+    InputLeftAddon,
 } from '@chakra-ui/react';
 import { IUnit } from '../../../utils/interfaces/typings';
 import { useForm } from 'react-hook-form';
@@ -85,7 +87,13 @@ const PriceModal: React.FC<PriceModalProps> = ({ isOpen, onClose, unit, date_ran
                         <FormLabel htmlFor="price_input">
                             {t('setPrice', { unitName: unit.name })}
                         </FormLabel>
-                        <NumberInput min={1} keepWithinRange={true} id="price_input">
+                        <NumberInput
+                            min={1}
+                            keepWithinRange={true}
+                            id="price_input"
+                            as={InputGroup}
+                        >
+                            <InputLeftAddon>€</InputLeftAddon>
                             <NumberInputField {...register('price')} />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />

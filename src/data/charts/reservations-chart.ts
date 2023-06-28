@@ -4,17 +4,19 @@ import { ReservationData } from '../../utils/interfaces/chart/chart-types';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const reservationsOptions = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'bottom' as const,
+export const reservationsOptions = (title: string) => {
+    return {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom' as const,
+            },
+            title: {
+                display: true,
+                text: title,
+            },
         },
-        title: {
-            display: true,
-            text: 'Reservations per unit',
-        },
-    },
+    };
 };
 
 export const transformToReservationData = (data: ReservationData[], filterBy: string) => {

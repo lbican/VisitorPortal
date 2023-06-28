@@ -2,17 +2,17 @@ import React, { ReactNode } from 'react';
 import { Box, HStack, Input, Tag, TagLabel } from '@chakra-ui/react';
 import { UseRadioProps, useRadio, UseRadioReturn, useRadioGroup } from '@chakra-ui/radio';
 import { ThemeTypings } from '@chakra-ui/styled-system';
-import { PropertyType } from '../../../utils/interfaces/typings';
-import { MdOutlineApartment, MdOutlineHotel, MdOutlineHouse } from 'react-icons/md';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
-interface RadioCardProps extends UseRadioProps {
+export interface RadioCardOptions extends UseRadioProps {
     icon: ReactNode;
     colorScheme: ThemeTypings['colorSchemes'];
     value: string;
 }
 
-const RadioCard: React.FC<RadioCardProps> = (props) => {
+const RadioCard: React.FC<RadioCardOptions> = (props) => {
+    const { t } = useTranslation();
     const { getInputProps, getRadioProps }: UseRadioReturn = useRadio(props);
 
     const input = getInputProps();
@@ -37,38 +37,21 @@ const RadioCard: React.FC<RadioCardProps> = (props) => {
                 justifyContent="center"
             >
                 {props.icon}
-                <TagLabel mx={2}>{props.value}</TagLabel>
+                <TagLabel mx={2}>{t(props.value)}</TagLabel>
             </Tag>
         </Box>
     );
 };
 
 interface RadioGroupProps {
-    defaultValue: PropertyType;
+    options: RadioCardOptions[];
+    defaultValue: string;
     onSelect: (option: string) => void;
 }
 
-const PropertyButtonGroup: React.FC<RadioGroupProps> = ({ onSelect, defaultValue }) => {
-    const options: RadioCardProps[] = [
-        {
-            value: PropertyType.APARTMENT,
-            icon: <MdOutlineHotel />,
-            colorScheme: 'yellow',
-        },
-        {
-            value: PropertyType.HOTEL,
-            icon: <MdOutlineApartment />,
-            colorScheme: 'red',
-        },
-        {
-            value: PropertyType.HOUSE,
-            icon: <MdOutlineHouse />,
-            colorScheme: 'green',
-        },
-    ];
-
+const CustomButtonGroup: React.FC<RadioGroupProps> = ({ onSelect, defaultValue, options }) => {
     const { getRootProps, getRadioProps } = useRadioGroup({
-        name: 'Property type',
+        name: 'Selector',
         defaultValue: defaultValue,
         onChange: onSelect,
     });
@@ -87,4 +70,4 @@ const PropertyButtonGroup: React.FC<RadioGroupProps> = ({ onSelect, defaultValue
     );
 };
 
-export default PropertyButtonGroup;
+export default CustomButtonGroup;

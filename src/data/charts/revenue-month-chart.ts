@@ -23,17 +23,19 @@ ChartJS.register(
     Legend
 );
 
-export const revenueMonthOptions = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'bottom' as const,
+export const revenueMonthOptions = (title: string) => {
+    return {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom' as const,
+            },
+            title: {
+                display: true,
+                text: title,
+            },
         },
-        title: {
-            display: true,
-            text: 'Revenue per month',
-        },
-    },
+    };
 };
 
 export const transformToMonthlyRevenueData = (

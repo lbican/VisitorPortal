@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IFormReservation, IGuest, IUnit } from '../../../utils/interfaces/typings';
+import {
+    IFormReservation,
+    IGuest,
+    IUnit,
+    ReservationType,
+} from '../../../utils/interfaces/typings';
 import {
     Box,
     Button,
@@ -44,6 +49,11 @@ import Autocomplete, {
     mapToAutocompleteLabels,
     mapValueToLabel,
 } from '../../../components/common/input/autocomplete';
+import CustomButtonGroup, {
+    RadioCardOptions,
+} from '../../../components/common/input/custom-button-group';
+import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
+import { BiBookOpen } from 'react-icons/bi';
 
 interface ReservationModalProps {
     isOpen: boolean;
@@ -51,6 +61,24 @@ interface ReservationModalProps {
     unit: IUnit;
     date_range: [Date, Date];
 }
+
+const options: RadioCardOptions[] = [
+    {
+        value: ReservationType.CUSTOM,
+        icon: <BiBookOpen />,
+        colorScheme: 'green',
+    },
+    {
+        value: ReservationType.AIRBNB,
+        icon: <TbBrandAirbnb />,
+        colorScheme: 'red',
+    },
+    {
+        value: ReservationType.BOOKING,
+        icon: <TbBrandBooking />,
+        colorScheme: 'facebook',
+    },
+];
 
 const ReservationActionModal: React.FC<ReservationModalProps> = ({
     isOpen,
@@ -64,6 +92,8 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
     const [prepaymentAmount, setPrepaymentAmount] = useState(0);
     const notification = useToastNotification();
     const { t } = useTranslation();
+    const [prepaymentPercent, setPrepaymentPercent] = useState(0);
+    const [type, setType] = useState<ReservationType>(ReservationType.CUSTOM);
 
     const {
         register,
@@ -75,24 +105,20 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
         control,
     } = useForm<IFormReservation & IGuest>({
         shouldUseNativeValidation: false,
-        defaultValues: {
-            prepayment_percent: 0,
-        },
     });
 
-    const prepayPercentValue = watch('prepayment_percent');
     const prepaymentPaid = watch('prepayment_paid');
     const country = watch('country');
-    const [prepaymentPercent, setPrepaymentPercent] = useState(prepayPercentValue);
 
     const resetForm = () => {
-        reset(
-            getReservationFormValues(
-                unit.id,
-                [date_range[0], date_range[1]],
-                reservationStore.editingReservation
-            )
+        const defaultValues = getReservationFormValues(
+            unit.id,
+            [date_range[0], date_range[1]],
+            reservationStore.editingReservation
         );
+        reset(defaultValues);
+        setPrepaymentPercent(defaultValues.prepayment_percent);
+        setType(defaultValues.type);
     };
 
     const disposeModalAndUpdateData = () => {
@@ -275,21 +301,23 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
                             <FormErrorMessage>{errors?.country?.message}</FormErrorMessage>
                         </FormControl>
                     </HStack>
-                    <FormControl mt={2}>
-                        <FormLabel htmlFor="is_booking_input">
-                            {t('Booking reservation?')}
-                        </FormLabel>
-                        <Checkbox
-                            defaultChecked={
-                                reservationStore.editingReservation?.is_booking_reservation ?? false
-                            }
-                            id="is_booking_input"
-                            size="lg"
-                            colorScheme="blue"
-                            {...register('is_booking_reservation')}
-                        >
-                            {t('Yes')}
-                        </Checkbox>
+                    <FormControl isInvalid={!!errors.type}>
+                        <FormLabel htmlFor="type">{t('Type')}</FormLabel>
+                        <Controller
+                            control={control}
+                            name="type"
+                            rules={{ required: t('Type is required') ?? true }}
+                            render={({ field }) => (
+                                <CustomButtonGroup
+                                    options={options}
+                                    defaultValue={type}
+                                    onSelect={(option) => {
+                                        field.onChange(option as ReservationType);
+                                    }}
+                                />
+                            )}
+                        />
+                        <FormErrorMessage>error</FormErrorMessage>
                     </FormControl>
                     <Text mt={4} fontSize="lg" textAlign="right">
                         {t('Prepayment amount')}

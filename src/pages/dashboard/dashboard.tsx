@@ -130,7 +130,7 @@ const Dashboard = (): ReactElement => {
                         <ChartContainer isLoaded={!loading}>
                             <Pie
                                 data={transformToReservationData(totalReservationsData, filterBy)}
-                                options={reservationsOptions}
+                                options={reservationsOptions(t('Reservations per unit'))}
                             />
                         </ChartContainer>
                     </GridItem>
@@ -143,7 +143,7 @@ const Dashboard = (): ReactElement => {
                                     new Date().getMonth() - 2,
                                     new Date().getMonth() + 4
                                 )}
-                                options={monthChartOptions}
+                                options={monthChartOptions(t('Number of reservations per month'))}
                             />
                         </ChartContainer>
                     </GridItem>
@@ -156,7 +156,7 @@ const Dashboard = (): ReactElement => {
                                     new Date().getMonth() - 2,
                                     new Date().getMonth() + 4
                                 )}
-                                options={revenueMonthOptions}
+                                options={revenueMonthOptions(t('Revenue per month'))}
                             />
                         </ChartContainer>
                     </GridItem>

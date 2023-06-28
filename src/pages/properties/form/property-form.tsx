@@ -27,7 +27,9 @@ import {
 } from 'react-hook-form';
 import { PropertyType, TFormProperty } from '../../../utils/interfaces/typings';
 import FileDropzone from '../../../components/common/input/file-dropzone';
-import PropertyButtonGroup from '../../../components/common/input/property-button-group';
+import CustomButtonGroup, {
+    RadioCardOptions,
+} from '../../../components/common/input/custom-button-group';
 import FileService, { IUploadedImage } from '../../../services/file-service';
 import ReactStars from 'react-stars';
 import useToastNotification from '../../../hooks/useToastNotification';
@@ -39,6 +41,7 @@ import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { v4 as uuidv4 } from 'uuid';
 import FormMap from '../../../components/form/form-map';
 import { useTranslation } from 'react-i18next';
+import { MdOutlineApartment, MdOutlineHotel, MdOutlineHouse } from 'react-icons/md';
 
 interface PropertyFormProps {
     register: UseFormRegister<TFormProperty>;
@@ -48,6 +51,25 @@ interface PropertyFormProps {
     watch: UseFormWatch<TFormProperty>;
     activeStep: number;
 }
+
+const options: RadioCardOptions[] = [
+    {
+        value: PropertyType.APARTMENT,
+        icon: <MdOutlineHotel />,
+        colorScheme: 'yellow',
+    },
+    {
+        value: PropertyType.HOTEL,
+        icon: <MdOutlineApartment />,
+        colorScheme: 'red',
+    },
+    {
+        value: PropertyType.HOUSE,
+        icon: <MdOutlineHouse />,
+        colorScheme: 'green',
+    },
+];
+
 const PropertyForm: React.FC<PropertyFormProps> = ({
     register,
     errors,
@@ -145,7 +167,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                             name="type"
                             rules={{ required: t('Type is required') ?? true }}
                             render={({ field }) => (
-                                <PropertyButtonGroup
+                                <CustomButtonGroup
+                                    options={options}
                                     defaultValue={
                                         propertyStore.editingProperty?.type ??
                                         PropertyType.APARTMENT

@@ -1,19 +1,21 @@
 import React from 'react';
 import {
     Box,
-    useBreakpointValue,
     Tag,
     TagLabel,
     TagLeftIcon,
-    Text,
     TagRightIcon,
+    Text,
+    useBreakpointValue,
 } from '@chakra-ui/react';
 import { ThemeTypings } from '@chakra-ui/styled-system';
-import { TbBrandBooking } from 'react-icons/tb';
+import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
 import { observer } from 'mobx-react-lite';
 import { motion, Variants } from 'framer-motion';
 import { IoPeopleOutline } from 'react-icons/io5';
+import { ReservationType } from '../../../utils/interfaces/typings';
+import { IconType } from 'react-icons';
 
 interface ReservationTagProps {
     first_name: string;
@@ -22,7 +24,7 @@ interface ReservationTagProps {
     isFirstDay: boolean;
     isLastDay: boolean;
     colorScheme: ThemeTypings['colorSchemes'];
-    isBookingReservation: boolean;
+    type: ReservationType;
     variants?: Variants;
 }
 
@@ -32,16 +34,41 @@ const getInitials = (first_name: string, last_name: string) => {
     return `${first_name[0]}. ${last_name[0]}.`;
 };
 
+interface TagScheme {
+    icon: IconType;
+    colorScheme: ThemeTypings['colorSchemes'];
+}
+
+const getIconAndScheme = (type: ReservationType): TagScheme => {
+    switch (type) {
+        case ReservationType.CUSTOM:
+            return {
+                icon: BiBookOpen,
+                colorScheme: 'green',
+            };
+        case ReservationType.BOOKING:
+            return {
+                icon: TbBrandBooking,
+                colorScheme: 'facebook',
+            };
+        case ReservationType.AIRBNB:
+            return {
+                icon: TbBrandAirbnb,
+                colorScheme: 'red',
+            };
+    }
+};
+
 const ReservationTag: React.FC<ReservationTagProps> = ({
     first_name,
     last_name,
     guests_num,
     isFirstDay,
     isLastDay,
-    colorScheme,
-    isBookingReservation,
+    type,
     variants,
 }) => {
+    const tagScheme = getIconAndScheme(type);
     const isSmallScreen = useBreakpointValue({ base: true, md: false });
     const name = isSmallScreen
         ? getInitials(first_name, last_name)
@@ -62,7 +89,7 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
             animate="show"
             exit="exit"
             variant="solid"
-            colorScheme={colorScheme}
+            colorScheme={tagScheme.colorScheme}
             w="full"
             zIndex={-1}
             marginLeft={isFirstDay ? 8 : 0}
@@ -71,10 +98,7 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
             roundedRight={isLastDay ? 6 : 0}
             variants={variants}
         >
-            <TagLeftIcon
-                as={isBookingReservation ? TbBrandBooking : BiBookOpen}
-                display={{ base: 'none', md: 'block' }}
-            />
+            <TagLeftIcon as={tagScheme.icon} display={{ base: 'none', md: 'block' }} />
             <TagLabel as="p">
                 <Box as="span">{isNameVisible() && name}</Box>
                 <Text as="b" display={{ base: 'none', md: 'inline-block' }}>
@@ -86,4 +110,4 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
     );
 };
 
-export default observer(ReservationTag);
+export default React.memo(ReservationTag);

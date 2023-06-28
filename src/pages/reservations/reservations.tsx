@@ -1,5 +1,15 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Alert, AlertIcon, Divider, Flex, Heading, HStack, Spinner, Stack } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    Button,
+    Divider,
+    Flex,
+    Heading,
+    HStack,
+    Spinner,
+    Stack,
+} from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
 import { motion } from 'framer-motion';
@@ -14,11 +24,15 @@ import { SingleValue } from 'chakra-react-select';
 import { observer } from 'mobx-react-lite';
 import { useAuth } from '../../context/auth-context';
 import { reservationStore } from '../../mobx/reservationStore';
+import { IoBook } from 'react-icons/io5';
+import TooltipIconButton from '../../components/common/tooltip-icon-button';
+import { useNavigate } from 'react-router-dom';
 
 const Reservations = (): ReactElement => {
     const { t } = useTranslation();
     const [unit, setUnit] = useState<IUnit | null>(null);
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         void store.fetchProperties(user?.id);
@@ -128,6 +142,15 @@ const Reservations = (): ReactElement => {
                         options={mapToAutocompleteLabels(store.currentProperty?.units ?? [])}
                         isDisabled={!store.currentProperty}
                         width="14rem"
+                    />
+                    <TooltipIconButton
+                        hasArrow={true}
+                        placement="bottom-start"
+                        label={t('Add new reservation')}
+                        ariaLabel="Add reservation"
+                        colorScheme="orange"
+                        onClick={() => navigate('/calendar')}
+                        icon={<IoBook />}
                     />
                 </Stack>
             </HStack>

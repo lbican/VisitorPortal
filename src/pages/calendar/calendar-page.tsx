@@ -131,14 +131,14 @@ const CalendarPage = (): ReactElement => {
 
                     reservationElement = (
                         <ReservationTag
-                            colorScheme={reservation.is_booking_reservation ? 'blue' : 'teal'}
+                            colorScheme="blue"
                             first_name={first_name}
                             last_name={last_name}
                             guests_num={guests_num}
                             isFirstDay={isSameDay(date, startDate)}
                             isLastDay={isSameDay(date, lastDay)}
-                            isBookingReservation={reservation.is_booking_reservation}
                             variants={getCalendarAnimations(true)}
+                            type={reservation.type}
                         />
                     );
 

@@ -51,11 +51,17 @@ export interface PropertyManager extends UserProfile {
 export type TFormProperty = Omit<IProperty, 'id'>;
 export type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 
+export enum ReservationType {
+    CUSTOM = 'Custom',
+    BOOKING = 'Booking',
+    AIRBNB = 'AirBnB',
+}
+
 export interface IReservation {
     id: string;
     guest: IGuest;
     unit: IUnit;
-    is_booking_reservation: boolean;
+    type: ReservationType;
     date_range: [Date, Date];
     total_price: number;
     fulfilled: boolean;
@@ -69,7 +75,7 @@ export interface IReservation {
 export interface IFormReservation {
     guest_id: string;
     unit_id: string;
-    is_booking_reservation: boolean;
+    type: ReservationType;
     date_range: [Date, Date];
     total_price: number;
     prepayment_percent: number;

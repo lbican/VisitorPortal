@@ -13,20 +13,23 @@ import {
     MonthlyReservationData,
 } from '../../utils/interfaces/chart/chart-types';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
+import { useTranslation } from 'react-i18next';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export const monthChartOptions = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'bottom' as const,
+export const monthChartOptions = (title: string) => {
+    return {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom' as const,
+            },
+            title: {
+                display: true,
+                text: title,
+            },
         },
-        title: {
-            display: true,
-            text: 'Number of reservations per month',
-        },
-    },
+    };
 };
 
 export const transformToMonthlyReservationData = (

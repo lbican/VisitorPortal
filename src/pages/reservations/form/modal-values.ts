@@ -1,4 +1,9 @@
-import { IFormReservation, IGuest, IReservation } from '../../../utils/interfaces/typings';
+import {
+    IFormReservation,
+    IGuest,
+    IReservation,
+    ReservationType,
+} from '../../../utils/interfaces/typings';
 
 const getReservationFormValues = (
     unitId: string,
@@ -9,7 +14,6 @@ const getReservationFormValues = (
         id: '',
         guest_id: '',
         unit_id: unitId,
-        is_booking_reservation: false,
         date_range: [date_range[0] || new Date(), date_range[1] || new Date()],
         total_price: 0,
         note: '',
@@ -18,6 +22,7 @@ const getReservationFormValues = (
         guests_num: 1,
         prepayment_percent: 0,
         prepayment_paid: false,
+        type: ReservationType.CUSTOM,
     };
 
     if (editingReservation) {
@@ -37,6 +42,7 @@ const getReservationFormValues = (
         defaultReservation.prepayment_paid = editingReservation.prepayment_paid;
         defaultReservation.prepayment_percent = editingReservation.prepayment_percent;
         defaultReservation.country = editingReservation.guest.country;
+        defaultReservation.type = editingReservation.type;
     }
 
     return defaultReservation;

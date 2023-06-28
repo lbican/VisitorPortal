@@ -10,7 +10,7 @@ interface TooltipButtonProps {
     colorScheme: string;
     onClick: () => void;
     icon: ReactElement;
-    isDisabled: boolean;
+    isDisabled?: boolean;
 }
 
 const TooltipIconButton: React.FC<TooltipButtonProps> = ({
