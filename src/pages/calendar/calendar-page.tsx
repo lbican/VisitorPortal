@@ -1,26 +1,34 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Divider, Heading, HStack, Stack, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Divider,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerOverlay,
+    Heading,
+    HStack,
+    IconButton,
+    useBreakpointValue,
+    useDisclosure,
+} from '@chakra-ui/react';
 import '../../styles/calendar.scss';
 import { useAuth } from '../../context/auth-context';
-import { IProperty, IUnit } from '../../utils/interfaces/typings';
+import { IUnit } from '../../utils/interfaces/typings';
 import { propertyStore as store } from '../../mobx/propertyStore';
-import Autocomplete, {
-    ILabel,
-    mapToAutocompleteLabels,
-    mapValueToLabel,
-} from '../../components/common/input/autocomplete';
+import { ILabel } from '../../components/common/input/autocomplete';
 import { observer } from 'mobx-react-lite';
 import { SingleValue } from 'chakra-react-select';
-import { IoPricetag, IoBook } from 'react-icons/io5';
 import PriceModal from './form/price-modal';
-import PDFButton from '../../pdf/pdf-button';
 import { useTranslation } from 'react-i18next';
 import ReservationModal from '../reservations/form/reservation-action-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
-import TooltipIconButton from '../../components/common/tooltip-icon-button';
 import { reservationStore } from '../../mobx/reservationStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReservationCalendar from '../../components/calendar/reservation-calendar';
+import CalendarActions from '../../components/common/action/calendar-header';
+import { MdOutlineCallToAction } from 'react-icons/md';
 
 export enum PriceStatus {
     SOLD = 'yellow',
@@ -31,8 +39,10 @@ export enum PriceStatus {
 
 const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+    const isLargerScreen = useBreakpointValue({ base: false, lg: true });
     const [unit, setUnit] = useState<IUnit | null>(null);
     const { user } = useAuth();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         isOpen: isPriceModalOpen,
         onOpen: onPriceModalOpen,
@@ -97,60 +107,59 @@ const CalendarPage = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Calendar')}
                 </Heading>
-                <Stack direction={{ base: 'column', lg: 'row' }}>
-                    <Autocomplete
-                        value={mapValueToLabel(store.currentProperty)}
-                        onSelect={handlePropertySelect}
-                        placeholder={t('Select property') ?? ''}
-                        options={mapToAutocompleteLabels<IProperty>(store.properties)}
-                        isLoading={store.isFetching}
-                        width="16rem"
-                    />
-                    <Autocomplete
-                        value={mapValueToLabel(unit)}
-                        onSelect={handleUnitSelect}
-                        placeholder={t('Select unit') ?? ''}
-                        options={mapToAutocompleteLabels<IUnit>(store.currentProperty?.units ?? [])}
-                        isDisabled={!store.currentProperty}
-                        width="14rem"
-                    />
-                    <HStack>
-                        <TooltipIconButton
-                            hasArrow={true}
-                            label={
-                                datesSelected()
-                                    ? t('Assign price')
-                                    : t('Select date range to assign prices')
-                            }
-                            ariaLabel="Assign price"
-                            colorScheme="green"
-                            onClick={onPriceModalOpen}
-                            icon={<IoPricetag />}
-                            isDisabled={!datesSelected()}
-                            placement="bottom-start"
-                        />
-                        <TooltipIconButton
-                            hasArrow={true}
-                            placement="bottom-start"
-                            label={
-                                datesSelected()
-                                    ? t('Add new reservation')
-                                    : t('Select date range to add reservation')
-                            }
-                            ariaLabel="Add reservation"
-                            colorScheme="orange"
-                            onClick={onReservationModalOpen}
-                            icon={<IoBook />}
-                            isDisabled={!datesSelected()}
-                        />
+                <>
+                    {isLargerScreen ? (
+                        <HStack>
+                            <HStack>
+                                <CalendarActions
+                                    currentProperty={store.currentProperty}
+                                    properties={store.properties}
+                                    onSelectProperty={handlePropertySelect}
+                                    onSelectUnit={handleUnitSelect}
+                                    onReservationModalOpen={onReservationModalOpen}
+                                    onPriceModalOpen={onPriceModalOpen}
+                                    datesSelected={datesSelected()}
+                                    selectedUnit={unit}
+                                    unitPrices={reservationStore.unitPrices}
+                                    isFetching={store.isFetching}
+                                />
+                            </HStack>
+                        </HStack>
+                    ) : (
+                        <Box display={{ base: 'block', lg: 'none' }}>
+                            <IconButton
+                                aria-label="Open menu"
+                                colorScheme="blue"
+                                onClick={onOpen}
+                                icon={<MdOutlineCallToAction />}
+                            />
 
-                        <PDFButton
-                            property={store.currentProperty}
-                            unit={unit}
-                            datePrices={reservationStore.unitPrices}
-                        />
-                    </HStack>
-                </Stack>
+                            <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+                                <DrawerOverlay>
+                                    <DrawerContent>
+                                        <DrawerCloseButton />
+                                        <DrawerBody>
+                                            <HStack alignItems="flex-start" py={10}>
+                                                <CalendarActions
+                                                    currentProperty={store.currentProperty}
+                                                    properties={store.properties}
+                                                    onSelectProperty={handlePropertySelect}
+                                                    onSelectUnit={handleUnitSelect}
+                                                    onReservationModalOpen={onReservationModalOpen}
+                                                    onPriceModalOpen={onPriceModalOpen}
+                                                    datesSelected={datesSelected()}
+                                                    selectedUnit={unit}
+                                                    unitPrices={reservationStore.unitPrices}
+                                                    isFetching={store.isFetching}
+                                                />
+                                            </HStack>
+                                        </DrawerBody>
+                                    </DrawerContent>
+                                </DrawerOverlay>
+                            </Drawer>
+                        </Box>
+                    )}
+                </>
             </HStack>
             <Divider mb={4} />
             {unit ? (

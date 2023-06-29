@@ -3,7 +3,6 @@ import {
     Alert,
     AlertIcon,
     Box,
-    Button,
     Divider,
     Drawer,
     DrawerBody,
@@ -17,7 +16,6 @@ import {
     Spinner,
     useBreakpointValue,
     useDisclosure,
-    VStack,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';

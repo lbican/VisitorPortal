@@ -1,6 +1,6 @@
 import React from 'react';
-import { SingleValue } from 'react-select'; // import if needed
-import { IoBook } from 'react-icons/io5'; // import if needed
+import { SingleValue } from 'react-select';
+import { IoBook } from 'react-icons/io5';
 import { useTranslation } from 'react-i18next';
 import Autocomplete, {
     ILabel,
@@ -8,7 +8,7 @@ import Autocomplete, {
     mapValueToLabel,
 } from '../input/autocomplete';
 import TooltipIconButton from '../tooltip-icon-button';
-import { IProperty, IUnit } from '../../../utils/interfaces/typings'; // import if needed
+import { IProperty, IUnit } from '../../../utils/interfaces/typings';
 
 interface ReservationActionsProps {
     onSelectProperty: (newValue: SingleValue<ILabel>) => void;
