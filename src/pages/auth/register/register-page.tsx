@@ -4,6 +4,7 @@ import RegisterSteps from './register-steps';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import getRandomImage from '../../../utils/image';
 
 export default function RegisterPage(): ReactElement {
     const { user } = useAuth();
@@ -21,10 +22,7 @@ export default function RegisterPage(): ReactElement {
     }, [user]);
 
     return (
-        <SplitScreen
-            imageLink="https://source.unsplash.com/1600x900/?croatia"
-            title={t('Register your account')}
-        >
+        <SplitScreen imageLink={getRandomImage} title={t('Register your account')}>
             <RegisterSteps />
         </SplitScreen>
     );

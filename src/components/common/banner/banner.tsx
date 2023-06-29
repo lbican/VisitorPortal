@@ -1,12 +1,11 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
+import getRandomImage from '../../../utils/image';
 
 interface ProfileImageProps {
     banner_url?: string;
     children: React.ReactNode;
 }
-
-const DEFAULT_BANNER = 'https://source.unsplash.com/1600x800/?mountains';
 
 const Banner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
     return (
@@ -17,7 +16,7 @@ const Banner: React.FC<ProfileImageProps> = ({ banner_url, children }) => {
             }}
             style={{
                 backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%), url(${
-                    banner_url ?? DEFAULT_BANNER
+                    banner_url ?? getRandomImage
                 })`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

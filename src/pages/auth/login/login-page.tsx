@@ -5,6 +5,7 @@ import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Flex, Spinner } from '@chakra-ui/react';
+import getRandomImage from '../../../utils/image';
 
 export default function LoginPage(): ReactElement {
     const { user, loadingUser } = useAuth();
@@ -30,10 +31,7 @@ export default function LoginPage(): ReactElement {
     }
 
     return (
-        <SplitScreen
-            imageLink="https://source.unsplash.com/1600x900/?croatia"
-            title={t('Login to your account')}
-        >
+        <SplitScreen imageLink={getRandomImage} title={t('Login to your account')}>
             <LoginForm />
         </SplitScreen>
     );

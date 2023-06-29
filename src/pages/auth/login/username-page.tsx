@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/auth-context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserService } from '../../../services/user-service';
+import getRandomImage from '../../../utils/image';
+
 const UsernamePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -64,10 +66,7 @@ const UsernamePage: React.FC = () => {
     };
 
     return (
-        <SplitScreen
-            imageLink="https://source.unsplash.com/1600x900/?croatia"
-            title="One last thing"
-        >
+        <SplitScreen imageLink={getRandomImage} title="One last thing">
             return (
             <>
                 <VStack
