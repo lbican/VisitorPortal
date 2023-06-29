@@ -1,9 +1,6 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Divider, Heading, HStack, Stack, useDisclosure } from '@chakra-ui/react';
-import Calendar from 'react-calendar';
 import '../../styles/calendar.scss';
-import { isBefore, isWithinInterval, subDays } from 'date-fns';
-import { View, Value } from 'react-calendar/dist/cjs/shared/types';
 import { useAuth } from '../../context/auth-context';
 import { IProperty, IUnit } from '../../utils/interfaces/typings';
 import { propertyStore as store } from '../../mobx/propertyStore';
@@ -18,20 +15,12 @@ import { IoPricetag, IoBook } from 'react-icons/io5';
 import PriceModal from './form/price-modal';
 import PDFButton from '../../pdf/pdf-button';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
 import ReservationModal from '../reservations/form/reservation-action-modal';
 import { InfoDisplay } from '../../components/calendar/info-display';
-import { isSameDay } from 'date-fns/fp';
-import PriceTag from '../../components/calendar/tags/price-tag';
-import ReservationTag from '../../components/calendar/tags/reservation-tag';
 import TooltipIconButton from '../../components/common/tooltip-icon-button';
 import { reservationStore } from '../../mobx/reservationStore';
 import { AnimatePresence, motion } from 'framer-motion';
-
-interface ITileProps {
-    view: View;
-    date: Date;
-}
+import ReservationCalendar from '../../components/calendar/reservation-calendar';
 
 export enum PriceStatus {
     SOLD = 'yellow',
@@ -97,82 +86,6 @@ const CalendarPage = (): ReactElement => {
         return !!(selectedDates[0] && selectedDates[1]);
     };
 
-    const getCalendarAnimations = (fromTop: boolean) => {
-        return {
-            hidden: { opacity: 0, y: fromTop ? -10 : 10 },
-            show: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: 10 },
-        };
-    };
-
-    const isWithinDateRange = (date: Date, date_range: [Date, Date]) =>
-        isWithinInterval(date, {
-            start: date_range[0],
-            end: date_range[1],
-        }) && isBefore(date, date_range[1]);
-
-    const getTileContent = useCallback(
-        ({ date, view }: ITileProps) => {
-            if (view !== 'month') return;
-            let priceTagElement: ReactElement | null = null;
-            let reservationElement: ReactElement | null = null;
-            let soldDate = false;
-
-            if (reservationStore.isFetchingData) {
-                return <PriceTag loading={true} status={PriceStatus.LOADING} />;
-            }
-
-            for (const reservation of reservationStore.reservations) {
-                const [startDate, endDate] = reservation.date_range;
-                const lastDay = subDays(endDate, 1);
-
-                if (isWithinDateRange(date, [startDate, endDate])) {
-                    const { first_name, last_name, guests_num } = reservation.guest;
-
-                    reservationElement = (
-                        <ReservationTag
-                            colorScheme="blue"
-                            first_name={first_name}
-                            last_name={last_name}
-                            guests_num={guests_num}
-                            isFirstDay={isSameDay(date, startDate)}
-                            isLastDay={isSameDay(date, lastDay)}
-                            variants={getCalendarAnimations(true)}
-                            type={reservation.type}
-                        />
-                    );
-
-                    soldDate = true;
-                    break;
-                }
-            }
-
-            for (const datePrice of reservationStore.unitPrices) {
-                if (isWithinDateRange(date, datePrice.date_range)) {
-                    priceTagElement = (
-                        <PriceTag
-                            price={datePrice.price}
-                            status={soldDate ? PriceStatus.SOLD : PriceStatus.AVAILABLE}
-                            variants={getCalendarAnimations(false)}
-                        />
-                    );
-                    break;
-                }
-            }
-
-            if (!priceTagElement && !reservationElement) {
-                priceTagElement = <PriceTag status={PriceStatus.UNSET} />;
-            }
-
-            return (
-                <>
-                    {reservationElement}
-                    {priceTagElement}
-                </>
-            );
-        },
-        [reservationStore.reservations, reservationStore.unitPrices]
-    );
     return (
         <motion.div
             key="calendar"
@@ -259,15 +172,12 @@ const CalendarPage = (): ReactElement => {
                         </>
                     )}
                     <AnimatePresence>
-                        <Calendar
-                            tileContent={getTileContent}
-                            locale={i18n.language ?? 'en'}
-                            selectRange={true}
-                            onChange={(value) => {
-                                setSelectedDates(value as Date[]);
-                            }}
-                            value={selectedDates as Value}
-                            minDetail="year"
+                        <ReservationCalendar
+                            onChange={(value) => setSelectedDates(value as Date[])}
+                            selectedDates={selectedDates}
+                            reservations={reservationStore.reservations}
+                            prices={reservationStore.unitPrices}
+                            isFetchingData={reservationStore.isFetchingData}
                         />
                     </AnimatePresence>
                 </>

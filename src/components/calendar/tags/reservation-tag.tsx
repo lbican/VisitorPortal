@@ -11,7 +11,6 @@ import {
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
-import { observer } from 'mobx-react-lite';
 import { motion, Variants } from 'framer-motion';
 import { IoPeopleOutline } from 'react-icons/io5';
 import { ReservationType } from '../../../utils/interfaces/typings';
