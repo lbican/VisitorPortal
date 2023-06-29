@@ -13,7 +13,6 @@ import {
     MonthlyReservationData,
 } from '../../utils/interfaces/chart/chart-types';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
-import { useTranslation } from 'react-i18next';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

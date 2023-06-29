@@ -2,34 +2,41 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import {
     Alert,
     AlertIcon,
+    Box,
     Button,
     Divider,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerOverlay,
     Flex,
     Heading,
     HStack,
+    IconButton,
     Spinner,
-    Stack,
+    useBreakpointValue,
+    useDisclosure,
+    VStack,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
 import { motion } from 'framer-motion';
-import Autocomplete, {
-    ILabel,
-    mapToAutocompleteLabels,
-    mapValueToLabel,
-} from '../../components/common/input/autocomplete';
+import { ILabel } from '../../components/common/input/autocomplete';
 import { propertyStore as store } from '../../mobx/propertyStore';
 import { IUnit } from '../../utils/interfaces/typings';
 import { SingleValue } from 'chakra-react-select';
 import { observer } from 'mobx-react-lite';
 import { useAuth } from '../../context/auth-context';
 import { reservationStore } from '../../mobx/reservationStore';
-import { IoBook } from 'react-icons/io5';
-import TooltipIconButton from '../../components/common/tooltip-icon-button';
 import { useNavigate } from 'react-router-dom';
+import ReservationActions from '../../components/common/action/reservations-header';
+import { MdOutlineCallToAction } from 'react-icons/md';
 
 const Reservations = (): ReactElement => {
     const { t } = useTranslation();
+    const isLargerScreen = useBreakpointValue({ base: false, lg: true });
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [unit, setUnit] = useState<IUnit | null>(null);
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -126,33 +133,55 @@ const Reservations = (): ReactElement => {
                 <Heading as="h2" size="lg">
                     {t('Reservations')}
                 </Heading>
-                <Stack direction={{ base: 'column', lg: 'row' }}>
-                    <Autocomplete
-                        value={mapValueToLabel(store.currentProperty)}
-                        onSelect={handlePropertySelect}
-                        placeholder={t('Select property') ?? ''}
-                        options={mapToAutocompleteLabels(store.properties)}
-                        isLoading={store.isFetching}
-                        width="16rem"
-                    />
-                    <Autocomplete
-                        value={mapValueToLabel(unit)}
-                        onSelect={handleUnitSelect}
-                        placeholder={t('Select unit') ?? ''}
-                        options={mapToAutocompleteLabels(store.currentProperty?.units ?? [])}
-                        isDisabled={!store.currentProperty}
-                        width="14rem"
-                    />
-                    <TooltipIconButton
-                        hasArrow={true}
-                        placement="bottom-start"
-                        label={t('Add new reservation')}
-                        ariaLabel="Add reservation"
-                        colorScheme="orange"
-                        onClick={() => navigate('/calendar')}
-                        icon={<IoBook />}
-                    />
-                </Stack>
+                <>
+                    {isLargerScreen ? (
+                        <HStack>
+                            <ReservationActions
+                                currentProperty={store.currentProperty}
+                                properties={store.properties}
+                                isFetching={store.isFetching}
+                                onSelectProperty={handlePropertySelect}
+                                onSelectUnit={handleUnitSelect}
+                                selectedUnit={unit}
+                                label={t('Add new reservation')}
+                                onAddReservationClick={() => navigate('/calendar')}
+                            />
+                        </HStack>
+                    ) : (
+                        <Box display={{ base: 'block', lg: 'none' }}>
+                            <IconButton
+                                aria-label="Open menu"
+                                colorScheme="blue"
+                                onClick={onOpen}
+                                icon={<MdOutlineCallToAction />}
+                            />
+
+                            <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+                                <DrawerOverlay>
+                                    <DrawerContent>
+                                        <DrawerCloseButton />
+                                        <DrawerBody>
+                                            <HStack alignItems="flex-start" py={10}>
+                                                <ReservationActions
+                                                    currentProperty={store.currentProperty}
+                                                    properties={store.properties}
+                                                    isFetching={store.isFetching}
+                                                    onSelectProperty={handlePropertySelect}
+                                                    onSelectUnit={handleUnitSelect}
+                                                    selectedUnit={unit}
+                                                    label={t('Add new reservation')}
+                                                    onAddReservationClick={() =>
+                                                        navigate('/calendar')
+                                                    }
+                                                />
+                                            </HStack>
+                                        </DrawerBody>
+                                    </DrawerContent>
+                                </DrawerOverlay>
+                            </Drawer>
+                        </Box>
+                    )}
+                </>
             </HStack>
             <Divider my={4} />
             {renderReservations()}
