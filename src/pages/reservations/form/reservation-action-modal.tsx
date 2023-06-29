@@ -93,7 +93,6 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
     const notification = useToastNotification();
     const { t } = useTranslation();
     const [prepaymentPercent, setPrepaymentPercent] = useState(0);
-    const [type, setType] = useState<ReservationType>(ReservationType.CUSTOM);
 
     const {
         register,
@@ -118,7 +117,6 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
         );
         reset(defaultValues);
         setPrepaymentPercent(defaultValues.prepayment_percent);
-        setType(defaultValues.type);
     };
 
     const disposeModalAndUpdateData = () => {
@@ -310,7 +308,10 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
                             render={({ field }) => (
                                 <CustomButtonGroup
                                     options={options}
-                                    defaultValue={type}
+                                    defaultValue={
+                                        reservationStore.editingReservation?.type ??
+                                        ReservationType.CUSTOM
+                                    }
                                     onSelect={(option) => {
                                         field.onChange(option as ReservationType);
                                     }}
