@@ -4,6 +4,8 @@ import { Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
 import { ReservationType } from '../../utils/interfaces/typings';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { useTranslation } from 'react-i18next';
+import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
+import { BiBookOpen } from 'react-icons/bi';
 
 interface ReservationTagProps {
     icon: IconType;
@@ -21,4 +23,19 @@ const ReservationTag: React.FC<ReservationTagProps> = ({ icon, colorScheme, labe
     );
 };
 
-export default ReservationTag;
+interface ReservationTypeTagProps {
+    type: ReservationType;
+}
+
+const ReservationTypeTag: React.FC<ReservationTypeTagProps> = ({ type }) => {
+    switch (type) {
+        case ReservationType.AIRBNB:
+            return <ReservationTag icon={TbBrandAirbnb} label={type} colorScheme="red" />;
+        case ReservationType.BOOKING:
+            return <ReservationTag icon={TbBrandBooking} label={type} colorScheme="facebook" />;
+        case ReservationType.CUSTOM:
+            return <ReservationTag icon={BiBookOpen} label={type} colorScheme="green" />;
+    }
+};
+
+export default ReservationTypeTag;

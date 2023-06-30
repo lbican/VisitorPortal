@@ -182,6 +182,7 @@ const CalendarPage = (): ReactElement => {
                                                     selectedUnit={unit}
                                                     unitPrices={reservationStore.unitPrices}
                                                     isFetching={store.isFetching}
+                                                    onCloseDrawer={onClose}
                                                 />
                                                 <Divider my={2} />
                                                 <Text as="b">{t('Limitations')}</Text>

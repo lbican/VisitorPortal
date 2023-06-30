@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { IReservation } from '../../utils/interfaces/typings';
-import { HStack, Text, VStack, Flex, Tag } from '@chakra-ui/react';
+import { HStack, Text, VStack, Flex, Tag, Stack } from '@chakra-ui/react';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';
 import i18n from 'i18next';
@@ -9,6 +9,7 @@ import { differenceInDays, isWithinInterval } from 'date-fns';
 import { BsMoonStars } from 'react-icons/bs';
 import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5';
 import { useTranslation } from 'react-i18next';
+import ReservationTypeTag from './type-tag';
 
 enum ReservationStatus {
     ARRIVAL,
@@ -40,9 +41,9 @@ const ReservationCard = (props: IReservation) => {
         <CardWrapper isArriving={isArriving}>
             <Flex w="full" flexDirection={{ lg: 'row', base: 'column' }}>
                 <VStack spacing={1} mb={3} textAlign="left" alignItems="flex-start" w="full">
-                    <Text size="md" w="100%">
+                    <Stack direction={{ base: 'column', md: 'row' }}>
                         {isArriving ? (
-                            <Text>
+                            <Text size="md">
                                 <Text as="b" color="blue.500">
                                     {t('Checks in: ')}
                                 </Text>
@@ -52,7 +53,7 @@ const ReservationCard = (props: IReservation) => {
                                 <Text as="span">{t('inDays', { inDays: daysUntilArrival })}</Text>
                             </Text>
                         ) : (
-                            <Text>
+                            <Text size="md">
                                 <Text as="b" color="red.500">
                                     {t('Checks out: ')}
                                 </Text>
@@ -62,7 +63,8 @@ const ReservationCard = (props: IReservation) => {
                                 <Text as="span">{t('inDays', { inDays: daysUntilDeparture })}</Text>
                             </Text>
                         )}
-                    </Text>
+                        <ReservationTypeTag type={props.type} />
+                    </Stack>
                     <HStack alignItems="center" spacing={2} wrap="wrap">
                         <Text as="b">{nights}</Text>
                         <BsMoonStars />

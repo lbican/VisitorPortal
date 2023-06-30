@@ -1,16 +1,13 @@
 import React from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
-import { IReservation, ReservationType } from '../../../utils/interfaces/typings';
+import { IReservation } from '../../../utils/interfaces/typings';
 import { Button, HStack, Icon, IconButton, Text } from '@chakra-ui/react';
 import { GoTrash } from 'react-icons/go';
 import i18n, { TFunction } from 'i18next';
 import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
 import { Country } from '../../../utils/interfaces/utils';
 import { IoChevronDown, IoChevronForward } from 'react-icons/io5';
-import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
-import { BiBookOpen } from 'react-icons/bi';
-import TypeTag from '../../../components/reservation/type-tag';
-
+import ReservationTypeTag from '../../../components/reservation/type-tag';
 const columnHelper = createColumnHelper<IReservation>();
 
 const mapDateToLocaleString = (dates: [Date, Date]) => {
@@ -26,17 +23,6 @@ const getIcon = (isTruthy: boolean) => {
     }
 
     return <Icon as={AiFillCloseCircle} color="red.500" boxSize={8} />;
-};
-
-const getReservationTypeIcon = (type: ReservationType) => {
-    switch (type) {
-        case ReservationType.AIRBNB:
-            return <TypeTag icon={TbBrandAirbnb} label={type} colorScheme="red" />;
-        case ReservationType.BOOKING:
-            return <TypeTag icon={TbBrandBooking} label={type} colorScheme="facebook" />;
-        case ReservationType.CUSTOM:
-            return <TypeTag icon={BiBookOpen} label={type} colorScheme="green" />;
-    }
 };
 
 const getCountryFlag = (country: Country, t: TFunction) => {
@@ -99,7 +85,7 @@ const columnHelpers = (
     }),
     columnHelper.accessor('type', {
         header: t('Reservation type'),
-        cell: (info) => getReservationTypeIcon(info.getValue()),
+        cell: (info) => <ReservationTypeTag type={info.getValue()} />,
         footer: (props) => props.column.id,
     }),
     columnHelper.accessor('date_range', {

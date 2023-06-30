@@ -26,6 +26,7 @@ interface CalendarActionsProps {
     properties: IProperty[];
     autocompleteWidth?: string;
     hasDivider?: boolean;
+    onCloseDrawer?: () => void;
 }
 
 const CalendarActions: React.FC<CalendarActionsProps> = (props) => {
@@ -75,7 +76,10 @@ const CalendarActions: React.FC<CalendarActionsProps> = (props) => {
                     }
                     ariaLabel="Add reservation"
                     colorScheme="orange"
-                    onClick={props.onReservationModalOpen}
+                    onClick={() => {
+                        props.onCloseDrawer && props.onCloseDrawer();
+                        props.onReservationModalOpen();
+                    }}
                     icon={<IoBook />}
                     isDisabled={!props.datesSelected}
                 />
