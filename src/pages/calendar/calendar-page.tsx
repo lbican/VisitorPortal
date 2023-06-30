@@ -12,6 +12,7 @@ import {
     IconButton,
     useBreakpointValue,
     useDisclosure,
+    VStack,
 } from '@chakra-ui/react';
 import '../../styles/calendar.scss';
 import { useAuth } from '../../context/auth-context';
@@ -29,6 +30,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ReservationCalendar from '../../components/calendar/reservation-calendar';
 import CalendarActions from '../../components/common/action/calendar-header';
 import { MdOutlineCallToAction } from 'react-icons/md';
+import { CgMenuRightAlt } from 'react-icons/cg';
 
 export enum PriceStatus {
     SOLD = 'yellow',
@@ -131,15 +133,15 @@ const CalendarPage = (): ReactElement => {
                                 aria-label="Open menu"
                                 colorScheme="blue"
                                 onClick={onOpen}
-                                icon={<MdOutlineCallToAction />}
+                                icon={<CgMenuRightAlt />}
                             />
 
-                            <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+                            <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
                                 <DrawerOverlay>
                                     <DrawerContent>
                                         <DrawerCloseButton />
                                         <DrawerBody>
-                                            <HStack alignItems="flex-start" py={10}>
+                                            <VStack alignItems="flex-start" py={10}>
                                                 <CalendarActions
                                                     currentProperty={store.currentProperty}
                                                     properties={store.properties}
@@ -148,11 +150,13 @@ const CalendarPage = (): ReactElement => {
                                                     onReservationModalOpen={onReservationModalOpen}
                                                     onPriceModalOpen={onPriceModalOpen}
                                                     datesSelected={datesSelected()}
+                                                    hasDivider={true}
+                                                    autocompleteWidth="full"
                                                     selectedUnit={unit}
                                                     unitPrices={reservationStore.unitPrices}
                                                     isFetching={store.isFetching}
                                                 />
-                                            </HStack>
+                                            </VStack>
                                         </DrawerBody>
                                     </DrawerContent>
                                 </DrawerOverlay>

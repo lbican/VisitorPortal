@@ -8,7 +8,7 @@ import Autocomplete, {
 } from '../input/autocomplete';
 import { IProperty, IUnit } from '../../../utils/interfaces/typings';
 import { IDatePrice } from '../../../services/calendar-service';
-import { HStack } from '@chakra-ui/react';
+import { Divider, HStack } from '@chakra-ui/react';
 import TooltipIconButton from '../tooltip-icon-button';
 import { IoBook, IoPricetag } from 'react-icons/io5';
 import PDFButton from '../../../pdf/pdf-button';
@@ -24,6 +24,8 @@ interface CalendarActionsProps {
     unitPrices: IDatePrice[];
     currentProperty: IProperty | null;
     properties: IProperty[];
+    autocompleteWidth?: string;
+    hasDivider?: boolean;
 }
 
 const CalendarActions: React.FC<CalendarActionsProps> = (props) => {
@@ -37,7 +39,7 @@ const CalendarActions: React.FC<CalendarActionsProps> = (props) => {
                 placeholder={t('Select property') ?? ''}
                 options={mapToAutocompleteLabels<IProperty>(props.properties)}
                 isLoading={props.isFetching}
-                width="16rem"
+                width={props.autocompleteWidth ? props.autocompleteWidth : '16rem'}
             />
             <Autocomplete
                 value={mapValueToLabel(props.selectedUnit)}
@@ -45,8 +47,9 @@ const CalendarActions: React.FC<CalendarActionsProps> = (props) => {
                 placeholder={t('Select unit') ?? ''}
                 options={mapToAutocompleteLabels<IUnit>(props.currentProperty?.units ?? [])}
                 isDisabled={!props.currentProperty}
-                width="14rem"
+                width={props.autocompleteWidth ? props.autocompleteWidth : '14rem'}
             />
+            {props.hasDivider && <Divider my={2} />}
             <HStack>
                 <TooltipIconButton
                     hasArrow={true}

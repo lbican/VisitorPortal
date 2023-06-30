@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Skeleton, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
+import { Flex, Skeleton, Tag, TagLabel, TagLeftIcon, useBreakpointValue } from '@chakra-ui/react';
 import { isUndefined } from 'lodash';
 import { IoPricetag, IoPricetagOutline } from 'react-icons/io5';
 import { PriceStatus } from '../../../pages/calendar/calendar-page';
@@ -17,7 +17,7 @@ const MotionTag = motion(Tag);
 
 const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading, variants }) => {
     return (
-        <Flex justifyContent="flex-end" mb={-6} px={2}>
+        <Flex justifyContent="flex-end" mb={-6} px={{ base: 0, md: 2 }}>
             <Skeleton isLoaded={!loading}>
                 <MotionTag
                     initial="hidden"
@@ -32,7 +32,9 @@ const PriceTag: React.FC<PriceTagProps> = ({ price, status, loading, variants })
                     {status !== PriceStatus.UNSET && !isUndefined(price) ? (
                         <>
                             <TagLeftIcon as={IoPricetag} display={{ base: 'none', md: 'block' }} />
-                            <TagLabel>{price} €</TagLabel>
+                            <TagLabel fontSize={{ base: 8, md: 10, lg: 'unset' }}>
+                                {price} €
+                            </TagLabel>
                         </>
                     ) : (
                         <>

@@ -9,6 +9,7 @@ import Autocomplete, {
 } from '../input/autocomplete';
 import TooltipIconButton from '../tooltip-icon-button';
 import { IProperty, IUnit } from '../../../utils/interfaces/typings';
+import { Divider } from '@chakra-ui/react';
 
 interface ReservationActionsProps {
     onSelectProperty: (newValue: SingleValue<ILabel>) => void;
@@ -19,6 +20,8 @@ interface ReservationActionsProps {
     isFetching: boolean;
     currentProperty: IProperty | null;
     properties: IProperty[];
+    autocompleteWidth?: string;
+    hasDivider?: boolean;
 }
 
 const ReservationActions: React.FC<ReservationActionsProps> = (props) => {
@@ -32,7 +35,7 @@ const ReservationActions: React.FC<ReservationActionsProps> = (props) => {
                 placeholder={t('Select property')}
                 options={mapToAutocompleteLabels(props.properties)}
                 isLoading={props.isFetching}
-                width="16rem"
+                width={props.autocompleteWidth ? props.autocompleteWidth : '16rem'}
             />
             <Autocomplete
                 value={mapValueToLabel(props.selectedUnit)}
@@ -40,8 +43,9 @@ const ReservationActions: React.FC<ReservationActionsProps> = (props) => {
                 placeholder={t('Select unit')}
                 options={mapToAutocompleteLabels(props.currentProperty?.units ?? [])}
                 isDisabled={!props.currentProperty}
-                width="14rem"
+                width={props.autocompleteWidth ? props.autocompleteWidth : '14rem'}
             />
+            {props.hasDivider && <Divider my={2} />}
             <TooltipIconButton
                 hasArrow={true}
                 placement="bottom-start"

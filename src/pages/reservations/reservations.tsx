@@ -16,6 +16,7 @@ import {
     Spinner,
     useBreakpointValue,
     useDisclosure,
+    VStack,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import DataTable from './table/data-table';
@@ -30,6 +31,7 @@ import { reservationStore } from '../../mobx/reservationStore';
 import { useNavigate } from 'react-router-dom';
 import ReservationActions from '../../components/common/action/reservations-header';
 import { MdOutlineCallToAction } from 'react-icons/md';
+import { CgMenuRightAlt } from 'react-icons/cg';
 
 const Reservations = (): ReactElement => {
     const { t } = useTranslation();
@@ -151,15 +153,15 @@ const Reservations = (): ReactElement => {
                                 aria-label="Open menu"
                                 colorScheme="blue"
                                 onClick={onOpen}
-                                icon={<MdOutlineCallToAction />}
+                                icon={<CgMenuRightAlt />}
                             />
 
-                            <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+                            <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
                                 <DrawerOverlay>
                                     <DrawerContent>
                                         <DrawerCloseButton />
                                         <DrawerBody>
-                                            <HStack alignItems="flex-start" py={10}>
+                                            <VStack alignItems="flex-start" py={10}>
                                                 <ReservationActions
                                                     currentProperty={store.currentProperty}
                                                     properties={store.properties}
@@ -167,12 +169,14 @@ const Reservations = (): ReactElement => {
                                                     onSelectProperty={handlePropertySelect}
                                                     onSelectUnit={handleUnitSelect}
                                                     selectedUnit={unit}
+                                                    autocompleteWidth="full"
+                                                    hasDivider={true}
                                                     label={t('Add new reservation')}
                                                     onAddReservationClick={() =>
                                                         navigate('/calendar')
                                                     }
                                                 />
-                                            </HStack>
+                                            </VStack>
                                         </DrawerBody>
                                     </DrawerContent>
                                 </DrawerOverlay>

@@ -68,7 +68,7 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
     variants,
 }) => {
     const tagScheme = getIconAndScheme(type);
-    const isSmallScreen = useBreakpointValue({ base: true, md: false });
+    const isSmallScreen = useBreakpointValue({ base: true, lg: false });
     const name = isSmallScreen
         ? getInitials(first_name, last_name)
         : `${first_name} ${last_name} | `;
@@ -99,8 +99,10 @@ const ReservationTag: React.FC<ReservationTagProps> = ({
         >
             <TagLeftIcon as={tagScheme.icon} display={{ base: 'none', md: 'block' }} />
             <TagLabel as="p">
-                <Box as="span">{isNameVisible() && name}</Box>
-                <Text as="b" display={{ base: 'none', md: 'inline-block' }}>
+                <Text as="span" fontSize={isSmallScreen ? 10 : 'unset'}>
+                    {isNameVisible() && name}
+                </Text>
+                <Text as="b" display={{ base: 'none', lg: 'inline-block' }}>
                     {guests_num}
                 </Text>
             </TagLabel>
