@@ -6,7 +6,7 @@ class PropertyStore {
     properties: IProperty[] = [];
     currentProperty: IProperty | null = null;
     editingProperty: IProperty | undefined = undefined;
-    propertyManagers: PropertyManager[] | undefined = undefined;
+    propertyManagers: PropertyManager[] = [];
     isDeleting = false;
     isFetching = false;
 

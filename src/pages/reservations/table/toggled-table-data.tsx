@@ -47,7 +47,7 @@ const ToggledTableData: React.FC<SubComponentProps> = ({ row }) => {
                     {t('Advance payment amount:')}
                     <Text as="b"> {prepaymentAmount}€</Text>
                     <Tag ml={2} colorScheme="orange">
-                        {t('PENDING')}
+                        {t('NOT PAID')}
                     </Tag>
                 </Text>
             )}

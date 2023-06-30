@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Box, HStack, Input, Tag, TagLabel } from '@chakra-ui/react';
+import { Box, Input, Stack, Tag, TagLabel } from '@chakra-ui/react';
 import { UseRadioProps, useRadio, UseRadioReturn, useRadioGroup } from '@chakra-ui/radio';
 import { ThemeTypings } from '@chakra-ui/styled-system';
 import { motion } from 'framer-motion';
@@ -59,14 +59,14 @@ const CustomButtonGroup: React.FC<RadioGroupProps> = ({ onSelect, defaultValue, 
     const group = getRootProps();
 
     return (
-        <HStack {...group} justifyContent="flex-start">
+        <Stack {...group} direction={{ base: 'column', md: 'row' }} justifyContent="flex-start">
             {options.map((card) => {
                 const { value } = card;
 
                 const radio = getRadioProps({ value });
                 return <RadioCard key={card.value} {...radio} {...card} />;
             })}
-        </HStack>
+        </Stack>
     );
 };
 

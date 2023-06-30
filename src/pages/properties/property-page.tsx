@@ -150,8 +150,15 @@ const PropertyPage = () => {
                 </BannerWrapper>
             </Box>
             <PropertyActionModal isOpen={isOpen} onClose={onClose} />
-            <Grid templateColumns={['repeat(1, 1fr)', null, '3fr 1fr']} gap={6}>
-                <GridItem order={[2, null, 1]} maxW="3xl">
+            <Grid
+                templateColumns={{
+                    base: 'repeat(1, 1fr)',
+                    md: 'repeat(4, 1fr)',
+                    lg: 'repeat(6, 1fr)',
+                }}
+                gap={6}
+            >
+                <GridItem order={[2, 2, 1]} colSpan={{ base: 1, sm: 4, lg: 4 }} maxW="3xl">
                     <Heading as="h3" fontSize="3xl" fontWeight="bold" mb={18} textAlign="left">
                         {t('Upcoming arrivals / departures')}
                     </Heading>
@@ -169,8 +176,14 @@ const PropertyPage = () => {
                         </Alert>
                     )}
                 </GridItem>
-                <GridItem order={[1, null, 2]} w="100%">
-                    <ManagerBox userId={user?.id} />
+                <GridItem order={[1, 1, 2]} w="100%" colSpan={{ base: 1, sm: 4, lg: 2 }}>
+                    <ManagerBox
+                        userId={user?.id}
+                        propertyManagers={store.propertyManagers}
+                        currentProperty={store.currentProperty}
+                        isFetching={store.isFetching}
+                        onRemoveManager={(managers) => store.setPropertyManagers(managers)}
+                    />
                 </GridItem>
             </Grid>
         </motion.div>

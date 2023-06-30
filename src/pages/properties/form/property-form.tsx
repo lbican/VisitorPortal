@@ -159,7 +159,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                 </VStack>
             )}
             {activeStep === 1 && (
-                <VStack justifyContent="center" spacing={4} w="full" mt={4} ml={2}>
+                <VStack alignItems="flex-start" spacing={4} w="full" mt={4} ml={2}>
                     <FormControl isInvalid={!!errors.type}>
                         <FormLabel htmlFor="type">{t('Type')}</FormLabel>
                         <Controller

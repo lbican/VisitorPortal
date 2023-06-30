@@ -9,7 +9,7 @@ interface CardWrapperProps {
 export const CardWrapper: React.FC<CardWrapperProps> = ({ isArriving, children }) => {
     return (
         <HStack
-            p={{ base: 3, sm: 6 }}
+            p={{ base: 2, sm: 3, md: 6 }}
             bg={useColorModeValue('gray.100', 'gray.800')}
             spacing={5}
             rounded="md"

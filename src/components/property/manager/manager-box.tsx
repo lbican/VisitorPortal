@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ManagerType } from '../../../utils/interfaces/typings';
-import { propertyStore as store } from '../../../mobx/propertyStore';
+import { IProperty, ManagerType, PropertyManager } from '../../../utils/interfaces/typings';
 import {
     Avatar,
     Box,
@@ -18,34 +17,35 @@ import { AiOutlineUserDelete } from 'react-icons/ai';
 import PropertyService from '../../../services/property-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { useTranslation } from 'react-i18next';
-import { observer } from 'mobx-react-lite';
 import { BsPersonBadge, BsPersonBadgeFill } from 'react-icons/bs';
 
 interface ManagerBoxProps {
+    propertyManagers: PropertyManager[];
+    isFetching: boolean;
+    currentProperty: IProperty | null;
     userId?: string;
+    onRemoveManager: (propertyManagers: PropertyManager[]) => void;
 }
 
-const canManageManagers = (managerRole: ManagerType) => {
-    return (
-        store.currentProperty?.manager_type === ManagerType.OWNER &&
-        managerRole === ManagerType.MANAGER
-    );
-};
-
-const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
+const ManagerBox: React.FC<ManagerBoxProps> = (props) => {
     const { t } = useTranslation();
-    const managerBackground = useColorModeValue('whitesmoke', 'gray.700');
+    const managerBackground = useColorModeValue('#F7FAFC', 'gray.700');
     const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
     const notification = useToastNotification();
 
+    const canManageManagers = (managerRole: ManagerType) => {
+        return (
+            props.currentProperty?.manager_type === ManagerType.OWNER &&
+            managerRole === ManagerType.MANAGER
+        );
+    };
+
     const removeSelectedManager = (userId: string) => {
         setLoadingStates((prev) => ({ ...prev, [userId]: true }));
-        PropertyService.removePropertyManager(userId, store.currentProperty?.id)
+        PropertyService.removePropertyManager(userId, props.currentProperty?.id)
             .then(() => {
                 notification.success(t('Manager successfully removed!'));
-                store.setPropertyManagers(
-                    store.propertyManagers?.filter((user) => user.id !== userId) ?? []
-                );
+                props.onRemoveManager(props.propertyManagers.filter((user) => user.id !== userId));
             })
             .catch((error) => {
                 console.error(error);
@@ -69,10 +69,10 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
             <Heading as="h4" size="md">
                 {t('Property managers')}
             </Heading>
-            {store.isFetching ? (
+            {props.isFetching ? (
                 <Spinner />
             ) : (
-                store.propertyManagers?.map((manager) => (
+                props.propertyManagers.map((manager) => (
                     <Box
                         borderRadius={4}
                         key={manager.id}
@@ -103,7 +103,7 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
                                         <BsPersonBadgeFill />
                                     </>
                                 )}
-                                {manager.id === userId && <GoStar />}
+                                {manager.id === props.userId && <GoStar />}
                                 {canManageManagers(manager.manager_type) && (
                                     <IconButton
                                         aria-label="Remove manager"
@@ -125,4 +125,4 @@ const ManagerBox: React.FC<ManagerBoxProps> = ({ userId }) => {
     );
 };
 
-export default observer(ManagerBox);
+export default ManagerBox;

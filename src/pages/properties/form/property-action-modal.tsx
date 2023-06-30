@@ -11,6 +11,8 @@ import {
     Box,
     HStack,
     useSteps,
+    useBreakpointValue,
+    Stack,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
@@ -44,6 +46,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
     const [submitting, setSubmitting] = useState(false);
     const notification = useToastNotification();
     const { user } = useAuth();
+    const isSmallScreen = useBreakpointValue({ base: true, md: false });
 
     const steps: FormStep[] = [
         { title: t('First'), description: t('📍 Details and Location') },
@@ -188,6 +191,7 @@ const PropertyActionModal: React.FC<PropertyActionModalProps> = ({ isOpen, onClo
                                 orientation="vertical"
                                 height="24rem"
                                 animate={true}
+                                hideDetails={!!isSmallScreen}
                             />
                             <PropertyForm
                                 register={register}

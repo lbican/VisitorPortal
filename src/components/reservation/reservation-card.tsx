@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { IReservation } from '../../utils/interfaces/typings';
-import { HStack, Text, VStack, Flex } from '@chakra-ui/react';
+import { HStack, Text, VStack, Flex, Tag } from '@chakra-ui/react';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';
 import i18n from 'i18next';
 import { differenceInCalendarDays } from 'date-fns/fp';
 import { differenceInDays, isWithinInterval } from 'date-fns';
-import { BsHouseDoor, BsMoonStars } from 'react-icons/bs';
+import { BsMoonStars } from 'react-icons/bs';
 import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +28,7 @@ const getReservationStatus = (date_range: [Date, Date]): ReservationStatus => {
 
 const ReservationCard = (props: IReservation) => {
     const { first_name, last_name, guests_num } = props.guest;
-    const { date_range, unit } = props;
+    const { date_range } = props;
     const { t } = useTranslation();
     const nights = differenceInDays(date_range[1], date_range[0]);
     const daysUntilArrival = differenceInCalendarDays(new Date(), date_range[0]);
@@ -64,9 +64,6 @@ const ReservationCard = (props: IReservation) => {
                         )}
                     </Text>
                     <HStack alignItems="center" spacing={2}>
-                        <BsHouseDoor />
-                        <Text>{unit.name}</Text>
-                        <Text>|</Text>
                         <Text as="b">{nights}</Text>
                         <BsMoonStars />
                         <Text>|</Text>
@@ -77,6 +74,7 @@ const ReservationCard = (props: IReservation) => {
                         <Text as="b">
                             {first_name} {last_name}
                         </Text>
+                        {!props.prepayment_paid && <Tag colorScheme="orange">{t('NOT PAID')}</Tag>}
                     </HStack>
                 </VStack>
             </Flex>

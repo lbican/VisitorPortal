@@ -27,14 +27,18 @@ interface FormStepperProps {
     activeStep: number;
     orientation: 'vertical' | 'horizontal';
     height?: string;
+    width?: string;
     animate?: boolean;
+    hideDetails?: boolean;
 }
 const FormStepper: React.FC<FormStepperProps> = ({
     steps,
     activeStep,
     orientation,
     height,
+    width,
     animate,
+    hideDetails,
 }) => {
     const variants = {
         idle: { scale: 1 },
@@ -42,7 +46,14 @@ const FormStepper: React.FC<FormStepperProps> = ({
     };
 
     return (
-        <Stepper index={activeStep} orientation={orientation} size="lg" height={height} gap="0">
+        <Stepper
+            index={activeStep}
+            orientation={orientation}
+            size="lg"
+            height={height}
+            gap="0"
+            width={width}
+        >
             {steps.map((step, index) => (
                 <Step key={step.title}>
                     <StepIndicator>
@@ -61,7 +72,7 @@ const FormStepper: React.FC<FormStepperProps> = ({
                         >
                             {step.title}
                         </MotionStepTitle>
-                        {step.description && (
+                        {step.description && !hideDetails && (
                             <MotionStepDescription
                                 initial="idle"
                                 animate={activeStep === index ? 'wiggle' : 'idle'}
