@@ -63,7 +63,7 @@ const ReservationCard = (props: IReservation) => {
                             </Text>
                         )}
                     </Text>
-                    <HStack alignItems="center" spacing={2}>
+                    <HStack alignItems="center" spacing={2} wrap="wrap">
                         <Text as="b">{nights}</Text>
                         <BsMoonStars />
                         <Text>|</Text>
