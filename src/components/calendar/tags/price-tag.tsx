@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Skeleton, Tag, TagLabel, TagLeftIcon, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Skeleton, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
 import { isUndefined } from 'lodash';
 import { IoPricetag, IoPricetagOutline } from 'react-icons/io5';
 import { PriceStatus } from '../../../pages/calendar/calendar-page';

@@ -19,7 +19,11 @@ export const reservationsOptions = (title: string) => {
     };
 };
 
-export const transformToReservationData = (data: ReservationData[], filterBy: string) => {
+export const transformToReservationData = (
+    data: ReservationData[],
+    filterBy: string,
+    label: string
+) => {
     const groupedData: { [key: string]: number } = {};
     let labels: string[];
     let dataSet: number[];
@@ -48,7 +52,7 @@ export const transformToReservationData = (data: ReservationData[], filterBy: st
         labels: labels,
         datasets: [
             {
-                label: 'Number of Reservations',
+                label: label,
                 data: dataSet,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,

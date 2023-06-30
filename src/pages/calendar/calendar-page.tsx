@@ -10,6 +10,7 @@ import {
     Heading,
     HStack,
     IconButton,
+    Text,
     useBreakpointValue,
     useDisclosure,
     VStack,
@@ -29,7 +30,6 @@ import { reservationStore } from '../../mobx/reservationStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReservationCalendar from '../../components/calendar/reservation-calendar';
 import CalendarActions from '../../components/common/action/calendar-header';
-import { MdOutlineCallToAction } from 'react-icons/md';
 import { CgMenuRightAlt } from 'react-icons/cg';
 
 export enum PriceStatus {
@@ -38,6 +38,33 @@ export enum PriceStatus {
     AVAILABLE = 'green',
     UNSET = 'gray',
 }
+
+interface LimitationsProps {
+    hasDatesSelected: boolean;
+    isCalendarVisible: boolean;
+}
+
+const Limitations: React.FC<LimitationsProps> = ({ hasDatesSelected, isCalendarVisible }) => {
+    const { t } = useTranslation();
+    if (hasDatesSelected && isCalendarVisible) {
+        return <Text as="small">{t('No limitations')}</Text>;
+    }
+
+    return (
+        <>
+            {!isCalendarVisible && (
+                <Text colorScheme="red">
+                    {t('You need to select property and unit to be able to manage calendar')}
+                </Text>
+            )}
+            {!hasDatesSelected && (
+                <Text colorScheme="red">
+                    {t('Dates need to be selected to assign prices and add reservations')}
+                </Text>
+            )}
+        </>
+    );
+};
 
 const CalendarPage = (): ReactElement => {
     const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -155,6 +182,12 @@ const CalendarPage = (): ReactElement => {
                                                     selectedUnit={unit}
                                                     unitPrices={reservationStore.unitPrices}
                                                     isFetching={store.isFetching}
+                                                />
+                                                <Divider my={2} />
+                                                <Text as="b">{t('Limitations')}</Text>
+                                                <Limitations
+                                                    hasDatesSelected={datesSelected()}
+                                                    isCalendarVisible={!!unit}
                                                 />
                                             </VStack>
                                         </DrawerBody>

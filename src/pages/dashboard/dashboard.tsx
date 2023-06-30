@@ -129,7 +129,11 @@ const Dashboard = (): ReactElement => {
                     <GridItem colSpan={{ base: 1, md: 2, xl: 1 }}>
                         <ChartContainer isLoaded={!loading}>
                             <Pie
-                                data={transformToReservationData(totalReservationsData, filterBy)}
+                                data={transformToReservationData(
+                                    totalReservationsData,
+                                    filterBy,
+                                    t('Number of Reservations')
+                                )}
                                 options={reservationsOptions(t('Reservations per unit'))}
                             />
                         </ChartContainer>

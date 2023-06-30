@@ -10,7 +10,6 @@ import { IoChevronDown, IoChevronForward } from 'react-icons/io5';
 import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
 import TypeTag from '../../../components/reservation/type-tag';
-import { useTranslation } from 'react-i18next';
 
 const columnHelper = createColumnHelper<IReservation>();
 
