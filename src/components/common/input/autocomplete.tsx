@@ -2,6 +2,7 @@ import React from 'react';
 import { ActionMeta, SingleValue, Select } from 'chakra-react-select';
 import { Property } from 'csstype';
 import { observer } from 'mobx-react-lite';
+import { TFunction } from 'i18next';
 
 export interface ILabel {
     value: string;
@@ -13,23 +14,29 @@ export interface IEntity {
     name: string;
 }
 
-export const mapToAutocompleteLabels = <T extends IEntity>(entities: T[]): ILabel[] => {
+export const mapToAutocompleteLabels = <T extends IEntity>(
+    entities: T[],
+    t?: TFunction
+): ILabel[] => {
     return entities.map((entity) => {
         return {
             value: entity.id,
-            label: entity.name,
+            label: t ? t(entity.name) : entity.name,
         };
     });
 };
 
-export const mapValueToLabel = <T extends IEntity>(entity: T | null | undefined): ILabel | null => {
+export const mapValueToLabel = <T extends IEntity>(
+    entity: T | null | undefined,
+    t?: TFunction
+): ILabel | null => {
     if (!entity) {
         return null;
     }
 
     return {
         value: entity.id,
-        label: entity.name,
+        label: t ? t(entity.name) : entity.name,
     };
 };
 

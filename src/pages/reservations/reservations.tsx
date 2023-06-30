@@ -30,7 +30,6 @@ import { useAuth } from '../../context/auth-context';
 import { reservationStore } from '../../mobx/reservationStore';
 import { useNavigate } from 'react-router-dom';
 import ReservationActions from '../../components/common/action/reservations-header';
-import { MdOutlineCallToAction } from 'react-icons/md';
 import { CgMenuRightAlt } from 'react-icons/cg';
 
 const Reservations = (): ReactElement => {
@@ -46,6 +45,10 @@ const Reservations = (): ReactElement => {
     }, [store, user]);
 
     useEffect(() => {
+        if (!unit) {
+            reservationStore.setReservations([]);
+        }
+
         reservationStore.fetchUnitReservations(unit?.id);
     }, [unit]);
 

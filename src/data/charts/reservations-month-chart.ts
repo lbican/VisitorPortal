@@ -13,6 +13,7 @@ import {
     MonthlyReservationData,
 } from '../../utils/interfaces/chart/chart-types';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
+import i18n from 'i18next';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -37,7 +38,7 @@ export const transformToMonthlyReservationData = (
     startMonth: number,
     endMonth: number
 ): ChartData => {
-    const labels = [
+    let labels = [
         'January',
         'February',
         'March',
@@ -77,6 +78,22 @@ export const transformToMonthlyReservationData = (
 
         return acc;
     }, []);
+
+    if (i18n.language === 'hr')
+        labels = [
+            'Siječanj',
+            'Veljača',
+            'Ožujak',
+            'Travanj',
+            'Svibanj',
+            'Lipanj',
+            'Srpanj',
+            'Kolovoz',
+            'Rujan',
+            'Listopad',
+            'Studeni',
+            'Prosinac',
+        ].slice(startMonth, endMonth);
 
     return { labels, datasets };
 };

@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import { HashColorGenerator } from '../../utils/hash-color-generator';
 import { ChartData, DataSet, MonthlyRevenueData } from '../../utils/interfaces/chart/chart-types';
+import i18n from 'i18next';
 
 ChartJS.register(
     CategoryScale,
@@ -44,7 +45,7 @@ export const transformToMonthlyRevenueData = (
     startMonth: number,
     endMonth: number
 ): ChartData => {
-    const labels = [
+    let labels = [
         'January',
         'February',
         'March',
@@ -86,6 +87,22 @@ export const transformToMonthlyRevenueData = (
 
         return acc;
     }, []);
+
+    if (i18n.language === 'hr')
+        labels = [
+            'Siječanj',
+            'Veljača',
+            'Ožujak',
+            'Travanj',
+            'Svibanj',
+            'Lipanj',
+            'Srpanj',
+            'Kolovoz',
+            'Rujan',
+            'Listopad',
+            'Studeni',
+            'Prosinac',
+        ].slice(startMonth, endMonth);
 
     return { labels, datasets };
 };

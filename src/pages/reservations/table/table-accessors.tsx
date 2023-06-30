@@ -10,6 +10,7 @@ import { IoChevronDown, IoChevronForward } from 'react-icons/io5';
 import { TbBrandAirbnb, TbBrandBooking } from 'react-icons/tb';
 import { BiBookOpen } from 'react-icons/bi';
 import TypeTag from '../../../components/reservation/type-tag';
+import { useTranslation } from 'react-i18next';
 
 const columnHelper = createColumnHelper<IReservation>();
 
@@ -39,7 +40,7 @@ const getReservationTypeIcon = (type: ReservationType) => {
     }
 };
 
-const getCountryFlag = (country: Country) => {
+const getCountryFlag = (country: Country, t: TFunction) => {
     return (
         <HStack>
             <img
@@ -48,7 +49,7 @@ const getCountryFlag = (country: Country) => {
                 width="32"
                 height="16"
             />
-            <Text>{country.name}</Text>
+            <Text>{t(country.name)}</Text>
         </HStack>
     );
 };
@@ -89,7 +90,7 @@ const columnHelpers = (
     }),
     columnHelper.accessor('guest.country', {
         header: t('Guest country'),
-        cell: (info) => getCountryFlag(info.getValue()),
+        cell: (info) => getCountryFlag(info.getValue(), t),
         footer: (props) => props.column.id,
     }),
     columnHelper.accessor('guest.guests_num', {

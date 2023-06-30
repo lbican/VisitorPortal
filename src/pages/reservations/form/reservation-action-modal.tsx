@@ -210,7 +210,13 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="2xl" scrollBehavior="inside">
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="2xl"
+            scrollBehavior="inside"
+            blockScrollOnMount={false}
+        >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -290,8 +296,8 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
                                                 field.onChange(countries[index]);
                                             }
                                         }}
-                                        options={mapToAutocompleteLabels(countries)}
-                                        value={mapValueToLabel(country)}
+                                        options={mapToAutocompleteLabels(countries, t)}
+                                        value={mapValueToLabel(country, t)}
                                         isLoading={countries.length === 0}
                                     />
                                 )}
