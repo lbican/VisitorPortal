@@ -9,6 +9,7 @@ import {
     Spinner,
     Text,
     useColorModeValue,
+    VStack,
     Wrap,
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
@@ -17,7 +18,6 @@ import { AiOutlineUserDelete } from 'react-icons/ai';
 import PropertyService from '../../../services/property-service';
 import useToastNotification from '../../../hooks/useToastNotification';
 import { useTranslation } from 'react-i18next';
-import { BsPersonBadge, BsPersonBadgeFill } from 'react-icons/bs';
 
 interface ManagerBoxProps {
     propertyManagers: PropertyManager[];
@@ -89,20 +89,14 @@ const ManagerBox: React.FC<ManagerBoxProps> = (props) => {
                                     src={manager.avatar_url ?? undefined}
                                     name={manager.full_name}
                                 />
-                                <Text as="b">{manager.username}</Text>
+                                <VStack alignItems="flex-start" ml="2" spacing="1px">
+                                    <Text as="b">{manager.username}</Text>
+                                    <Text fontSize="xs" as="small" color="gray.600">
+                                        {t(manager.manager_type)}
+                                    </Text>
+                                </VStack>
                             </HStack>
                             <HStack>
-                                {manager.manager_type === ManagerType.MANAGER ? (
-                                    <>
-                                        <Text>{t('MNG.')}</Text>
-                                        <BsPersonBadge />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Text>{t('OWN.')}</Text>
-                                        <BsPersonBadgeFill />
-                                    </>
-                                )}
                                 {manager.id === props.userId && <GoStar />}
                                 {canManageManagers(manager.manager_type) && (
                                     <IconButton

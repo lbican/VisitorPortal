@@ -41,7 +41,7 @@ const ReservationCard = (props: IReservation) => {
         <CardWrapper isArriving={isArriving}>
             <Flex w="full" flexDirection={{ lg: 'row', base: 'column' }}>
                 <VStack spacing={1} mb={3} textAlign="left" alignItems="flex-start" w="full">
-                    <Stack direction={{ base: 'column', md: 'row' }}>
+                    <HStack wrap="wrap">
                         {isArriving ? (
                             <Text size="md">
                                 <Text as="b" color="blue.500">
@@ -64,7 +64,7 @@ const ReservationCard = (props: IReservation) => {
                             </Text>
                         )}
                         <ReservationTypeTag type={props.type} />
-                    </Stack>
+                    </HStack>
                     <HStack alignItems="center" spacing={2} wrap="wrap">
                         <Text as="b">{nights}</Text>
                         <BsMoonStars />
