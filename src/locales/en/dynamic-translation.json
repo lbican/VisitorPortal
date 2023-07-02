@@ -1,5 +1,7 @@
 {
   "Custom": "Custom",
   "Apartments": "Apartments",
-  "House": "House"
+  "House": "House",
+  "User already registered": "User already registered",
+  "Invalid login credentials": "Invalid login credentials"
 }

@@ -159,14 +159,18 @@ const ReservationActionModal: React.FC<ReservationModalProps> = ({
     };
 
     useEffect(() => {
-        ReservationService.getTotalPrice(unit.id, date_range)
-            .then((price) => {
-                setReservationPrice(price);
-                setValue('total_price', price ?? 0);
-            })
-            .catch(() => {
-                setReservationPrice(0);
-            });
+        if (reservationStore.editingReservation) {
+            setReservationPrice(reservationStore.editingReservation.total_price);
+        } else {
+            ReservationService.getTotalPrice(unit.id, date_range)
+                .then((price) => {
+                    setReservationPrice(price);
+                    setValue('total_price', price ?? 0);
+                })
+                .catch(() => {
+                    setReservationPrice(0);
+                });
+        }
 
         ReservationService.fetchCountries()
             .then((countries) => {

@@ -1,5 +1,7 @@
 {
   "Custom": "Individualno",
   "Apartments": "Apartman",
-  "House": "Kuća"
+  "House": "Kuća",
+  "User already registered": "Korisnik je već registriran",
+  "Invalid login credentials": "Pogrešan Email ili Lozinka"
 }

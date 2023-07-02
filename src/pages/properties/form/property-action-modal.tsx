@@ -12,7 +12,6 @@ import {
     HStack,
     useSteps,
     useBreakpointValue,
-    Stack,
 } from '@chakra-ui/react';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';

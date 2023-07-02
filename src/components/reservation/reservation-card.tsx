@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { IReservation } from '../../utils/interfaces/typings';
-import { HStack, Text, VStack, Flex, Tag, Stack } from '@chakra-ui/react';
+import { HStack, Text, VStack, Flex, Tag } from '@chakra-ui/react';
 import React from 'react';
 import CardWrapper from './card/card-wrapper';
 import i18n from 'i18next';

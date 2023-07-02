@@ -32,7 +32,8 @@ const AccountComplete: React.FC<StepActions> = ({ prevStep }) => {
         try {
             await AuthService.signUpUser(user);
         } catch (error) {
-            setError(error as AuthError);
+            const authError = error as AuthError;
+            setError(authError);
         } finally {
             setLoading(false);
         }
