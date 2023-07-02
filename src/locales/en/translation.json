@@ -206,5 +206,6 @@
   "unitCapacity": "Capacity: {{unitCapacity}}",
   "Price List": "Price List",
   "nights": "nights",
-  "night": "night"
+  "night": "night",
+  "Login": "Prijava"
 }
